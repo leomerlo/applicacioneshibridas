@@ -1,0 +1,11 @@
+{
+  "name": "app-simple",
+  "version": "1.0.0",
+  "description": "Una aplicacion para la materia aplicaciones hibridas",
+  "main": "server.js",
+  "scripts": {
+    "server": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
