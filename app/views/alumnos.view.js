@@ -1,11 +1,50 @@
 import { pageWrapper, alumnoForm } from '../utils/index.js'
 
-function createListadoAlumnos() {
+function createListadoAlumnos(alumnos, eliminados = false) {
+  let listadoAlumnos = '';
+
+  const title = eliminados ? "Listado de alumnos eliminados" : "Listado de alumnos"
+
+  const botones = eliminados ? `
+    <a class="btn btn-secondary me-2" href="/alumnos/">Ver Alumnos Enlistados</a>
+  ` : `
+    <a class="btn btn-secondary me-2" href="/alumnos/eliminados">Ver Alumnos Eliminados</a>
+    <a class="btn btn-primary" href="/alumnos/nuevo">Agregar Nuevo Alumno</a>
+  `;
+
+  if(alumnos.length > 0) {
+    alumnos.forEach(alumno => {
+      const acciones = eliminados ? `
+      <a class="btn btn-primary me-2" href="/alumnos/${alumno.legajo}/restore">Restaurar</a>
+      ` : `
+      <a class="btn btn-primary me-2" href="/alumnos/${alumno.legajo}">Ver Perfil</a>
+      <a class="btn btn-primary me-2" href="/alumnos/${alumno.legajo}/edit">Editar</a>
+      <a class="btn btn-primary deleteUser" href="/alumnos/${alumno.legajo}/delete">Eliminar</a>
+      `;
+      listadoAlumnos += `
+        <tr>
+          <td>${alumno.legajo}</td>
+          <td>${alumno.nombre}</td>
+          <td>${alumno.apellido}</td>
+          <td>${alumno.ano}</td>
+          <td class="text-end">
+            <div class="d-flex justify-content-end">
+              ${acciones}
+            </div>
+          </td>
+        </tr>`
+    });
+  } else {
+    listadoAlumnos = '<td colspan="5" class="text-center">No existen alumnos en nuestros registros. Podés crear uno para comenzar.</td>'
+  }
+
   const html = `
   <div class="container">
-    <h1 class="text-center mt-5">Listado de alumnos</h1>
+    <h1 class="text-center mt-5">${title}</h1>
     <hr>
-    <div class="mt-3 mb-3 d-flex justify-content-end"><a class="btn btn-primary" href="alumnos/nuevo">Agregar Nuevo Alumno</a></div>
+    <div class="mt-3 mb-3 d-flex justify-content-end">
+      ${botones}
+    </div>
     <hr>
     <table class="table">
       <thead>
@@ -18,19 +57,7 @@ function createListadoAlumnos() {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Data</td>
-          <td>Not</td>
-          <td>Available</td>
-          <td>Yet</td>
-          <td class="text-end">
-            <div class="d-flex justify-content-end">
-              <a class="btn btn-primary me-2" href="/alumnos/:legajo">Ver Perfil</a>
-              <a class="btn btn-primary me-2" href="/alumnos/:legajo/edit">Editar</a>
-              <a class="btn btn-primary deleteUser" href="/alumnos/:legajo/delete">Eliminar</a>
-            </div>
-          </td>
-        </tr>
+        ${listadoAlumnos}
       </tbody>
     </table>
     <div>
@@ -82,7 +109,7 @@ function createEditAlumnoForm(data) {
   const form = alumnoForm(data);
   const html = `
   <div class="container">
-    <h1 class="text-center mt-5">Editar alumno $Alumno</h1>
+    <h1 class="text-center mt-5">Editando alumno - ${data.nombre} ${data.apellido}</h1>
     <hr class="mb-3 mt-3">
     <form method="POST">
       ${form}
@@ -104,10 +131,23 @@ function createDeleteForm(data) {
   return pageWrapper('Eliminar Alumno', html);
 }
 
+function createAlumnoInexistente() {
+  const html = `
+  <div class="container">
+    <div class="text-center">
+      <h1 class="mt-5">El alumno que estas buscando no existe o fue eliminado.</h1>
+      <a href="/alumnos">Volver al listado</a>
+    </div>
+  </div>`;
+
+  return pageWrapper('Eliminar Alumno', html);
+}
+
 export {
   createListadoAlumnos,
   createPerfilAlumno,
   createNewAlumnoForm,
   createEditAlumnoForm,
-  createDeleteForm
+  createDeleteForm,
+  createAlumnoInexistente
 }

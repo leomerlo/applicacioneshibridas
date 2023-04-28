@@ -18,17 +18,25 @@ function pageWrapper(title, content) {
 function alumnoForm(data = { legajo: '', nombre: '', apellido: '', ano: ''}) {
   let html;
 
+  html += `<div class="d-flex justify-content-end">
+    <button class="btn btn-primary">Guardar</button>
+  </div>
+  <hr class="mb-3 mt-3">`;
+
+  html += '<div class="mb-3">';
+  html += '<label for="legajo" class="form-label">Legajo</label>';
   if(data.legajo != '') {
     html += `
-      <input type="hidden" name="legajo" value="${data.legajo}"/>
+      <input readonly class="form-control" type="text" name="legajo" id="legajo" value="${data.legajo}"/>
+    `;
+  } else {
+    html += `
+      <input type="text" class="form-control" name="legajo" id="legajo"/>
     `;
   }
+  html += '</div>';
 
   html += `
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-primary">Guardar</button>
-    </div>
-    <hr class="mb-3 mt-3">
     <div class="mb-3">
       <label for="nombre" class="form-label">Nombre</label>
       <input type="text" class="form-control" id="nombre" name="nombre" required value="${data.nombre}"/>

@@ -1,27 +1,37 @@
+import * as service from '../services/alumnos.service.js';
 import * as view from '../views/alumnos.view.js';
 
 function getListadoAlumnos(req, res) {
-  res.send(view.createListadoAlumnos());
+  service.getAlumnos().then((alumnos) => {
+    res.send(view.createListadoAlumnos(alumnos));
+  });
+}
+
+function getListadoAlumnosEliminados(req, res) {
+  service.getAlumnosEliminados().then((alumnos) => {
+    console.log(alumnos)
+    res.send(view.createListadoAlumnos(alumnos, true));
+  });
 }
 
 function getAlumnoByLegajo(req, res) {
-  const data = {
-    legajo: '0',
-    nombre: 'Leo',
-    apellido: 'Merlo',
-    ano: '2015'
-  }
-  res.send(view.createPerfilAlumno(data));
+  service.getAlumnosByLegajo(req.params.legajo).then((alumno) => {
+    if(alumno) {
+      res.send(view.createPerfilAlumno(alumno));
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
 }
 
 function getAlumnoEditForm(req, res) {
-  const data = {
-    legajo: '0',
-    nombre: 'Leo',
-    apellido: 'Merlo',
-    ano: '2015'
-  }
-  res.send(view.createEditAlumnoForm(data));
+  service.getAlumnosByLegajo(req.params.legajo).then((alumno) => {
+    if(alumno) {
+      res.send(view.createEditAlumnoForm(alumno));
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
 }
 
 function getAlumnoNewForm(req, res) {
@@ -29,25 +39,69 @@ function getAlumnoNewForm(req, res) {
 }
 
 function editAlumno(req, res) {
-  res.redirect('../../alumnos');
+  const alumno = {
+    legajo: req.body.legajo,
+    nombre: req.body.nombre,
+    apellido: req.body.apellido,
+    ano: req.body.ano
+  }
+  service.getAlumnosByLegajo(alumno.legajo).then((alumno) => {
+    if(alumno) {
+      service.updateAlumno(alumno).then(() => {
+        res.redirect('/alumnos');
+      });
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
 }
 
 function saveAlumno(req, res) {
-  res.redirect('../alumnos');
+  const alumno = {
+    legajo: req.body.legajo,
+    nombre: req.body.nombre,
+    apellido: req.body.apellido,
+    ano: req.body.ano
+  }
+  service.createAlumno(alumno).then(() => {
+    res.redirect('../alumnos');
+  });
 }
 
 function deleteAlumnoForm(req, res) {
-  const data = {
-    legajo: '0',
-    nombre: 'Leo',
-    apellido: 'Merlo',
-    ano: '2015'
-  }
-  res.send(view.createDeleteForm(data));
+  service.getAlumnosByLegajo(req.params.legajo).then((alumno) => {
+    if(alumno) {
+      res.send(view.createDeleteForm(alumno));
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
 }
 
 function deleteAlumno(req, res) {
-  res.redirect('/alumnos');
+  service.getAlumnosByLegajo(req.params.legajo).then((alumno) => {
+    if(alumno) {
+      alumno.deleted = true;
+      service.updateAlumno(alumno).then((alumno) => {
+        res.redirect('/alumnos');
+      });
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
+}
+
+function restoreAlumno(req, res) {
+  service.getAlumnosByLegajo(req.params.legajo, true).then((alumno) => {
+    if(alumno) {
+      alumno.deleted = false;
+      service.updateAlumno(alumno).then((alumno) => {
+        res.redirect('/alumnos');
+      });
+    } else {
+      res.send(view.createAlumnoInexistente());
+    }
+  });
 }
 
 export {
@@ -58,5 +112,7 @@ export {
   saveAlumno,
   editAlumno,
   deleteAlumnoForm,
-  deleteAlumno
+  deleteAlumno,
+  getListadoAlumnosEliminados,
+  restoreAlumno
 }
