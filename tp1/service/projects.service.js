@@ -13,7 +13,25 @@ async function getProjectsBySection(section) {
   return db.collection("Projects").find({ section: section }).toArray();
 }
 
+async function getProjectsWithFilter(filters) {
+  await client.connect()
+  return db.collection("Projects").find(filters).toArray();
+}
+
+async function getProjectTechnologies() {
+  await client.connect()
+  return db.collection("Projects").distinct("technologies")
+}
+
+async function saveProject(project) {
+  await client.connect()
+  return db.collection("Projects").insertOne(project);
+}
+
 export {
   getAllProjects,
-  getProjectsBySection
+  getProjectsBySection,
+  getProjectsWithFilter,
+  getProjectTechnologies,
+  saveProject
 }

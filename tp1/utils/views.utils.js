@@ -26,7 +26,7 @@ function navBar(active) {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <a class="nav-link" href="/">Home</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -39,6 +39,9 @@ function navBar(active) {
               <li><a class="dropdown-item" href="/projects/eCommerce">E-commerce</a></li>
               <li><a class="dropdown-item" href="/projects/games">Games</a></li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/projects/new">+ Crear nuevo proyecto</a>
           </li>
         </ul>
       </div>
