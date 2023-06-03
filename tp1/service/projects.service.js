@@ -8,6 +8,11 @@ async function getAllProjects() {
   return db.collection("Projects").find().toArray();
 }
 
+async function getProjectById(id) {
+  await client.connect()
+  return db.collection("Projects").findOne({ id: id });
+}
+
 async function getProjectsBySection(section) {
   await client.connect()
   return db.collection("Projects").find({ section: section }).toArray();
@@ -28,10 +33,23 @@ async function saveProject(project) {
   return db.collection("Projects").insertOne(project);
 }
 
+async function updateProject(project) {
+  await client.connect()
+  return db.collection("Projects").findOneAndReplace({ id: project.id }, project);
+}
+
+async function removeProject(id) {
+  await client.connect()
+  return db.collection("Projects").findOneAndDelete({ id: id });
+}
+
 export {
   getAllProjects,
   getProjectsBySection,
   getProjectsWithFilter,
   getProjectTechnologies,
-  saveProject
+  saveProject,
+  getProjectById,
+  updateProject,
+  removeProject
 }

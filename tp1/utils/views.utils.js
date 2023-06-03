@@ -69,10 +69,10 @@ function projectList(projects) {
       projectList += `
       <li>
         <img src="${project.img}" role="presentation"/>
-        <h2><a href="/projects/${project.id}">${project.name}</a></h2>
+        <h2><a href="/projects/${project.id}">${project.name}</a></h2> - <a href="/projects/${project.id}/edit">Editar</a> - <a href="/projects/${project.id}/delete">Eliminar</a>
         <p>${project.description}</p>
         <ul>${techList}</ul>
-        <a href="${project.link}">Repository</a>
+        <a href="${project.link}">Repositorio</a>
       </li>
       `
     });
