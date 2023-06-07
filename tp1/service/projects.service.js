@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 
 const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("AH20231CP1");
@@ -10,7 +10,7 @@ async function getAllProjects() {
 
 async function getProjectById(id) {
   await client.connect()
-  return db.collection("Projects").findOne({ id: id });
+  return db.collection("Projects").findOne({ _id: new ObjectId(id) });
 }
 
 async function getProjectsBySection(section) {
@@ -35,12 +35,12 @@ async function saveProject(project) {
 
 async function updateProject(project) {
   await client.connect()
-  return db.collection("Projects").findOneAndReplace({ id: project.id }, project);
+  return db.collection("Projects").findOneAndReplace({ _id: new ObjectId(project._id) }, project);
 }
 
 async function removeProject(id) {
   await client.connect()
-  return db.collection("Projects").findOneAndDelete({ id: id });
+  return db.collection("Projects").findOneAndDelete({ _id: newObjectId(id) });
 }
 
 export {

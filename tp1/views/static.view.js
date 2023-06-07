@@ -2,11 +2,10 @@ import { pageWrapper, navBar, projectList } from '../utils/views.utils.js'
 
 function viewHomePage(projects) {
   const nav = navBar();
-  const list = projectList(projects);
   const html = `
     ${nav}
     <div class="container">
-      ${list}
+      <h1>Mi Portfolio</h1>
     </div>
   `;
 

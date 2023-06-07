@@ -30,7 +30,7 @@ function navBar(active) {
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Projectos
+              Proyectos
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="/projects/mobile">Mobile</a></li>
@@ -41,7 +41,7 @@ function navBar(active) {
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/projects/new">+ Crear nuevo proyecto</a>
+            <a class="nav-link" href="/clients">Clientes</a>
           </li>
         </ul>
       </div>
@@ -69,7 +69,7 @@ function projectList(projects) {
       projectList += `
       <li>
         <img src="${project.img}" role="presentation"/>
-        <h2><a href="/projects/${project.id}">${project.name}</a></h2> - <a href="/projects/${project.id}/edit">Editar</a> - <a href="/projects/${project.id}/delete">Eliminar</a>
+        <h2><a href="/projects/${project._id}">${project.name}</a></h2> - <a href="/projects/${project._id}/edit">Editar</a> - <a href="/projects/${project._id}/delete">Eliminar</a>
         <p>${project.description}</p>
         <ul>${techList}</ul>
         <a href="${project.link}">Repositorio</a>

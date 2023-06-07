@@ -1,10 +1,21 @@
 import * as view from '../views/projects.view.js';
 import * as projectService from '../service/projects.service.js';
+import * as clientsService from '../service/clients.service.js';
+
+function getAllProjects(req, res) {
+  projectService.getProjectTechnologies().then((technologies) => {
+    projectService.getAllProjects().then((projects) => {
+      res.send(view.viewProjectsPage(projects, technologies));
+    });
+  })
+}
 
 function getSection(req, res) {
   const section = req.params.section;
-  projectService.getProjectsBySection(section).then((projects) => {
-    res.send(view.viewProjectsPage(projects, [], section));
+  projectService.getProjectTechnologies().then((technologies) => {
+    projectService.getProjectsBySection(section).then((projects) => {
+      res.send(view.viewProjectsPage(projects, technologies, section));
+    });
   });
 }
 
@@ -26,7 +37,9 @@ async function getFilteredList(req, res) {
 }
 
 function getNewForm(req, res) {
-  res.send(view.viewForm());
+  clientsService.getAllClients().then((clients) => {
+    res.send(view.viewForm({}, clients));
+  });
 }
 
 function saveProject(req, res) {
@@ -44,11 +57,14 @@ function saveProject(req, res) {
       variant: 'danger',
       text: "Todos los campos son requeridos para crear un proyecto.",
     };
-    res.send(view.viewForm(req.body, message));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm(req.body, clients, message));
+    });
   }
 
   const newProject = {
     name: req.body.name,
+    client_id: req.body.client_id,
     description: req.body.description,
     link: req.body.link,
     img: req.body.img,
@@ -61,19 +77,25 @@ function saveProject(req, res) {
       variant: 'success',
       text: `El proyecto ${project.name} fue creado con éxito`,
     };
-    res.send(view.viewForm({}));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm({}, clients));
+    });
   }).catch((error) => {
     message = {
       variant: 'danger',
       text: `Hubo un problema al crear el proyecto, intentelo nuevamente.`,
     };
-    res.send(view.viewForm({}, message));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm({}, clients, message));
+    });
   });
 }
 
 function getEditForm(req, res) {
   projectService.getProjectById(req.params.id).then((project) => {
-    res.send(view.viewForm(project));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm(project, clients));
+    });
   });
 }
 
@@ -82,6 +104,7 @@ function editProject(req, res) {
 
   if(
     req.body.name === '' ||
+    req.body.client_id === '' ||
     req.body.description === '' ||
     req.body.link === '' ||
     req.body.img === '' ||
@@ -92,18 +115,22 @@ function editProject(req, res) {
       variant: 'danger',
       text: "Todos los campos son requeridos para crear un proyecto.",
     };
-    res.send(view.viewForm(req.body, message));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm(req.body, clients, message));
+    });
   }
 
   const project = {
     id: req.params.id,
     name: req.body.name,
+    client_id: req.body.client_id,
     description: req.body.description,
     link: req.body.link,
     img: req.body.img,
     section: req.body.section,
     technologies: req.body.technologies != '' ? req.body.technologies.split(',').map((e) => e.trim()) : []
   }
+
   projectService.updateProject(project).then(() => {
     if (project) {
       message = {
@@ -117,7 +144,9 @@ function editProject(req, res) {
         text: 'No se encontró el proyecto',
       };
     }
-    res.send(view.viewForm(project, message));
+    clientsService.getAllClients().then((clients) => {
+      res.send(view.viewForm(project, clients, message));
+    });
   });
 }
 
@@ -134,6 +163,7 @@ function deleteProject(req, res) {
 }
 
 export {
+  getAllProjects,
   getSection,
   getFilteredList,
   getNewForm,
