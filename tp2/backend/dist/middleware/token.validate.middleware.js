@@ -18,7 +18,6 @@ function validateToken(req, res, next) {
         if (!account) {
             return res.status(401).json({ error: { message: 'Token inválido' } });
         }
-        // @ts-ignore-next-line
         req.account = account;
         next();
     });

@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { Request } from "express"
 
 export interface Session {
   userName: string,
@@ -8,4 +9,8 @@ export interface Session {
 export interface Account {
   _id: ObjectId,
   userName: string,
+}
+
+export interface RequestWithAccount extends Request {
+  account: Account
 }
