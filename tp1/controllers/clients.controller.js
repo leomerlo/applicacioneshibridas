@@ -1,5 +1,6 @@
 import * as view from '../views/clients.view.js';
 import * as clientsService from '../service/clients.service.js';
+import * as projectsService from '../service/projects.service.js';
 
 function getClientList(req, res) {
   clientsService.getAllClients().then((clients) => {
@@ -73,6 +74,15 @@ function deleteClient(req, res) {
   });
 }
 
+function getClientInfo(req, res) {
+  clientsService.getClientById(req.params.id).then((client) => {
+    projectsService.getProjectsByClient(req.params.id).then((projects) => {
+      client.projects = projects;
+      res.send(view.viewClientInfo(client));
+    });
+  });
+}
+
 export {
   getClientList,
   getNewClientForm,
@@ -80,5 +90,6 @@ export {
   updateClient,
   saveClient,
   getDeleteConfirm,
-  deleteClient
+  deleteClient,
+  getClientInfo
 }

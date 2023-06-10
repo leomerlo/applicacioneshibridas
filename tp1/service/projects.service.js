@@ -18,6 +18,11 @@ async function getProjectsBySection(section) {
   return db.collection("Projects").find({ section: section }).toArray();
 }
 
+async function getProjectsByClient(client) {
+  await client.connect()
+  return db.collection("Projects").find({ client: client }).toArray();
+}
+
 async function getProjectsWithFilter(filters) {
   await client.connect()
   return db.collection("Projects").find(filters).toArray();
@@ -46,6 +51,7 @@ async function removeProject(id) {
 export {
   getAllProjects,
   getProjectsBySection,
+  getProjectsByClient,
   getProjectsWithFilter,
   getProjectTechnologies,
   saveProject,

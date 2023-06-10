@@ -1,4 +1,4 @@
-import { pageWrapper, navBar } from '../utils/views.utils.js'
+import { pageWrapper, navBar, projectList } from '../utils/views.utils.js'
 
 function viewClientList(clients, message) {
   const nav = navBar();
@@ -10,12 +10,13 @@ function viewClientList(clients, message) {
           <img src="${client.image}" />
         </div>
         <div>
-          <span>Nombre: ${client.name}</span>
+          <a>Nombre: ${client.name}</span>
           <span>Descripcion: ${client.description}</span>
           <div>
             <a href="/clients/${client._id}/edit">Editar</a>
             <a href="/clients/${client._id}/delete">Eliminar</a>
           </div>
+          <a href="/client/${client._id}">Ver mas</a>
         </div>
       </div>`
   });
@@ -104,8 +105,30 @@ function confirmDelete(client) {
   return pageWrapper("Eliminando cliente", html);
 }
 
+function viewClientInfo(client) {
+  const nav = navBar();
+  const projects = projectList(client.projects);
+  const html = `
+    ${ nav }
+    <div class="container">
+      <div class="d-flex justify-content-between">
+        <h1>Información del cliente ${client.name}</h1>
+        <div class="d-flex">
+          <a href="/clients/${client._id}/edit" class="btn btn-primary d-flex align-items-center">Editar</a>
+          <a href="/clients/${client._id}/delete" class="btn btn-danger d-flex align-items-center">Eliminar</a>
+        </div>
+        <p>${client.description}</p>
+        ${projects}
+      </div>
+    </div>
+  `;
+
+  return pageWrapper(`Información del cliente ${client.name}`, html);
+}
+
 export {
   viewClientList,
   viewClientForm,
-  confirmDelete
+  confirmDelete,
+  viewClientInfo
 }
