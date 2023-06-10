@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { MongoClient, ObjectId } from 'mongodb'
-import { Account, Profile } from '../types/account';
+import { Profile } from '../types/profile';
 
 const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("foodGenie")
@@ -29,6 +29,8 @@ async function validateToken(token: string) {
     }
 
     return payload;
+  } catch (error) {
+    throw error;
   }
 }
 

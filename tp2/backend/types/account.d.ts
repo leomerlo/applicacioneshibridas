@@ -11,15 +11,6 @@ export interface Account {
   userName: string,
 }
 
-export interface Profile {
-  _id?: ObjectId,
-  accountId: ObjectId,
-  userName: string,
-  name?: string,
-  restrictions?: string,
-  preferences?: string,
-}
-
 export interface RequestWithAccount extends Request {
   account: Account
 }

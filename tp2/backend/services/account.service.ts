@@ -1,11 +1,11 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import bcrypt from 'bcrypt'
-import { Session, Profile } from '../types/account.js';
+import { Session } from '../types/account.js';
+import { createProfile, getProfileByAccount } from './profile.service.js'
 
 const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("foodGenie")
 const accountsCollection = db.collection('accounts')
-const profilesColelction = db.collection('profiles')
 
 async function createAccount(account: Session) {
   await client.connect()
@@ -23,19 +23,7 @@ async function createAccount(account: Session) {
   const createdAccount = await accountsCollection.insertOne(newAccount)
 
   // To allow for future profile creation we create a profile for the new account
-  createProfile({ accountId: createdAccount.insertedId, userName: account.userName })
-}
-
-async function createProfile(profile: Profile) {
-  await client.connect()
-
-  const profileExist = await profilesColelction.findOne({ userName: profile.userName })
-
-  if (profileExist) {
-    throw new Error('El perfil que intentas crear ya existe.')
-  }
-
-  await profilesColelction.insertOne(profile)
+  createProfile({ accountId: createdAccount.insertedId, name: account.userName })
 }
 
 async function createSession(session: Session) {
@@ -53,7 +41,7 @@ async function createSession(session: Session) {
     throw new Error('La contraseña es incorrecta.')
   }
 
-  const returnProfile = await profilesColelction.findOne({ accountId: new ObjectId(accountExist._id) });
+  const returnProfile = getProfileByAccount(accountExist._id);
 
   return returnProfile
 }
