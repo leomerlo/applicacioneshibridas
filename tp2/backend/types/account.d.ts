@@ -11,6 +11,12 @@ export interface Account {
   userName: string,
 }
 
+export interface Profile {
+  _id?: ObjectId,
+  accountId: ObjectId,
+  userName: string,
+}
+
 export interface RequestWithAccount extends Request {
   account: Account
 }

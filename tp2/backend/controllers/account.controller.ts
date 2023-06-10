@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as services from '../services/account.service.js';
 import * as tokenService from '../services/token.service.js';
-import { Account } from '../types/account.js';
+import { Profile } from '../types/account.js';
 
 async function createAccount(req: Request, res: Response) {
   return services.createAccount(req.body)
@@ -15,10 +15,12 @@ async function createAccount(req: Request, res: Response) {
 
 async function createSession(req: Request, res: Response) {
   return services.createSession(req.body)
-  .then(async (account) => {
-    return { token: await tokenService.createToken(account as Account), account }
+  .then(async (profile) => {
+    console.log('2');
+    return { token: await tokenService.createToken(profile as Profile), profile }
   })
   .then((token) => {
+      console.log('3');
       res.status(200).json({ token })
   })
   .catch((err) => {

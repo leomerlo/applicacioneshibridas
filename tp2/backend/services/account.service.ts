@@ -1,10 +1,11 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import bcrypt from 'bcrypt'
-import { Session } from '../types/account.js';
+import { Session, Profile } from '../types/account.js';
 
 const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("foodGenie")
 const accountsCollection = db.collection('accounts')
+const profilesColelction = db.collection('profiles')
 
 async function createAccount(account: Session) {
   await client.connect()
@@ -18,27 +19,43 @@ async function createAccount(account: Session) {
   const newAccount = { ...account }
   const salt = await bcrypt.genSalt(10)
   newAccount.password = await bcrypt.hash(account.password, salt)
-  await accountsCollection.insertOne(newAccount)
+
+  const createdAccount = await accountsCollection.insertOne(newAccount)
+
+  // To allow for future profile creation we create a profile for the new account
+  createProfile({ accountId: createdAccount.insertedId, userName: account.userName })
 }
 
-async function createSession(account: Session) {
+async function createProfile(profile: Profile) {
   await client.connect()
 
-  const accountExist = await accountsCollection.findOne({ userName: account.userName });
+  const profileExist = await profilesColelction.findOne({ userName: profile.userName })
+
+  if (profileExist) {
+    throw new Error('El perfil que intentas crear ya existe.')
+  }
+
+  await profilesColelction.insertOne(profile)
+}
+
+async function createSession(session: Session) {
+  await client.connect()
+
+  const accountExist = await accountsCollection.findOne({ userName: session.userName });
 
   if (!accountExist) {
     throw new Error('La cuenta que intentas iniciar sesión no existe.')
   }
 
-  const validPassword = await bcrypt.compare(account.password, accountExist.password)
+  const validPassword = await bcrypt.compare(session.password, accountExist.password)
 
   if (!validPassword) {
     throw new Error('La contraseña es incorrecta.')
   }
 
-  const returnAccount = await accountsCollection.findOne({ userName: account.userName }, { projection: { password: 0 } });
+  const returnProfile = await profilesColelction.findOne({ accountId: new ObjectId(accountExist._id) });
 
-  return returnAccount
+  return returnProfile
 }
 
 export {

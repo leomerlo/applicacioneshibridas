@@ -23,10 +23,12 @@ function createAccount(req, res) {
 function createSession(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         return services.createSession(req.body)
-            .then((account) => __awaiter(this, void 0, void 0, function* () {
-            return { token: yield tokenService.createToken(account), account };
+            .then((profile) => __awaiter(this, void 0, void 0, function* () {
+            console.log('2');
+            return { token: yield tokenService.createToken(profile), profile };
         }))
             .then((token) => {
+            console.log('3');
             res.status(200).json({ token });
         })
             .catch((err) => {
