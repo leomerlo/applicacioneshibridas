@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as services from '../services/account.service.js';
 import * as tokenService from '../services/token.service.js';
-import { Profile } from '../types/account.js';
+import { Profile } from '../types/profile.js';
 
 async function createAccount(req: Request, res: Response) {
   return services.createAccount(req.body)
