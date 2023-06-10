@@ -16,11 +16,9 @@ async function createAccount(req: Request, res: Response) {
 async function createSession(req: Request, res: Response) {
   return services.createSession(req.body)
   .then(async (profile) => {
-    console.log('2');
     return { token: await tokenService.createToken(profile as Profile), profile }
   })
   .then((token) => {
-      console.log('3');
       res.status(200).json({ token })
   })
   .catch((err) => {
