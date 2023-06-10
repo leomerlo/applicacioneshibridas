@@ -4,8 +4,9 @@
   "description": "Backend for FoodGenie",
   "main": "server.js",
   "scripts": {
-    "server": "cls && nodemon server.js"
+    "server": "clear && nodemon server.js"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/leomerlo/applicacioneshibridas.git"
