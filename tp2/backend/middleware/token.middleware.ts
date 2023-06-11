@@ -17,6 +17,21 @@ async function validateToken(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+async function addProfileIdToBody(req: Request, res: Response, next: NextFunction) {
+  const token = req.headers['auth-token']
+
+  const account = await tokenService.validateToken(token as string);
+
+  if (!account) {
+    return res.status(401).json({ error: { message: 'Token inválido' } })
+  }
+
+  req.body.profileId = account._id;
+  
+  next();
+}
+
 export {
-  validateToken
+  validateToken,
+  addProfileIdToBody
 }

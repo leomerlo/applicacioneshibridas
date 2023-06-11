@@ -19,9 +19,9 @@ async function createProfile(profile: Profile) {
   await profilesColelction.insertOne(profile)
 }
 
-async function getProfile(profileId: ObjectId) {
+async function getProfile(profileId: ObjectId): Promise<Profile | null> {
   await client.connect()
-  return profilesColelction.findOne({ _id: new ObjectId(profileId) })
+  return profilesColelction.findOne<Profile>({ _id: new ObjectId(profileId) })
 }
 
 async function getProfileByAccount(accountId: ObjectId) {
