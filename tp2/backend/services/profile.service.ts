@@ -26,7 +26,7 @@ async function getProfile(profileId: ObjectId): Promise<Profile | null> {
 
 async function getProfileByAccount(accountId: ObjectId) {
   await client.connect()
-  return profilesColelction.findOne({ accountId: new ObjectId(accountId) })
+  return profilesColelction.findOne<Profile>({ accountId: new ObjectId(accountId) })
 }
 
 async function updateProfile(token: string, profile: Profile) {

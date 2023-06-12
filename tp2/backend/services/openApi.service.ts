@@ -1,7 +1,12 @@
 import { Configuration, OpenAIApi } from "openai";
+import dotenv from 'dotenv'
+import { ObjectId } from "bson";
+
+dotenv.config()
+
 const configuration = new Configuration({
-  organization: "org-j11llTR64awUiGvPJHa8M99A",
-  apiKey: "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",
+  organization: process.env.OPENAI_ORGANIZATION,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 const model = "text-davinci-003";
@@ -28,7 +33,7 @@ async function promptHelper(prompt: string): Promise<string | undefined> {
     } else {
       console.log(error.message);
     }
-    throw new Error("Error on ChatGPT API");
+    throw new Error("Error en ChatGPT API");
   }
 }
 
@@ -43,41 +48,26 @@ async function generatePlan(restrictions: string, preferences: string): Promise<
   Use this as an example for the format but not the meals or nutrition values:
   {
     "monday": {
-      "breakfast": 
-      {
+      "breakfast": {
         "name": "Oats and chia bowl",
-        "nutrition": {
-          "calories": 300,
-          "carbs": 50,
-          "fat": 10,
-          "protein": 10
-        },
       },
       "lunch": {
         "name": "Spinach and Avocado Salad",
-        "nutrition": {
-          "calories": 200,
-          "carbs": 20,
-          "fat": 10,
-          "protein": 10
-        },
+      }
       "dinner": {
         "name": "Tofu and veggies stir fry",
-        "nutrition": {
-          "calories": 300,
-          "carbs": 20,
-          "fat": 10,
-          "protein": 10
-        }
+      }
     },
   }
   `
   return await promptHelper(prompt);
 }
 
-async function generateRecipie(recipie: string): Promise<string | undefined> {
+async function generateRecipie(recipie: string, diners: number): Promise<string | undefined> {
   const prompt = `
-  Generate a list of ingredients using only metric units and instructions in up to 10 steps on the following meal or meals: "${recipie}".
+  Generate a list of ingredients for ${diners} diners using only metric units, instructions in up to 10 steps and nutritional value on the following meal or meals per diner: "${recipie}".
+
+  Using only metric (gr, mg, kg) system units is extremely important.
   
   Format the entire response as a single JSON string without line breaks or words that are not part of the JSON string. Do not add Answer or any other prefix to the answer, just the JSON string.
   
@@ -105,7 +95,13 @@ async function generateRecipie(recipie: string): Promise<string | undefined> {
       "Boil the water",
       "Add the oats and salt",
       "Cook for 5 minutes"
-    ]
+    ],
+    "nutrition": {
+      "calories": 300,
+      "carbs": 20,
+      "fat": 10,
+      "protein": 10
+    }
   }
   `
   return await promptHelper(prompt);

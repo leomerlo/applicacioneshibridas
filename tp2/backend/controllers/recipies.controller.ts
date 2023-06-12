@@ -3,8 +3,9 @@ import * as recipiesService from '../services/recipies.service.js';
 
 async function getRecipie(req: Request, res: Response) {
   const recipie = req.params.recipie;
+  const profileId = req.body.profileId;
 
-  recipiesService.getRecipie(recipie)
+  recipiesService.getRecipie(recipie, profileId)
   .then((recipie) => {
     res.status(201).json(recipie)
   })

@@ -3,6 +3,9 @@ import accountRouter from './routes/account.routes.js';
 import profileRouter from './routes/profile.routes.js';
 import plansRouter from './routes/plans.routes.js';
 import recipiesRouter from './routes/recipies.routes.js';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express()
 

@@ -4,4 +4,5 @@ export interface Profile {
   name: string,
   restrictions?: string,
   preferences?: string,
+  diners?: number
 }

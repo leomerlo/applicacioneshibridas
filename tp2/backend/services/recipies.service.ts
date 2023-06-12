@@ -2,12 +2,13 @@ import { MongoClient, ObjectId } from 'mongodb'
 import * as recipieSchema from '../schemas/recipies.schema.js';
 import type { Recipie } from '../types/recipies.d.ts';
 import * as openAiService from './openApi.service.js';
+import * as profileService from './profile.service.js';
 
 const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("foodGenie")
 const recipiesCollection = db.collection('recipies')
 
-async function getRecipie(recipie: string): Promise<Recipie> {
+async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie> {
   await client.connect()
 
   const recipieExist = await recipiesCollection.findOne({ name: recipie.toLowerCase() }) as Recipie;
@@ -18,13 +19,15 @@ async function getRecipie(recipie: string): Promise<Recipie> {
   }
 
   console.log(`Recipie "${recipie}" not found in database, generating...`);
-  const newRecipie = await generateRecipie(recipie);
+  const newRecipie = await generateRecipie(recipie, profileId);
   return newRecipie as Recipie;
 }
 
-async function generateRecipie(recipie: string): Promise<Recipie | void> {
+async function generateRecipie(recipie: string, profileId: ObjectId): Promise<Recipie | void> {
   // Generate the recipie
-  const rawOutput = await openAiService.generateRecipie(recipie);
+  const profile = await profileService.getProfile(profileId);
+  const diners = profile?.diners || 1;
+  const rawOutput = await openAiService.generateRecipie(recipie, diners);
   // const rawOutput = {name:"Oats and banana smoothie bowl",ingredients:[{name:"Oats",quantity:"100",unit:"gr"},{name:"Banana",quantity:"1",unit:"each"},{name:"Vanilla Extract",quantity:"1",unit:"tsp"},{name:"Coconut Milk",quantity:"250",unit:"ml"},{name:"Honey",quantity:"2",unit:"tsp"}],instructions:["Peel the banana and cut it into slices","Place the oats, banana slices, coconut milk, vanilla extract, and honey in a blender","Blend until it reaches desired consistency","Pour into a bowl","Top with your favorite toppings","Enjoy!"]}
 
   console.log(`Recipie "${recipie}" generated, parsing`);
@@ -33,6 +36,7 @@ async function generateRecipie(recipie: string): Promise<Recipie | void> {
   try {
     // Validate the recipie
     console.log(`Validating new recipie for "${recipie}"`);
+    console.log("Recipie Ingredients", newRecipie.ingredients[0]);
     await recipieSchema.recipie.validate(newRecipie, { abortEarly: false, stripUnknown: true })
     .then(async (newRecipie) => {
       // Save the recipie
@@ -40,11 +44,11 @@ async function generateRecipie(recipie: string): Promise<Recipie | void> {
       console.log(`Recipie "${recipie}" saved to database`);
       
       // Return the recipie
-      const insertedItem = await recipiesCollection.findOne({ _id: new ObjectId(result.insertedId) });
+      const insertedItem = await recipiesCollection.findOne<Recipie>({ _id: new ObjectId(result.insertedId) });
       return insertedItem as Recipie;
     });
   } catch(err: any) {
-    console.log(`Error validating new recipie for "${newRecipie}"`);
+    console.log(`Error validating new recipie for "${newRecipie}"`, err);
     throw new Error(err);
   }
 }
