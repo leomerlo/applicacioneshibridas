@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import apiService from '../services/api.service'
+import apiService from '../../services/api.service'
+import './Home.scss'
 
 const Home = () => {
 
@@ -10,7 +11,9 @@ const Home = () => {
   }, [])
 
   return (
-    <div>Home</div>
+    <>
+      <div>Home</div>
+    </>
   )
 }
 
