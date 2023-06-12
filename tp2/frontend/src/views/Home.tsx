@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import apiService from '../services/api.service'
 
 const Home = () => {

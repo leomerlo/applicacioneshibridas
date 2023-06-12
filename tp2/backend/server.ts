@@ -3,11 +3,10 @@ import accountRouter from './routes/account.routes.js';
 import profileRouter from './routes/profile.routes.js';
 import plansRouter from './routes/plans.routes.js';
 import recipiesRouter from './routes/recipies.routes.js';
-import dotenv from 'dotenv'
-
-dotenv.config()
+import cors from 'cors';
 
 const app = express()
+app.use(cors())
 
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', express.json())
