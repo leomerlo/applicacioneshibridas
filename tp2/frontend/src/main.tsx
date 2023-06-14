@@ -5,20 +5,34 @@ import App from './App.tsx'
 import HomePage from './views/Home.tsx';
 import LoginPage from './views/Login.tsx';
 import RegisterPage from './views/Register.tsx';
+import RecipiePage from './views/Recipie.tsx';
+import ProfilePage from './views/Profile.tsx';
+import ShoppingListPage from './views/ShoppingList.tsx';
 import RoutePrivate from './components/RoutePrivate.tsx';
-import MobileWrap from './components/MobileWrap.tsx';
 
 import './index.scss'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RoutePrivate><MobileWrap><App /></MobileWrap></RoutePrivate>,
+    element: <RoutePrivate><App /></RoutePrivate>,
     // errorElement: <Error404Page />,
     children: [
       {
         path: '',
         element: <HomePage />,
+      },
+      {
+        path: '/recipie/:recipie',
+        element: <RecipiePage />
+      },
+      {
+        path: '/profile',
+        element: <ProfilePage />
+      },
+      {
+        path: '/shoppingList',
+        element: <ShoppingListPage />
       },
     ]
   },
@@ -30,7 +44,6 @@ const router = createBrowserRouter([
     path: '/register',
     element: <RegisterPage />
   },
-  
 ])
 
 

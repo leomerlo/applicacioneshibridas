@@ -14,6 +14,7 @@ export default {
           pressed: '#220F80'
         },
         gray: {
+          10: '#FFFFFF',
           20: '#F5F5F5',
           30: '#EDEDED',
           40: '#E0E0E0',
@@ -24,16 +25,28 @@ export default {
           90: '#424242',
           100: '#212121',
         },
+        info: {
+          main: "#0080DD",
+          secondary: "#D9EFFF",
+        },
       },
       width: {
-        mobile: '393px',
+        avatar: '60px',
         authForm: '420px'
       },
       height: {
-        mobile: '852px',
+        avatar: '60px',
+        navbar: '84px',
+      },
+      padding: {
+        'navbar': '84px',
       },
       maxWidth: {
         authForm: '420px'
+      },
+      backgroundPosition: {
+        dividerLineSteps: 'left 9px top 8px',
+        dividerLineDays: 'left 22px top 8px'
       }
     },
   },

@@ -1,24 +1,15 @@
 import { Outlet } from 'react-router-dom'
-import { useNavigate } from 'react-router'
-import authService from './services/auth.service';
 import './App.scss'
+import NavBar from './components/NavBar';
 
 function App() {
-
-  const navigate = useNavigate()
-
-  const logout = () => {
-    authService.logout().then(() => {
-      localStorage.removeItem('token');
-
-      navigate('/login', {replace: true});
-    });
-  }
-
   return (
-    <>
-      <Outlet />
-    </>
+    <div className="flex min-h-screen">
+      <NavBar />
+      <div className="pt-navbar p-5 w-full">
+        <Outlet />
+      </div>
+    </div>
   )
 }
 

@@ -1,33 +1,43 @@
-import { useEffect } from 'react'
-import apiService from '../services/api.service'
-import Button from '../components/Button'
-import authService from '../services/auth.service'
-import { useNavigate } from 'react-router'
+import WelcomeCard, { WelcomeType } from "../components/WelcomeCard"
+import DaysCarousel from "../components/DaysCarousel/DaysCarousel"
+import FeaturedMealCard from "../components/FeaturedMealCard"
+import NextMeals from "../components/NextMeals/NextMeals"
+import EmptyPlanImage from "../assets/girlBowl.png";
+import Button from "../components/Button";
 
 const Home = () => {
 
-  const navigation = useNavigate();
+  const hasPlan = true;
 
-  useEffect(() => {
-    apiService.call({ uri: 'profile', method: 'GET' }).then((data) => {
-      console.log(data.data);
-    });
-  }, [])
-
-  const logout = () => {
-    authService.logout().then(() => {
-      localStorage.removeItem('token');
-      navigation('/login', { replace: true });
-    }).catch((err) => {
-      throw new Error(err);
-    });
+  const newPlan = () => {
   }
 
   return (
-    <>
-      <div>Home</div>
-      <Button onClick={logout}>Logout</Button>
-    </>
+    <div className="container mx-auto flex flex-col h-full justify-center">
+      { hasPlan ? <div>
+        <WelcomeCard mode={WelcomeType.h} />
+        <DaysCarousel />
+        <FeaturedMealCard />
+        <NextMeals />
+      </div>
+      :
+      <div className="w-fit mx-auto flex flex-col h-full">
+        <WelcomeCard mode={WelcomeType.v} />
+        <div className="mx-auto w-fit mt-8">
+          <img src={EmptyPlanImage} className="mx-2" />
+        </div>
+        <div className="text-center mt-8">
+          <h1 className="text-3xl text-gray-90">¡Ups! Parece que aquí no hay nada por el momento.</h1>
+          <p className="text-gray-80 mt-8">Generá tu plan y descubrí una experiencia gastronómica única.</p>
+        </div>
+        <div className="mt-8 mb-8 flex grow items-end">
+          <div className="w-full">
+            <Button full onClick={newPlan}>Crear plan</Button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
   )
 }
 
