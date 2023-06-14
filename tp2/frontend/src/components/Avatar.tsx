@@ -1,13 +1,15 @@
 import { Identicon } from '@nichoth/identicon';
+import { useProfile } from "../contexts/ProfileContext";
 
 export type Props = {
   size?: number;
 }
 
 const Avatar = (props: Props) => {
+  const profile = useProfile();
 
   // create a base64 encoded PNG
-  const hash = '6484b884a81f0c4c3def6f0a';
+  const hash = profile._id || '000000000000000';
   const options = {
     foreground: [255, 255, 255, 255],
     background: [94, 71, 210, 255],

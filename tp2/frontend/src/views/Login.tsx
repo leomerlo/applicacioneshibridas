@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import authService from '../services/auth.service'
 import { useNavigate } from 'react-router'
-import Button from '../components/Button'
+import Button, { ButtonType } from '../components/Button'
 import Input from '../components/Input'
 import Logo from '../assets/logoAlt.svg'
 import LoginImage from '../assets/loginImage.png'
@@ -13,14 +13,18 @@ const Login = () => {
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const login = () => {
     authService.login({ userName, password }).then((data) => {
-      const response = data.data.token
-
-      localStorage.setItem('token', response.token);
-
-      navigate('/', {replace: true}) 
+      setError("");
+      if(data.status === 200) {
+        const response = data.data.token
+        localStorage.setItem('token', response.token);
+        navigate('/', {replace: true}) 
+      } else {
+        setError("Usuario o contraseña incorrectos");
+      }
     })
   }
 
@@ -37,19 +41,21 @@ const Login = () => {
       <div className="h-screen flex">
         <div className="basis-1/2 flex justify-center items-center">
           <div className="block h-fit max-w-authForm">
-            <div className="text-center">
-              <h1 className="text-4xl text-gray-80">Bienvenid@ a Food Genie!</h1>
-              <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
-            </div>
-            <div className="mt-8">
-              <Input name="userName" label="Usuario" value={userName} onInput={userNameHandler} placeholder="Escribi tu usuario" />
-            </div>
-            <div className="mt-8">
-              <Input name="password" label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
-            </div>
-            <div className="mt-8">
-              <Button full onClick={login}>Login</Button>
-            </div>
+            <form onSubmit={(e) => { e.preventDefault(); login(); }}>
+              <div className="text-center">
+                <h1 className="text-4xl text-gray-80">Bienvenid@ a Food Genie!</h1>
+                <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
+              </div>
+              <div className="mt-8">
+                <Input name="userName" label="Usuario" value={userName} onInput={userNameHandler} placeholder="Escribi tu usuario" />
+              </div>
+              <div className="mt-8">
+                <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
+              </div>
+              <div className="mt-8">
+                <Button type={ButtonType.submit} full>Login</Button>
+              </div>
+            </form>
             <div className="mt-8 text-center">
               <span className="text-gray-60">¿No tienes una cuenta? <Link to={'/register'} className="text-primary-main">Regístrate!</Link></span>
             </div>
