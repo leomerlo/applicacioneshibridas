@@ -10,7 +10,8 @@ export enum IconSizes {
 
 export type Props = {
   type: MealTypes,
-  size: IconSizes
+  size: IconSizes,
+  background?: boolean
 }
 
 const MealIcon = (props: Props) => {
@@ -42,7 +43,7 @@ const MealIcon = (props: Props) => {
   }
 
   return (
-    <span className={`${getSize(props.size)} rounded-full bg-primary-main text-white flex justify-center items-center w-fit`}>
+    <span className={`${getSize(props.size)} rounded-full ${props.background ? "bg-primary-main" : ""} text-white flex justify-center items-center w-fit`}>
       <FontAwesomeIcon icon={getIcon(props.type)} />
     </span>
   )

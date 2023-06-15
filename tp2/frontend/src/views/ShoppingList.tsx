@@ -1,8 +1,11 @@
 import GoBack from "../components/GoBack"
-import shoppingListImage from "../assets/cookChef.png"
+import shoppingListImage from "../assets/shopping.png"
 import IngredientItem from "../components/IngredientItem"
+import { usePlan } from "../contexts/PlanContext"
 
 const ShoppingListPage = () => {
+  const { shoppingList } = usePlan();
+
   return (
     <div className="container mx-auto">
       <div className="flex justify-between">
@@ -13,7 +16,11 @@ const ShoppingListPage = () => {
       </div>
       <h1 className="text-4xl mt-6">Lista de compras</h1>
       <ul className="mt-4">
-        <li><IngredientItem ingredient="Dulce de leche - 100gr"></IngredientItem></li>
+        { Object.keys(shoppingList).every((key) => {
+          <li key={key}>
+            <IngredientItem ingredient={shoppingList[key]} />
+          </li>
+        })}
       </ul>
     </div>
   )

@@ -38,8 +38,8 @@ const Login = () => {
 
   return (
     <>
-      <div className="h-screen flex">
-        <div className="basis-1/2 flex justify-center items-center">
+      <div className="h-screen flex flex-col lg:flex-row">
+        <div className="basis-1/2 flex justify-center items-center py-16 px-6">
           <div className="block h-fit max-w-authForm">
             <form onSubmit={(e) => { e.preventDefault(); login(); }}>
               <div className="text-center">
@@ -63,9 +63,9 @@ const Login = () => {
         </div>
         <div
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-28 bg-[image:var(--image-url)]"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)]"
         >
-          <div className="h-fit text-center">
+          <div className="w-fit h-fit text-center">
             <img src={Logo} alt="Food Genie" className="mx-auto" />
             <img src={LoginImage} aria-hidden="true" className="mt-20 mx-auto" />
             <div>

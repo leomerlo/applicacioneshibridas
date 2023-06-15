@@ -11,6 +11,8 @@ import ShoppingListPage from './views/ShoppingList.tsx';
 import RoutePrivate from './components/RoutePrivate.tsx';
 
 import './index.scss'
+import { RecipieProvider } from './contexts/RecipiesContext.tsx';
+import { PlanProvider } from './contexts/PlanContext.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,8 +25,8 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: '/recipie/:recipie',
-        element: <RecipiePage />
+        path: '/recipie/:name',
+        element: <RecipieProvider><RecipiePage /></RecipieProvider>
       },
       {
         path: '/profile',
@@ -32,7 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/shoppingList',
-        element: <ShoppingListPage />
+        element: <PlanProvider><ShoppingListPage /></PlanProvider>
       },
     ]
   },
@@ -48,7 +50,5 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 )

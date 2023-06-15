@@ -32,7 +32,7 @@ const NextMealItem = (props: Props) => {
         </div>
         <div className="grow border rounded-lg border-gray-30">
           <div className="flex items-center gap-4 p-4">
-            <MealIcon size={IconSizes.small} type={props.meal.type} />
+            <MealIcon background size={IconSizes.small} type={props.meal.type} />
             <div className="flex flex-col">
               <span className="text-gray-80 font-semibold">{props.meal.name}</span>
               <span className="text-sm text-gray-60">{props.meal.type}</span>

@@ -13,11 +13,10 @@ const Home = () => {
   }
 
   return (
-    <div className="container mx-auto flex flex-col h-full justify-center">
+    <div className="container mx-auto flex flex-col h-full justify-start">
       { hasPlan ? <div>
         <WelcomeCard mode={WelcomeType.h} />
         <PlanProvider>
-          <DaysCarousel />
           <FeaturedMealCard />
           <NextMeals />
         </PlanProvider>

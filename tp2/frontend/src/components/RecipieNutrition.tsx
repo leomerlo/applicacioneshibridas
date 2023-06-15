@@ -1,12 +1,17 @@
+import { useRecipie } from "../contexts/RecipiesContext";
+
 const RecipieNutrition = () => {
+  const { recipie } = useRecipie();
+
+  const keys = Object.keys(recipie.nutrition);
+
   return (
     <ul className="text-sm mt-4">
-      <li className="p-4">
-        <span>Calorias: 50</span>
-      </li>
-      <li className="p-4">
-        <span>Grasas: 150</span>
-      </li>
+      { keys.map((key) => {          
+        return <li className="p-4" key={key}>
+          <span className="capitalize">{key}: {recipie.nutrition[key]}</span>
+        </li>
+      })}
     </ul>
   )
 }

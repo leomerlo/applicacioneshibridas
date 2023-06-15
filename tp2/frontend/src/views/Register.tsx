@@ -14,14 +14,20 @@ const Register = () => {
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const register = () => {
-    accountService.register({ userName, password }).then(() => {
-      authService.login({ userName, password }).then((data) => {
-        const response = data.data.token
-        localStorage.setItem('token', response.token);
-        navigate('/', {replace: true})
-      });
+    accountService.register({ userName, password }).then((resp) => {
+      setError("");
+      if(resp.status === 200) {
+        authService.login({ userName, password }).then((resp) => {
+          const response = resp.data.token
+          localStorage.setItem('token', response.token);
+          navigate('/', {replace: true})
+        });
+      } else {
+        setError(resp.data.error.message || "Error al registrarse");
+      }
     }).catch((error) => {
       throw new Error(error);
     });
@@ -37,8 +43,8 @@ const Register = () => {
 
   return (
     <>
-      <div className="h-screen flex">
-        <div className="basis-1/2 flex justify-center items-center">
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        <div className="basis-1/2 flex justify-center items-center py-16 px-6">
           <div className="block h-fit max-w-authForm">
             <div className="text-center">
               <h1 className="text-4xl text-gray-80">Bienvenid@ a Food Genie!</h1>
@@ -48,7 +54,7 @@ const Register = () => {
               <Input name="userName" label="Usuario" value={userName} onInput={userNameHandler} placeholder="Escribi tu usuario" />
             </div>
             <div className="mt-8">
-              <Input name="password" label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
+              <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
             </div>
             <div className="mt-8">
               <Button full onClick={register}>Register</Button>
@@ -60,7 +66,7 @@ const Register = () => {
         </div>
         <div
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-28 bg-[image:var(--image-url)]"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)]"
         >
           <div className="h-fit text-center">
             <img src={Logo} alt="Food Genie" className="mx-auto" />
