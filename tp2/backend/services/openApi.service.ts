@@ -14,7 +14,7 @@ const max_tokens = 2064;
 
 async function promptHelper(prompt: string): Promise<string | undefined> {
   try {
-    console.log('Reaching out to openai API with the prompt: ' + prompt);
+    // console.log('Reaching out to openai API with the prompt: ' + prompt);
     const completion = await openai.createCompletion({
       model,
       max_tokens,
@@ -24,7 +24,7 @@ async function promptHelper(prompt: string): Promise<string | undefined> {
     result = result?.replace("Answer:", "");
     result = result?.replace("answer:", "");
     result = result?.replace("JSON Response:", "");
-    console.log("openAi Response: ", result);
+    // console.log("openAi Response: ", result);
     return result;
   } catch (error: any) {
     if (error.response) {

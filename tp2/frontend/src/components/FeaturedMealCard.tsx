@@ -18,7 +18,7 @@ const FeaturedMealCard = () => {
   useEffect(() => {
     if (todayString !== '') {
       setFeaturedMeal({
-        name: plan.meals[todayString][nextMeal].name,
+        name: plan.meals[todayString][nextMeal],
         meal: nextMealType
       })
     }

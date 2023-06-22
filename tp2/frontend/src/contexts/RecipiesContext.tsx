@@ -65,7 +65,8 @@ function RecipieProvider({children}: PropsWithChildren){
       if(res.status === 200) {
         setRecipie(res.data)
       } else {
-        throw new Error(res.data.error.message);
+        console.log(res);
+        throw new Error(res);
       }
     });
   }, []);

@@ -39,7 +39,7 @@ const NextMeals = () => {
           nextMeals.push({
             day: internalTodayString?.substring(0, 3),
             date: (today.getDate() + date).toString(),
-            name: plan.meals[internalTodayString][internalNextMeal].name,
+            name: plan.meals[internalTodayString][internalNextMeal],
             meal: MealTypes[internalNextMeal],
           });
         } else {

@@ -1,10 +1,20 @@
 import GoBack from "../components/GoBack"
 import shoppingListImage from "../assets/shopping.png"
 import IngredientItem from "../components/IngredientItem"
-import { usePlan } from "../contexts/PlanContext"
+import { useEffect, useState } from "react"
+import planService from "../services/plan.service"
+import { ShoppingListIngredient } from "../contexts/PlanContext"
 
 const ShoppingListPage = () => {
-  const { shoppingList } = usePlan();
+  const [shoppingList, setShoppingList] = useState([]);
+
+  useEffect(() => {
+    planService.getShoppingList()
+    .then((res) => {
+      const sorted = res.data.sort((a: ShoppingListIngredient, b: ShoppingListIngredient) => a.name.localeCompare(b.name));
+      setShoppingList(sorted)
+    });
+  }, []);
 
   return (
     <div className="container mx-auto">
@@ -16,11 +26,11 @@ const ShoppingListPage = () => {
       </div>
       <h1 className="text-4xl mt-6">Lista de compras</h1>
       <ul className="mt-4">
-        { Object.keys(shoppingList).every((key) => {
+        { Array.from(Object.keys(shoppingList)).map((key) => (
           <li key={key}>
             <IngredientItem ingredient={shoppingList[key]} />
           </li>
-        })}
+        ))}
       </ul>
     </div>
   )

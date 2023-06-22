@@ -33,33 +33,42 @@ async function getList(req: Request, res: Response) {
   const ingredients: Ingredients[] = [];
 
   try {
-    const plan: Plan = await planService.getPlan(profileId);
+    const list = await planService.getList(profileId);
 
-    const promises = Object.keys(plan.meals).map((dayKey: string) => {
-      const day = plan.meals[dayKey as keyof typeof plan.meals];
-      const mealPromises = Object.keys(day).map((mealKey: string) => {
-        // @ts-ignore-next-line
-        const meal = day[mealKey];
-        return recipiesService.getRecipie(meal.name)
-          .then((recipie) => {
-            console.log('Adding ingredients for ' + recipie.name);
-            recipie.ingredients.forEach((ingredient) => {
-              ingredients.push(ingredient);
+    if(list) {
+      console.log('List already exists');
+      return res.status(200).json(list);
+    } else {
+      console.log('List does not exits, generating...');
+      
+      const plan: Plan = await planService.getPlan(profileId);
+
+      const promises = Object.keys(plan.meals).map((dayKey: string) => {
+        const day = plan.meals[dayKey as keyof typeof plan.meals];
+        const mealPromises = Object.keys(day).map((mealKey: string) => {
+          // @ts-ignore-next-line
+          const meal = day[mealKey];
+          return recipiesService.getRecipie(meal, profileId)
+            .then((recipie) => {
+              console.log('Adding ingredients for ' + recipie.name);
+              recipie.ingredients.forEach((ingredient) => {
+                ingredients.push(ingredient);
+              });
             });
-          });
+        });
+        return Promise.all(mealPromises);
       });
-      return Promise.all(mealPromises);
-    });
 
-    await Promise.all(promises);
+      await Promise.all(promises);
 
-    await planService.generateShoppingList(profileId, ingredients);
+      await planService.generateShoppingList(profileId, ingredients);
 
-    await planService.getPlan(profileId).then((plan) => {
-      res.status(201).json(plan.shoppingList);
-    });
+      await planService.getPlan(profileId).then((plan) => {
+        res.status(201).json(plan.shoppingList);
+      });
+    }
   } catch (err: any) {
-    res.status(400).json({ error: { message: err.message } });
+    res.status(400).json({ err, message: err.message });
   }
 }
 

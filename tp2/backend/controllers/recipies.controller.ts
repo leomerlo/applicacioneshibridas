@@ -7,7 +7,7 @@ async function getRecipie(req: Request, res: Response) {
 
   recipiesService.getRecipie(recipie, profileId)
   .then((recipie) => {
-    res.status(201).json(recipie)
+    res.status(200).json(recipie)
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })

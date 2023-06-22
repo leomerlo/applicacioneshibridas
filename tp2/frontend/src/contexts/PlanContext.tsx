@@ -8,12 +8,10 @@ export type Meals = {
   dinner: string;
 }
 
-export interface ShoppingList {
-  [key: string]: {
-    name: string,
-    quantity: number,
-    unit: string
-  }
+export interface ShoppingListIngredient {
+  name: string,
+  quantity: number,
+  unit: string
 }
 
 export interface Plan {
@@ -28,7 +26,7 @@ export interface Plan {
     sunday: Meals,
   },
   profileId?: string,
-  shoppingList?: ShoppingList
+  shoppingList?: ShoppingListIngredient[]
 }
 
 const emptyPlan: {
@@ -37,7 +35,7 @@ const emptyPlan: {
   nextMeal: string,
   todayString: string,
   nextMealType: MealTypes,
-  shoppingList: ShoppingList
+  shoppingList?: ShoppingListIngredient[]
 } = {
   plan: {
     meals: {
@@ -82,7 +80,6 @@ const emptyPlan: {
   nextMeal: '',
   todayString: '',
   nextMealType: MealTypes.breakfast,
-  shoppingList: {}
 }
 
 const PlanContext = createContext(emptyPlan)
@@ -97,7 +94,6 @@ function PlanProvider({children}: PropsWithChildren){
   const [todayString, setTodayString] = useState<string>('');
   const [nextMeal, setNextMeal] = useState<string>(emptyPlan.nextMeal);
   const [nextMealType, setNextMealType] = useState<MealTypes>(emptyPlan.nextMealType);
-  const [shoppingList, setShoppingList] = useState<ShoppingList>(emptyPlan.shoppingList);
 
   useEffect(() => {
     setToday(new Date());
@@ -107,10 +103,10 @@ function PlanProvider({children}: PropsWithChildren){
       setPlan(plan.data)
     })
 
-    planService.getShoppingList()
-    .then((res) => {
-      setShoppingList(res.data)
-    });
+    // planService.getShoppingList()
+    // .then((res) => {
+    //   setShoppingList(res.data)
+    // });
   }, []);
 
   useEffect(() => {
@@ -149,7 +145,7 @@ function PlanProvider({children}: PropsWithChildren){
   }, [nextMeal])
   
   return (
-    <PlanContext.Provider value={{ plan, today, nextMeal, todayString, nextMealType, shoppingList}}>
+    <PlanContext.Provider value={{ plan, today, nextMeal, todayString, nextMealType }}>
       {children}
     </PlanContext.Provider>
   )

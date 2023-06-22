@@ -37,29 +37,32 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
 }
 
 async function getPlan(profileId: string): Promise<Plan> {
-  console.log(profileId);
   const plan = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) }, { projection: { _id: 0, profileId: 0 } });
   return plan as Plan;
 }
 
+async function getList(profileId: string): Promise<Ingredients[]> {
+  const list = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) }, { projection: { _id: 0, profileId: 0, meals: 0 } });
+  return list?.shoppingList as Ingredients[];
+}
+
 async function generateShoppingList(profileId: string, ingredients: Ingredients[]): Promise<void> {
-  const unifiedList: {
-    [key: string]: {
-      quantity: number,
-      unit: string
-    }
-  } = {};
+  const unifiedList: Ingredients[] = [];
 
   ingredients.forEach((ingredient) => {
-    if (unifiedList.hasOwnProperty(ingredient.name)) {
+    let found = unifiedList.find((item) => {
+      return item.name === ingredient.name;
+    });
+    if (found) {
       // @ts-ignore-next-line
-      unifiedList[ingredient.name].quantity += ingredient.quantity;
+      found += ingredient.quantity;
     } else {
       // @ts-ignore-next-line
-      unifiedList[ingredient.name] = {
+      unifiedList.push({
+        name: ingredient.name,
         quantity: ingredient.quantity,
         unit: ingredient.unit
-      };
+      });
     }
   });
 
@@ -69,5 +72,6 @@ async function generateShoppingList(profileId: string, ingredients: Ingredients[
 export {
   generatePlan,
   getPlan,
+  getList,
   generateShoppingList
 }
