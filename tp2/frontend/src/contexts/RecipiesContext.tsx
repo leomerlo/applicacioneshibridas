@@ -42,7 +42,8 @@ const RecipieContext = createContext({
   userSteps: [],
   setSteps: (steps: number[]) => {},
   userIngredients: [],
-  setIngredients: (ingredients: Ingredients[]) => {}
+  setIngredients: (ingredients: Ingredients[]) => {},
+  recipieError: [],
 })
 
 function useRecipie(){
@@ -51,22 +52,22 @@ function useRecipie(){
 
 function RecipieProvider({children}: PropsWithChildren){
   const { name } = useParams();
+  const [recipieError, setRecipieError] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recipie, setRecipie] = useState<Recipie>(emptyRecipie);
   const [userSteps, setUserSteps] = useState<number[]>([])
   const [userIngredients, setUserIngredients] = useState<Ingredients[]>([])
 
   useEffect(() => {
-    console.log('set loading to true');
     setLoading(true);
+    console.log('fetch recipie');
     recipiesService.getRecipie(name as string).then((res) => {
       console.log('set loading to false');
       setLoading(false);
       if(res.status === 200) {
         setRecipie(res.data)
       } else {
-        console.log(res);
-        throw new Error(res);
+        setRecipieError(res.data.error.message);
       }
     });
   }, []);
@@ -80,7 +81,7 @@ function RecipieProvider({children}: PropsWithChildren){
   }
   
   return (
-    <RecipieContext.Provider value={{ recipie, loading, userSteps, userIngredients, setSteps, setIngredients }}>
+    <RecipieContext.Provider value={{ recipie, loading, userSteps, userIngredients, setSteps, setIngredients, recipieError }}>
       {children}
     </RecipieContext.Provider>
   )

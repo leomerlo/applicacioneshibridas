@@ -65,18 +65,20 @@ async function generatePlan(restrictions: string, preferences: string): Promise<
 
 async function generateRecipie(recipie: string, diners: number): Promise<string | undefined> {
   const prompt = `
-  Generate a list of ingredients for ${diners} diners using only metric units, instructions in up to 10 steps and nutritional value on the following meal or meals per diner: "${recipie}".
-
-  Using only metric (gr, mg, kg) system units is extremely important.
-  
+  Generate a list of ingredients, steps and nutritional values for ${recipie}.
+  Follow these rules when generating it:
+  - Ingredients should only use the singular and never plural.
+  - Ingredients ammounts should only be expressed in gr and ml. Never use cups, spoons or any other unit.
+  - Whole ingredients should only be expressed as units. Never use cloves, pieces or any other unit.
+  - Ingredients, and nutritional values should be set for ${diners} diners.
+  - Steps should be expressed in up to 10 easy to follow steps.
   Format the entire response as a single JSON string without line breaks or words that are not part of the JSON string. Do not add Answer or any other prefix to the answer, just the JSON string.
-  
   Use this as an example for the format but not the recipie, ingredients or instructions:
   {
     "name": "Oatmeal",
     "ingredients": [
       {
-        "name": "Oats",
+        "name": "Oat",
         "quantity": "100",
         "unit": "gr"
       },

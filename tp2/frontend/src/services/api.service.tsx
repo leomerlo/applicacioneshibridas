@@ -14,6 +14,8 @@ export async function call({ uri, method = 'GET', body = undefined }: { uri: str
       status: res.status,
       data
     };
+  }).catch(err => {
+    throw new Error(err);
   });
 }
 

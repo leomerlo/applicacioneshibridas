@@ -18,7 +18,7 @@ import recipiesService from "../services/recipies.service"
 const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
   const { name } = useParams();
-  const { recipie, loading } = useRecipie();
+  const { recipie, loading, recipieError } = useRecipie();
   const profile = useProfile();
   const [image, setImage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
@@ -33,7 +33,6 @@ const Recipie = () => {
   }, [name]);
 
   useEffect(() => {
-    console.log('loading change');
     setIsLoading(!isLoading);
   }, [loading]);
 
@@ -76,24 +75,41 @@ const Recipie = () => {
             </div>
           </>
           :
-            <>
-              <div className="flex justify-between">
-                <GoBack />
-                <div>
-                  <button className="flex items-center justify-between" onClick={likeButtonHandler}>
-                    <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} className="text-xl" />
-                    <span className="text-gray-90 ms-2">{recipie.likes?.length || 0}</span>
-                  </button>
-                </div>
+          <>
+            <div className="flex justify-between">
+              <GoBack />
+              <div>
+                <button className="flex items-center justify-between" onClick={likeButtonHandler}>
+                  <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} className="text-xl" />
+                  <span className="text-gray-90 ms-2">{recipie.likes?.length || 0}</span>
+                </button>
               </div>
-              <div className="mt-6">
-                <div className="text-4xl mx-auto w-fit">
-                  <img src={image} aria-hidden />
+            </div>
+            {
+              recipieError && recipieError.length > 0 
+              ?
+              <>
+                <div className="mt-6">
+                  <div className="text-4xl mx-auto w-fit">
+                    <img src={image} aria-hidden />
+                  </div>
+                  <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">Hubo un error en tu receta.</h1>
+                  <p className="text-xl text-gray-60 text-center mt-2">Por favor, intentalo nuevamente.</p>
+                  <button className="block mx-auto w-fit mt-4" onClick={() => { location.reload() }}>Recargar</button>
                 </div>
-                <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">{recipie.name}</h1>
-              </div>
-              <RecipieTabs />
-            </>
+              </>
+              :
+              <>
+                <div className="mt-6">
+                  <div className="text-4xl mx-auto w-fit">
+                    <img src={image} aria-hidden />
+                  </div>
+                  <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">{recipie.name}</h1>
+                </div>
+                <RecipieTabs />
+              </>
+            }
+          </>
         }
       </div>
     </div>

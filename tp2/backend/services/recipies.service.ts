@@ -8,22 +8,14 @@ const client = new MongoClient("mongodb://127.0.0.1:27017")
 const db = client.db("foodGenie")
 const recipiesCollection = db.collection('recipies')
 
-async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie> {
+async function getRecipie(recipie: string): Promise<Recipie | void> {
   await client.connect()
-
-  const recipieExist = await recipiesCollection.findOne({ name: recipie.toLowerCase() }) as Recipie;
-
-  if (recipieExist) {
-    console.log(`Recipie "${recipie}" found in database`)
-    return recipieExist;
-  }
-
-  console.log(`Recipie "${recipie}" not found in database, generating...`);
-  const newRecipie = await generateRecipie(recipie, profileId);
-  return newRecipie as Recipie;
+  return await recipiesCollection.findOne<Recipie>({ name: recipie.toLowerCase() }) as Recipie;
 }
 
-async function generateRecipie(recipie: string, profileId: ObjectId): Promise<Recipie | void> {
+async function generateRecipie(recipie: string, profileId: ObjectId): Promise<ObjectId | void> {
+  await client.connect()
+    
   // Generate the recipie
   const profile = await profileService.getProfile(profileId);
   const diners = profile?.diners || 1;
@@ -33,24 +25,15 @@ async function generateRecipie(recipie: string, profileId: ObjectId): Promise<Re
   console.log(`Recipie "${recipie}" generated, parsing`);
   const newRecipie = JSON.parse(rawOutput as string);
 
-  try {
-    // Validate the recipie
-    console.log(`Validating new recipie for "${recipie}"`);
-    console.log("Recipie Ingredients", newRecipie.ingredients[0]);
-    await recipieSchema.recipie.validate(newRecipie, { abortEarly: false, stripUnknown: true })
-    .then(async (newRecipie) => {
-      // Save the recipie
-      const result = await recipiesCollection.insertOne(newRecipie);
-      console.log(`Recipie "${recipie}" saved to database`);
-      
-      // Return the recipie
-      const insertedItem = await recipiesCollection.findOne<Recipie>({ _id: new ObjectId(result.insertedId) });
-      return insertedItem as Recipie;
-    });
-  } catch(err: any) {
-    console.log(`Error validating new recipie for "${newRecipie}"`, err);
-    throw new Error(err);
-  }
+  // Validate the recipie
+  console.log(`Validating new recipie for "${recipie}"`);
+  console.log("Recipie Ingredients", newRecipie.ingredients[0]);
+  await recipieSchema.recipie.validate(newRecipie, { abortEarly: false, stripUnknown: true })
+  .then(async (newRecipie) => {
+    // Save the recipie
+    const result = await recipiesCollection.insertOne(newRecipie);
+    return result;
+  });
 }
 
 async function likeRecipie(recipieId: string, profileId: string): Promise<void> {
@@ -95,5 +78,6 @@ async function unlikeRecipie(recipieId: string, profileId: string): Promise<void
 export {
   getRecipie,
   likeRecipie,
-  unlikeRecipie
+  unlikeRecipie,
+  generateRecipie
 }
