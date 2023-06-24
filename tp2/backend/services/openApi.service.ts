@@ -9,23 +9,20 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-const model = "text-davinci-003";
-const max_tokens = 2064;
+const model = "gpt-3.5-turbo-16k";
+const temperature = 0;
 
-async function promptHelper(prompt: string): Promise<string | undefined> {
+async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
   try {
     // console.log('Reaching out to openai API with the prompt: ' + prompt);
-    const completion = await openai.createCompletion({
+    const completion = await openai.createChatCompletion({
       model,
-      max_tokens,
-      prompt,
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
+      temperature
     });
-    let result = completion.data.choices[0].text;
-    result = result?.replace("Answer:", "");
-    result = result?.replace("answer:", "");
-    result = result?.replace("JSON Response:", "");
-    // console.log("openAi Response: ", result);
-    return result;
+    let result = completion.data.choices[0].message?.content;
+    console.log("openAi usage: ", completion.data.usage);
+    return result as string;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -33,83 +30,61 @@ async function promptHelper(prompt: string): Promise<string | undefined> {
     } else {
       console.log(error.message);
     }
-    throw new Error("Error en ChatGPT API");
+    throw new Error(error);
   }
 }
 
-async function generatePlan(restrictions: string, preferences: string): Promise<string | undefined> {
-  const prompt = `
-  Create a meal plan for a week using the following restrictions: '${restrictions}' and preferences: '${preferences}'.
-  Place special importance in restrictions as they are more important than preferences.
-  Provide breakfast, lunch and dinner for each day of the week including nutricional values as specified in the example.
-  
-  Format the entire response as a single JSON string without line breaks or words that are not part of the response.
-  
-  Use this as an example for the format but not the meals or nutrition values:
+async function generatePlan(restrictions: string, preferences: string): Promise<string> {
+  const systemPrompt = `
+  Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
+  Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
+  Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
+  El plan de comida debe incluir desayuno, almuerzo y cena para cada dia de la semana como se especifica en el ejemplo.
+  Los nombres de los dias, breakfast, lunch y dinner deben estar en inglés, mientras que los nombres de las comidas, recetas e instrucciones deben estar en español.
+
+  Segui las siguientes reglas al crear la receta:
+  - Los ingredientes deben estar expresados en singular y nunca en plural.
+  - Las cantidades de los ingredientes deben estar siempre expresadas en gr y ml. Nunca en tazas, cucharadas o cualquier otra unidad que no sea metrica.
+  - Los ingredientes enteros deben estar expresados en unidades. Nunca en dientes, piezas o cualquier otra unidad.
+  - Los ingredientes y valores nutricionales deben estar expresados para 1 comensales.
+  - Los pasos deben estar expresados en hasta 10 pasos fáciles de seguir.
+  - Los valores nutritivos deben estar expresados junto con su unidad de medida.
+  - Las cantidades deben ser representadas en numeros enteros, nunca uses fracciones o decimales.
+
+  Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
+
+  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
   {
     "monday": {
       "breakfast": {
-        "name": "Oats and chia bowl",
-      },
-      "lunch": {
-        "name": "Spinach and Avocado Salad",
+        name: yup.string().required(),
+        ingredients: yup.array().of(yup.object({
+          name: yup.string().lowercase().required(),
+          quantity: yup.mixed().required(),
+          unit: yup.string()
+        })).required(),
+        instructions: yup.array().of(yup.string().required()).required(),
+        nutrition: yup.object({
+          calorias: yup.number(),
+          carbohidratos: yup.number(),
+          grasas: yup.number(),
+          proteinas: yup.number()
+        }).required()
       }
-      "dinner": {
-        "name": "Tofu and veggies stir fry",
-      }
-    },
-  }
-  `
-  return await promptHelper(prompt);
-}
-
-async function generateRecipie(recipie: string, diners: number): Promise<string | undefined> {
-  const prompt = `
-  Generate a list of ingredients, steps and nutritional values for ${recipie}.
-  Follow these rules when generating it:
-  - Ingredients should only use the singular and never plural.
-  - Ingredients ammounts should only be expressed in gr and ml. Never use cups, spoons or any other unit.
-  - Whole ingredients should only be expressed as units. Never use cloves, pieces or any other unit.
-  - Ingredients, and nutritional values should be set for ${diners} diners.
-  - Steps should be expressed in up to 10 easy to follow steps.
-  Format the entire response as a single JSON string without line breaks or words that are not part of the JSON string. Do not add Answer or any other prefix to the answer, just the JSON string.
-  Use this as an example for the format but not the recipie, ingredients or instructions:
-  {
-    "name": "Oatmeal",
-    "ingredients": [
-      {
-        "name": "Oat",
-        "quantity": "100",
-        "unit": "gr"
-      },
-      {
-        "name": "Water",
-        "quantity": "150",
-        "unit": "ml"
-      },
-      {
-        "name": "Salt",
-        "quantity": "5",
-        "unit": "gr"
-      }
-    ],
-    "instructions": [
-      "Boil the water",
-      "Add the oats and salt",
-      "Cook for 5 minutes"
-    ],
-    "nutrition": {
-      "calories": 300,
-      "carbs": 20,
-      "fat": 10,
-      "protein": 10
     }
   }
   `
-  return await promptHelper(prompt);
+
+  const userPrompt = `
+    Quiero un plan de comidas que cumpla con las siguientes restricciones y preferencias:
+    Restricciones: ${restrictions}
+
+    Preferencias: ${preferences}
+  `;
+
+  return await promptHelper(systemPrompt, userPrompt);
 }
 
 export {
-  generatePlan,
-  generateRecipie
+  generatePlan
 }

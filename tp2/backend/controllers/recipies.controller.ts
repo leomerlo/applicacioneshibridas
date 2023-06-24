@@ -6,27 +6,9 @@ async function getRecipie(req: Request, res: Response) {
   const recipie = req.params.recipie;
   const profileId = req.body.profileId;
 
-  recipiesService.getRecipie(recipie)
+  recipiesService.getRecipie(recipie, profileId)
   .then(async (response) => {
-
-    if(response) {
-      console.log(`Recipie ${recipie} found in database`);
-      res.status(200).json(response);
-      return;
-    }
-
-    console.log(`Generating recipie ${recipie}`);
-    await recipiesService.generateRecipie(recipie, profileId).then((newId) => {
-      console.log(`Recipie ${recipie} saved`);
-      recipiesService.getRecipie(recipie).then((response) => {
-        console.log(`Recipie ${recipie} retrieved from database`);
-        res.status(200).json(response);
-      }).catch((err) => {
-        res.status(400).json({ error: { message: err.message } })
-      });
-    }).catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
-    });
+    res.status(200).json(response);
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })

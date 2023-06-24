@@ -5,15 +5,15 @@ const recipie = yup.object({
   ingredients: yup.array().of(yup.object({
     name: yup.string().lowercase().required(),
     quantity: yup.number().required(),
-    unit: yup.string()
+    unit: yup.string().oneOf(['gr', 'kg', 'ml', 'l', 'un'])
   })).required(),
   instructions: yup.array().of(yup.string().required()).required(),
   likes: yup.array().of(yup.string().required()),
   nutrition: yup.object({
-    calories: yup.number().required(),
-    carbs: yup.number().required(),
-    fat: yup.number().required(),
-    protein: yup.number().required()
+    calorias: yup.number().required(),
+    carbohidratos: yup.number().required(),
+    grasas: yup.number().required(),
+    proteinas: yup.number().required()
   }).required()
 });
 
