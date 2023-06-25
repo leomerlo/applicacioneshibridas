@@ -1,9 +1,10 @@
 import { ObjectId } from "mongodb";
+import { Recipie } from "./recipies";
 
 export type Meals = {
-  breakfast: string;
-  lunch: string;
-  dinner: string;
+  breakfast: Recipie;
+  lunch: Recipie;
+  dinner: Recipie;
 }
 
 export interface Plan {

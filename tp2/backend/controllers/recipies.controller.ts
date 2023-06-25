@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as recipiesService from '../services/recipies.service.js';
-import { Recipie } from '../types/recipies.js';
 
 async function getRecipie(req: Request, res: Response) {
   const recipie = req.params.recipie;
@@ -8,7 +7,11 @@ async function getRecipie(req: Request, res: Response) {
 
   recipiesService.getRecipie(recipie, profileId)
   .then(async (response) => {
-    res.status(200).json(response);
+    if(response) {
+      res.status(200).json(response);
+    } else {
+      res.status(400).json({ error: { message: 'No se encontró la receta' } })  
+    }
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })

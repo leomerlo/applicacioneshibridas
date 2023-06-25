@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as planService from '../services/plans.service.js';
-import * as recipiesService from '../services/recipies.service.js';
 import { Ingredients } from '../types/recipies.js';
 import { Plan } from '../types/plan.js';
 
@@ -43,23 +42,17 @@ async function getList(req: Request, res: Response) {
       
       const plan: Plan = await planService.getPlan(profileId);
 
-      const promises = Object.keys(plan.meals).map((dayKey: string) => {
-        const day = plan.meals[dayKey as keyof typeof plan.meals];
-        const mealPromises = Object.keys(day).map((mealKey: string) => {
-          // @ts-ignore-next-line
-          const meal = day[mealKey];
-          return recipiesService.getRecipie(meal, profileId)
-            .then((recipie) => {
-              console.log('Adding ingredients for ' + recipie.name);
-              recipie.ingredients.forEach((ingredient) => {
-                ingredients.push(ingredient);
-              });
-            });
-        });
-        return Promise.all(mealPromises);
-      });
+      if(!plan) {
+        return res.status(400).json({ message: 'El plan no existe aun para este perfil.' });
+      }
 
-      await Promise.all(promises);
+      Array.from(Object.keys(plan.meals)).forEach((day) => {
+        Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
+          plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
+            ingredients.push(ingredient);
+          });
+        });
+      });
 
       await planService.generateShoppingList(profileId, ingredients);
 

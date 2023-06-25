@@ -11,5 +11,5 @@ export type Recipie = {
   name: string;
   ingredients: Ingredients[];
   instructions: string[];
-  likes?: ObjectId[]
+  likes?: boolean
 }
