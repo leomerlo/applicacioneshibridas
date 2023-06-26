@@ -29,6 +29,11 @@ export default {
           main: "#0080DD",
           secondary: "#D9EFFF",
         },
+        mealIcons: {
+          breakfast: "#A82525",
+          lunch: "#F5AC0F",
+          dinner: "#0080DD",
+        }
       },
       width: {
         avatar: '60px',
@@ -36,10 +41,10 @@ export default {
       },
       height: {
         avatar: '60px',
-        navbar: '84px',
+        navbar: '98px',
       },
       padding: {
-        'navbar': '84px',
+        'navbar': '98px',
       },
       maxWidth: {
         authForm: '420px'

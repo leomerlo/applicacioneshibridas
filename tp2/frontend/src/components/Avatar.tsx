@@ -6,7 +6,7 @@ export type Props = {
 }
 
 const Avatar = (props: Props) => {
-  const profile = useProfile();
+  const { profile } = useProfile();
 
   // create a base64 encoded PNG
   const hash = profile._id || '000000000000000';

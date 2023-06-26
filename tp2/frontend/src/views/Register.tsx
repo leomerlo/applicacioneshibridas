@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import accountService from '../services/account.service'
 import authService from '../services/auth.service'
 import { useNavigate } from 'react-router'
@@ -7,11 +8,12 @@ import Input from '../components/Input'
 import Logo from '../assets/logoAlt.svg'
 import LoginImage from '../assets/loginImage.png'
 import backGradient from '../assets/backGradient.svg'
-import { Link } from 'react-router-dom'
+import { useNotifications } from '../contexts/NotificationsContext'
 
 const Register = () => {
 
   const navigate = useNavigate()
+  const { updateNotifications } = useNotifications();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,7 +21,8 @@ const Register = () => {
   const register = () => {
     accountService.register({ userName, password }).then((resp) => {
       setError("");
-      if(resp.status === 200) {
+      if(resp.status === 201) {
+        updateNotifications({ variant: 'success', message: 'Usuario creado con éxito' });
         authService.login({ userName, password }).then((resp) => {
           const response = resp.data.token
           localStorage.setItem('token', response.token);
@@ -51,13 +54,13 @@ const Register = () => {
               <p className="text-base text-gray-70 mt-3">Ingresa tus datos a continuación y comienza a explorar un mundo de deliciosas recetas personalizadas.</p>
             </div>
             <div className="mt-8">
-              <Input name="userName" label="Usuario" value={userName} onInput={userNameHandler} placeholder="Escribi tu usuario" />
+              <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
             </div>
             <div className="mt-8">
               <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
             </div>
             <div className="mt-8">
-              <Button full onClick={register}>Register</Button>
+              <Button full onClick={register}>Registrate</Button>
             </div>
             <div className="mt-8 text-center">
               <span className="text-gray-60">¿Ya tienes una cuenta? <Link to={'/login'} className="text-primary-main">Ingresá!</Link></span>
@@ -66,7 +69,7 @@ const Register = () => {
         </div>
         <div
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)]"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="h-fit text-center">
             <img src={Logo} alt="Food Genie" className="mx-auto" />

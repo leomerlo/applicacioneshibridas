@@ -19,6 +19,10 @@ async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie
     })
   });
 
+  if(!returnRecipie.name) {
+    throw new Error(`No se encontro la receta "${recipie}"`);
+  }
+
   return returnRecipie;
 }
 

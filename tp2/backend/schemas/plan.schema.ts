@@ -1,7 +1,6 @@
 import yup from 'yup'
 
 const meal = yup.object({
-  _id: yup.string().required(),
   name: yup.string().required(),
   ingredients: yup.array().of(yup.object({
     name: yup.string().lowercase().required(),

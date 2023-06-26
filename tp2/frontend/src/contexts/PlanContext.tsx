@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, PropsWithChildren, useContext, useCallback } from "react"
+import { createContext, useState, useEffect, PropsWithChildren, useContext } from "react"
 import planService from "../services/plan.service"
 import { MealTypes } from "../components/NextMeals/NextMealItem";
+import { useNotifications } from "./NotificationsContext";
 
 export type Meals = {
   breakfast: string;
@@ -30,52 +31,16 @@ export interface Plan {
 }
 
 const emptyPlan: {
-  plan: Plan 
+  plan: Plan | null,
+  updatePlan: () => void,
   today: Date,
   nextMeal: string,
   todayString: string,
   nextMealType: MealTypes,
-  shoppingList?: ShoppingListIngredient[]
+  shoppingList?: ShoppingListIngredient[],
 } = {
-  plan: {
-    meals: {
-      monday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      tuesday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      wednesday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      thursday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      friday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      saturday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-      sunday: {
-        breakfast: '',
-        lunch: '',
-        dinner: ''
-      },
-    }
-  },
+  plan: null,
+  updatePlan: () => {},
   today: new Date(),
   nextMeal: '',
   todayString: '',
@@ -89,24 +54,22 @@ function usePlan(){
 }
 
 function PlanProvider({children}: PropsWithChildren){
-  const [plan, setPlan] = useState<Plan>(emptyPlan.plan)
+  const [plan, setPlan] = useState<Plan | null>(emptyPlan.plan)
   const [today, setToday] = useState<Date>(emptyPlan.today);
   const [todayString, setTodayString] = useState<string>('');
   const [nextMeal, setNextMeal] = useState<string>(emptyPlan.nextMeal);
   const [nextMealType, setNextMealType] = useState<MealTypes>(emptyPlan.nextMealType);
+  const { updateNotifications } = useNotifications();
 
   useEffect(() => {
     setToday(new Date());
 
     planService.getPlan()
     .then((plan) => {
-      setPlan(plan.data)
+      if(plan.data) {
+        setPlan(plan.data)
+      }
     })
-
-    // planService.getShoppingList()
-    // .then((res) => {
-    //   setShoppingList(res.data)
-    // });
   }, []);
 
   useEffect(() => {
@@ -143,9 +106,16 @@ function PlanProvider({children}: PropsWithChildren){
       }
     })
   }, [nextMeal])
+
+  const updatePlan = async () => {
+    planService.getPlan().then((plan) => {
+      updateNotifications({ variant: 'success', message: 'Plan creado con éxito' });
+      setPlan({...plan.data});
+    })
+  };
   
   return (
-    <PlanContext.Provider value={{ plan, today, nextMeal, todayString, nextMealType }}>
+    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType }}>
       {children}
     </PlanContext.Provider>
   )

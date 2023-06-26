@@ -17,7 +17,6 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
   }
 
   const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '');
-  // const rawOutput = "{\"monday\":{\"breakfast\":\"Overnight Oats\",\"lunch\":\"Mixed Salad with Grilled Tofu Avocado and Quinoa\",\"dinner\":\"Rainbow Vegetable Stir-Fry with Tofu\"},\"tuesday\":{\"breakfast\":\"Smoothie Bowl\",\"lunch\":\"Chickpea Avocado Wraps\",\"dinner\":\"Baked Veggie Fritters with Coconut Amchoor Sauce\"},\"wednesday\":{\"breakfast\":\"Tofu Scramble\",\"lunch\":\"Spicy Roasted Veggie and Quinoa Bowls\",\"dinner\":\"Vegan Mac and Cheese\"},\"thursday\":{\"breakfast\":\"Creamy Coconut Oatmeal\",\"lunch\":\"Mixed Greens and Veggie Quinoa Bowls\",\"dinner\":\"Mexican Pizza with Tempeh\"},\"friday\":{\"breakfast\":\"Avocado Toast with Almond Butter\",\"lunch\":\"Japanese Sushi Bowl\",\"dinner\":\"Thai Coconut Soup with Tofu and Mushrooms\"},\"saturday\":{\"breakfast\":\"Carrot Cake Oatmeal\",\"lunch\":\"Tofu Kale Salad\",\"dinner\":\"Roasted Veggies and Beans\"},\"sunday\":{\"breakfast\":\"Chia Pudding\",\"lunch\":\"Veggie Burgers\",\"dinner\":\"Gnocchi with Vegan Cream Cheese Sauce\"}}";
 
   const meals = JSON.parse(rawOutput as string);
 

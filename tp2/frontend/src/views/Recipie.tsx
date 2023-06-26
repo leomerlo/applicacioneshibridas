@@ -9,11 +9,10 @@ import recipie_1 from '../assets/recipie_1.png'
 import recipie_2 from '../assets/recipie_2.png'
 import recipie_3 from '../assets/recipie_3.png'
 import recipie_4 from '../assets/recipie_4.png'
-import loadingImage from '../assets/girlPhone.png'
-import loadingGif from '../assets/loading.gif'
 import { useProfile } from "../contexts/ProfileContext"
 import { useRecipie } from "../contexts/RecipiesContext"
 import recipiesService from "../services/recipies.service"
+import Loading from "../components/Loading"
 
 const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
@@ -62,17 +61,7 @@ const Recipie = () => {
         {
           loading ?
           <>
-            <div className="flex justify-between">
-              <GoBack />
-            </div>
-            <div className="mt-6">
-              <div className="text-4xl mx-auto w-fit text-center">
-                <img src={loadingGif} alt="loading" className="mx-auto" />
-                <img src={loadingImage} aria-hidden className="mt-4" />
-              </div>
-              <h1 className="text-4xl text-gray-90 text-center mt-3">FoodGenie está escribiendo tu receta.</h1>
-              <p className="text-xl text-gray-60 text-center mt-2">Aguardá unos instantes.</p>
-            </div>
+            <Loading action="Cargando receta..." />
           </>
           :
           <>

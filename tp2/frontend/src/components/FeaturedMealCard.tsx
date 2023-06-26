@@ -16,12 +16,15 @@ const FeaturedMealCard = () => {
   });
 
   useEffect(() => {
-    if (todayString !== '') {
-      setFeaturedMeal({
-        name: plan.meals[todayString][nextMeal],
-        meal: nextMealType
-      })
-    }
+    console.log('Feature Meal Card', plan);
+    if(plan) {
+      if (todayString !== '') {
+        setFeaturedMeal({
+          name: plan.meals[todayString][nextMeal].name,
+          meal: nextMealType
+        })
+      }
+    };
   }, [plan])
 
   return (
@@ -30,7 +33,8 @@ const FeaturedMealCard = () => {
         style={{'--image-url': `url(${cardGradient})`}}
         className="flex flex-col p-10 bg-[image:var(--image-url)] bg-cover rounded-lg mt-6"
       >
-        <h2 className="text-xl text-white">{featuredMeal.name}</h2>
+        <h2 className="text-xl text-white mb-2">Próxima comida</h2>
+        <span className="text-gray-30 font-bold">{featuredMeal.name}</span>
         <span className="text-gray-40">{featuredMeal.meal}</span>
         {/* <ul className="text-sm text-gray-10 mt-4">
           <li><span className="font-bold">Calorias:</span> 560</li>

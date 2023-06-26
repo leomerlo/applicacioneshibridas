@@ -23,7 +23,7 @@ async function createAccount(account: Session) {
   const createdAccount = await accountsCollection.insertOne(newAccount)
 
   // To allow for future profile creation we create a profile for the new account
-  createProfile({ accountId: createdAccount.insertedId, name: account.userName })
+  createProfile({ accountId: createdAccount.insertedId, name: account.userName, preferences: 'Ninguna', restrictions: 'Ninguna' })
 }
 
 async function createSession(session: Session) {

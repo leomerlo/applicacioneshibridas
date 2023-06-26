@@ -7,6 +7,7 @@ import Logo from '../assets/logoAlt.svg'
 import LoginImage from '../assets/loginImage.png'
 import backGradient from '../assets/backGradient.svg'
 import { Link } from 'react-router-dom'
+import { useNotifications } from '../contexts/NotificationsContext'
 
 const Login = () => {
 
@@ -14,6 +15,7 @@ const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { updateNotifications } = useNotifications();
 
   const login = () => {
     authService.login({ userName, password }).then((data) => {
@@ -21,6 +23,7 @@ const Login = () => {
       if(data.status === 200) {
         const response = data.data.token
         localStorage.setItem('token', response.token);
+        updateNotifications({ variant: 'success', message: 'Usuario logueado con éxito' });
         navigate('/', {replace: true}) 
       } else {
         setError("Usuario o contraseña incorrectos");
@@ -47,13 +50,13 @@ const Login = () => {
                 <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
               </div>
               <div className="mt-8">
-                <Input name="userName" label="Usuario" value={userName} onInput={userNameHandler} placeholder="Escribi tu usuario" />
+                <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
               </div>
               <div className="mt-8">
                 <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
               </div>
               <div className="mt-8">
-                <Button type={ButtonType.submit} full>Login</Button>
+                <Button type={ButtonType.submit} full>Ingresá</Button>
               </div>
             </form>
             <div className="mt-8 text-center">
@@ -63,7 +66,7 @@ const Login = () => {
         </div>
         <div
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)]"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="w-fit h-fit text-center">
             <img src={Logo} alt="Food Genie" className="mx-auto" />
@@ -71,7 +74,7 @@ const Login = () => {
             <div>
               <p className="text-3xl text-white mt-20">
                 <strong className="block">Despierta al chef que llevas dentro.</strong>
-                Bienvenido a Food Genie, tu asistente culinario personal. ¡Deja que la magia de la cocina comience!
+                Con Food Genie, tu asistente culinario personal.
               </p>
             </div>
           </div>

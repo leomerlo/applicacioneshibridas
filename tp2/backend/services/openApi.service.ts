@@ -14,12 +14,17 @@ const temperature = 0;
 
 async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
   try {
-    // console.log('Reaching out to openai API with the prompt: ' + prompt);
+    const timeStart = new Date();
+    console.log('Start OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
     const completion = await openai.createChatCompletion({
       model,
       messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
       temperature
     });
+    const timeEnd = new Date();
+    const timeDiff = Math.abs((timeStart.getTime() - timeEnd.getTime()) / 1000);
+    console.log('End OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
+    console.log('Query time: ', timeDiff + 'segs');
     let result = completion.data.choices[0].message?.content;
     console.log("openAi usage: ", completion.data.usage);
     return result as string;

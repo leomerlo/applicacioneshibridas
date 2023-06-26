@@ -11,7 +11,7 @@ export type Props = {
 }
 
 const WelcomeCard = (props: Props) => {
-  const profile = useProfile();
+  const { profile } = useProfile();
 
   const isVertical = () => {
     return props.mode === WelcomeType.v

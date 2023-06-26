@@ -21,12 +21,41 @@ export type Props = {
 }
 
 const NextMealItem = (props: Props) => {
+
+  const dayString = (day: string) => {
+    switch (day) {
+      case 'mon':
+        return 'lun'
+
+      case 'tue':
+        return 'mar'
+
+      case 'wed':
+        return 'mie'
+      
+      case 'thu':
+        return 'jue'
+
+      case 'fri':
+        return 'vie'
+
+      case 'sat':
+        return 'sáb'
+      
+      case 'sun':
+        return 'dom'
+
+      default:
+        return ''
+    }
+  }
+
   return (
     <Link to={`/recipie/${props.meal.name}`}>
       <div className="flex gap-6">
         <div className="flex grow-0 flex-col items-center justify-center text-gray-70">
           <div className="bg-gray-10 text-center py-2 w-12">
-            <span className="uppercase block">{props.day}</span>
+            <span className="uppercase block">{dayString(props.day)}</span>
             <span className="block">{props.date}</span>
           </div>
         </div>

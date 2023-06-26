@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.tsx'
@@ -7,12 +6,13 @@ import LoginPage from './views/Login.tsx';
 import RegisterPage from './views/Register.tsx';
 import RecipiePage from './views/Recipie.tsx';
 import ProfilePage from './views/Profile.tsx';
+import PlanPage from './views/Plan.tsx';
 import ShoppingListPage from './views/ShoppingList.tsx';
 import RoutePrivate from './components/RoutePrivate.tsx';
 
 import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
-import { PlanProvider } from './contexts/PlanContext.tsx';
+import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
 
 const router = createBrowserRouter([
   {
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/shoppingList',
-        element: <PlanProvider><ShoppingListPage /></PlanProvider>
+        element: <ShoppingListPage />
       },
     ]
   },
@@ -50,5 +50,5 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <RouterProvider router={router} />
+  <NotificationsProvider><RouterProvider router={router} /></NotificationsProvider>
 )

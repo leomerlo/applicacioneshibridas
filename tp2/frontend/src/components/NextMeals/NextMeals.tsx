@@ -39,7 +39,7 @@ const NextMeals = () => {
           nextMeals.push({
             day: internalTodayString?.substring(0, 3),
             date: (today.getDate() + date).toString(),
-            name: plan.meals[internalTodayString][internalNextMeal],
+            name: plan.meals[internalTodayString][internalNextMeal].name,
             meal: MealTypes[internalNextMeal],
           });
         } else {
@@ -54,7 +54,9 @@ const NextMeals = () => {
   }
 
   useEffect(() => {
-    setNextMeals(generateNextMeals());
+    if(plan){
+      setNextMeals(generateNextMeals());
+    }
   }, [plan]);
 
   return (
