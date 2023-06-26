@@ -41,10 +41,10 @@ export default {
       },
       height: {
         avatar: '60px',
-        navbar: '98px',
+        navbar: '64px',
       },
       padding: {
-        'navbar': '98px',
+        'navbar': '96px',
       },
       maxWidth: {
         authForm: '420px'
