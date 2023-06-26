@@ -1,0 +1,18 @@
+{
+  "name": "trabajopractico1",
+  "version": "1.0.0",
+  "description": "TP para Aplicaciones Hibridas",
+  "main": "server.js",
+  "type": "module",
+  "author": "Leandro Merlo",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "express": "^4.18.2",
+    "mongodb": "^5.5.0",
+    "nodemon": "^2.0.22"
+  },
+  "scripts": {
+    "server": "clear && nodemon server.js"
+  }
+}
