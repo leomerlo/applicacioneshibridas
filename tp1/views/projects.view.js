@@ -9,7 +9,7 @@ function viewProjectsPage(projects, technologies, category, message) {
   }
   let techList = '';
   technologies.forEach((tech) => {
-    techList += `<div class="col"><a href="/projects/${category}/${tech.toLowerCase()}">${tech}</a></div>`
+    techList += `<div class="col"><a href="/projects/${category}?tech=${tech.toLowerCase()}">${tech}</a></div>`
   });
   const html = `
     ${nav}

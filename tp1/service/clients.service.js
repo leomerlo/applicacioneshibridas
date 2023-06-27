@@ -10,7 +10,15 @@ async function getAllClients() {
 
 async function getClientById(id) {
   await client.connect()
-  return db.collection("Clients").findOne({ _id: new ObjectId(id) });
+  // return db.collection("Clients").findOne({ _id: new ObjectId(id) });
+  return db.collection("Clients").aggregate([{
+    $lookup: {
+      from: "Projects",
+      localField: "_id",
+      foreignField: "client_id",
+      as: "projects"
+    }
+  }]).toArray();
 }
 
 async function saveClient(payload) {

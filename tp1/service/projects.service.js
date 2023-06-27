@@ -18,9 +18,9 @@ async function getProjectsBySection(section) {
   return db.collection("Projects").find({ section: section }).toArray();
 }
 
-async function getProjectsByClient(client) {
+async function getProjectsByClient(clientId) {
   await client.connect()
-  return db.collection("Projects").find({ client: client }).toArray();
+  return db.collection("Projects").find({ client: clientId }).toArray();
 }
 
 async function getProjectsWithFilter(filters) {

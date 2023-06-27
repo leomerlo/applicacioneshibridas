@@ -76,10 +76,8 @@ function deleteClient(req, res) {
 
 function getClientInfo(req, res) {
   clientsService.getClientById(req.params.id).then((client) => {
-    projectsService.getProjectsByClient(req.params.id).then((projects) => {
-      client.projects = projects;
-      res.send(view.viewClientInfo(client));
-    });
+    console.log(client);
+    res.send(view.viewClientInfo(client));
   });
 }
 

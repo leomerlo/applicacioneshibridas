@@ -4,11 +4,12 @@ function pageWrapper(title, content) {
     <html>
       <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/style.css" />
         <title>${title}</title>
       </head>
       <body>${content}</body>
-      <script src="/js/bootstrap.bundle.min.js"></script>
+      <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     </html>
   `;
 
@@ -67,20 +68,28 @@ function projectList(projects) {
         techList += `<li>${tech}</li>`;
       });
       projectList += `
-      <li>
-        <img src="${project.img}" role="presentation"/>
-        <h2><a href="/projects/${project._id}">${project.name}</a></h2> - <a href="/projects/${project._id}/edit">Editar</a> - <a href="/projects/${project._id}/delete">Eliminar</a>
-        <p>${project.description}</p>
-        <ul>${techList}</ul>
-        <a href="${project.link}">Repositorio</a>
+      <li class="col-sm-6 col-lg-4 mb-4">
+        <div class="card d-flex flex-column">
+          <img src="${project.img}" class="card-img-top" role="presentation" />
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title my-4">${project.name}</h5>
+            <p class="card-text flex-grow-1">${project.description}</p>
+            <ul class="my-4">${techList}</ul>
+            <a href="${project.link}">Repositorio</a>
+            <div class="d-flex justify-content-between mt-4">
+              <a href="/projects/${project._id}/edit" class="btn btn-primary">Editar</a>
+              <a href="/projects/${project._id}/delete" class="btn btn-secondary">Eliminar</a>
+            </div>
+          </div>
+        </div>
       </li>
       `
     });
     html = `
-      <ul>${projectList}</ul>
+      <ul class="row project-list">${projectList}</ul>
     `;
   } else {
-    html = `<h2>No hay projectos para mostrar.</h2>`
+    html = `<h2 class="my-4 text-center">No hay projectos para mostrar.</h2>`
   }
 
   return html;

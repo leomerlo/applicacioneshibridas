@@ -1,6 +1,7 @@
 import * as view from '../views/projects.view.js';
 import * as projectService from '../service/projects.service.js';
 import * as clientsService from '../service/clients.service.js';
+import { ObjectId } from 'mongodb';
 
 function getAllProjects(req, res) {
   projectService.getProjectTechnologies().then((technologies) => {
@@ -21,15 +22,18 @@ function getSection(req, res) {
 
 async function getFilteredList(req, res) {
   const section = req.params.section;
-  const filteredTech = req.params.technologies.split(',').map((e) => e.charAt(0).toUpperCase() + e.slice(1));
   let technologies = [];
   await projectService.getProjectTechnologies().then((result) => {
     technologies = result;
   })
+
+  const techQuery = req.query.tech ? req.query.tech.split(',').map((e) => e.charAt(0).toUpperCase() + e.slice(1)) : technologies;
+
+  console.log(techQuery);
   
   const filter = {
     section,
-    technologies: { $in: filteredTech }
+    technologies: { $in: techQuery }
   }
   projectService.getProjectsWithFilter(filter).then((projects) => {
     res.send(view.viewProjectsPage(projects, technologies, section));
@@ -64,7 +68,7 @@ function saveProject(req, res) {
 
   const newProject = {
     name: req.body.name,
-    client_id: req.body.client_id,
+    client_id: new ObjectId(req.body.client_id),
     description: req.body.description,
     link: req.body.link,
     img: req.body.img,

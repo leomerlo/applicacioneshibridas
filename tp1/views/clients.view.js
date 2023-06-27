@@ -5,34 +5,31 @@ function viewClientList(clients, message) {
   let clientList = '';
   clients.forEach((client) => {
     clientList += `
-      <div class="col-12">
-        <div>
-          <img src="${client.image}" />
-        </div>
-        <div>
-          <a>Nombre: ${client.name}</span>
-          <span>Descripcion: ${client.description}</span>
-          <div>
-            <a href="/clients/${client._id}/edit">Editar</a>
-            <a href="/clients/${client._id}/delete">Eliminar</a>
+      <li class="col-3">
+        <div class="card d-flex flex-column">
+          <img src="${client.image}" class="card-img-top" role="presentation" />
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title my-4"><a href="/client/${client._id}">${client.name}</a></h5>
+            <p class="card-text flex-grow-1">${client.description}</p>
+            <div class="d-flex justify-content-between mt-4">
+              <a href="/clients/${client._id}/edit" class="btn btn-primary">Editar</a>
+              <a href="/clients/${client._id}/delete" class="btn btn-secondary">Eliminar</a>
+            </div>
           </div>
-          <a href="/client/${client._id}">Ver mas</a>
         </div>
-      </div>`
+      </li>`
   });
   const html = `
     ${nav}
-    <div class="container">
+    <div class="container mt-4">
       ${ message ? `<div class="alert alert-${message.variant}">${message.text}</div>` : '' }
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between align-items-center">
         <h1>Mis Clientes</h1>
         <div class="d-flex">
           <a href="/clients/new" class="btn btn-primary d-flex align-items-center">Nuevo cliente</a>
         </div>
       </div>
-      <div class="row">
-        ${clientList}
-      </div>
+      <ul class="row project-list mt-4">${clientList}</ul>
     </div>
   `;
 
@@ -58,7 +55,7 @@ function viewClientForm(client = {},message) {
   }
   const html = `
     ${nav}
-    <div class="container">
+    <div class="container mt-4">
       ${ message ? `<div class="alert alert-${message.variant}">${message.text}</div>` : '' }
       <form method="POST" action="${action.path}">
         <div class="d-flex justify-content-between">
@@ -90,7 +87,7 @@ function confirmDelete(client) {
   const nav = navBar();
   const html = `
     ${ nav }
-    <div class="container">
+    <div class="container mt-4">
       <form method="POST" action="/clients/${client._id}/delete">
         <div class="alert alert-danger my-3" role="alert">
           Está seguro de que quiere borrar el cliente ${client.name}?
@@ -105,20 +102,29 @@ function confirmDelete(client) {
   return pageWrapper("Eliminando cliente", html);
 }
 
-function viewClientInfo(client) {
+function viewClientInfo(clients) {
   const nav = navBar();
+  const client = clients[0];
   const projects = projectList(client.projects);
   const html = `
     ${ nav }
-    <div class="container">
-      <div class="d-flex justify-content-between">
-        <h1>Información del cliente ${client.name}</h1>
-        <div class="d-flex">
-          <a href="/clients/${client._id}/edit" class="btn btn-primary d-flex align-items-center">Editar</a>
-          <a href="/clients/${client._id}/delete" class="btn btn-danger d-flex align-items-center">Eliminar</a>
+    <div class="container mt-4">
+      <div class="d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1>${client.name}</h1>
+          <div class="d-flex">
+            <a href="/clients/${client._id}/edit" class="btn btn-primary d-flex align-items-center me-4">Editar</a>
+            <a href="/clients/${client._id}/delete" class="btn btn-danger d-flex align-items-center">Eliminar</a>
+          </div>
         </div>
-        <p>${client.description}</p>
-        ${projects}
+        <div class="my-4">
+          <h2>Info del cliente</h2>
+          <p>${client.description}</p>
+        </div>
+        <div class="my-4">
+          <h2>Proyectos de ${client.name}</h2>
+          ${projects}
+        </div>
       </div>
     </div>
   `;

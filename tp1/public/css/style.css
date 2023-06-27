@@ -1,0 +1,11 @@
+.project-list {
+  padding: 0;
+}
+
+.project-list li {
+  list-style: none;
+}
+
+.project-list .card {
+  height: 100%;
+}
