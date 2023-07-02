@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { MongoClient, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { Profile } from '../types/profile';
+import { db, client } from './mongo.service.js';
 
-const client = new MongoClient("mongodb://127.0.0.1:27017")
-const db = client.db("foodGenie")
 const tokensCollection = db.collection('tokens')
 
 async function createToken(profile: Profile) {

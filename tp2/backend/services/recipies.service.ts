@@ -1,9 +1,8 @@
-import { MongoClient, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import type { Recipie } from '../types/recipies.d.ts';
 import { Plan } from '../types/plan.js';
+import { db, client } from './mongo.service.js';
 
-const client = new MongoClient("mongodb://127.0.0.1:27017")
-const db = client.db("foodGenie")
 const planCollection = db.collection('plans')
 const likedCollection = db.collection('likes')
 

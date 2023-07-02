@@ -1,13 +1,11 @@
-import { MongoClient, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
 import { Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
 import { Profile } from '../types/profile.js';
-
-const client = new MongoClient("mongodb://127.0.0.1:27017")
-const db = client.db("foodGenie")
+import { db, client } from './mongo.service.js';
 
 async function generatePlan(profileId: ObjectId): Promise<void> {
   await client.connect()
