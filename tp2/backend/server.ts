@@ -16,6 +16,6 @@ app.use('/api', profileRouter);
 app.use('/api', plansRouter);
 app.use('/api', recipiesRouter);
 
-app.listen(2023, function () {
+process.env.NODE_ENV === 'production' ? module.exports = app : app.listen(2023, function () {
   console.log('FoodGenie API -> http://localhost:2023')
-})
+});
