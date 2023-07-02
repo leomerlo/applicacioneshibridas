@@ -23,7 +23,7 @@ const NavBar = () => {
   }
   
   return (
-    <nav className={`flex flex-col items-center justify-between fixed z-50 top-0 left-0 w-full bg-white p-2 ${menuOpen ? "h-screen" : "h-navbar"} transition-all duration-500 ease-in-out shadow-md`}>
+    <nav className={`flex flex-col items-center justify-between fixed z-50 top-0 left-0 w-full bg-white p-2 ${menuOpen ? "h-screen" : "h-navbar"} transition-all duration-500 ease-in-out`}>
       <div className="flex container justify-between items-center">
         <div className="flex items-center flex-shrink-0 mr-6">
           <img src={logo} aria-hidden="true" className="h-12" />

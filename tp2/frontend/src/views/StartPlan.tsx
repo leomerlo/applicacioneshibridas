@@ -105,6 +105,7 @@ const StartPlan = () => {
         <div className="text-left mt-8">
           <h1 className="text-3xl text-gray-90">Te queremos conocer.</h1>
           <div className="mt-4">
+            {/* @ts-ignore */}
             <Input label="¿Cómo querés que te llamemos?" name="name" autoFocus value={tempProfile.name} onInput={(ev) => { setTempProfile({...tempProfile, name: ev.target.value}) }} />
           </div>
         </div>
@@ -131,6 +132,7 @@ const StartPlan = () => {
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */} 
             <Input label="Contanos tus restricciones alimenticias." autoFocus name="restrictions" value={tempProfile.restrictions} onInput={(ev) => { setTempProfile({...tempProfile, restrictions: ev.target.value}) }} />
           </div>
           <div className="mt-4">
@@ -158,6 +160,7 @@ const StartPlan = () => {
             </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */}
             <Input label="Contanos tus preferencias." name="preferences" autoFocus value={tempProfile.preferences} onInput={(ev) => { setTempProfile({...tempProfile, preferences: ev.target.value}) }} />
           </div>
           <div className="mt-4">
@@ -183,6 +186,7 @@ const StartPlan = () => {
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */}
             <Input type="number" label="Comensales:" name="diners" autoFocus value={tempProfile.diners} onInput={(ev) => { setTempProfile({...tempProfile, diners: Math.ceil(Number(ev.target.value))}) }} />
           </div>
         </div>

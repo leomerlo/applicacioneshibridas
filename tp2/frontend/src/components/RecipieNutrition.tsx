@@ -9,6 +9,7 @@ const RecipieNutrition = () => {
     <ul className="text-sm mt-4">
       { keys.map((key) => {          
         return <li className="p-4" key={key}>
+          {/* @ts-ignore */}
           <span className="capitalize">{key}: {recipie.nutrition[key]}</span>
         </li>
       })}

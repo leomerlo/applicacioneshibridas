@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Identicon } from '@nichoth/identicon';
 import { useProfile } from "../contexts/ProfileContext";
 

@@ -28,6 +28,7 @@ const ShoppingListPage = () => {
       <ul className="mt-4">
         { Array.from(Object.keys(shoppingList)).map((key) => (
           <li key={key}>
+            {/* @ts-ignore */}
             <IngredientItem ingredient={shoppingList[key]} />
           </li>
         ))}

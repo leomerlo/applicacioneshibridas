@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import accountService from '../services/account.service'
 import authService from '../services/auth.service'
@@ -68,6 +68,7 @@ const Register = () => {
           </div>
         </div>
         <div
+          // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
           className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >

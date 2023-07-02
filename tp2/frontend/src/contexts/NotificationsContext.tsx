@@ -1,5 +1,4 @@
-import { createContext, useState, useEffect, PropsWithChildren, useContext } from "react"
-import accountService from "../services/account.service"
+import { createContext, useState, PropsWithChildren, useContext } from "react"
 
 export type Notification = {
   variant: 'success' | 'info' | 'warning' | 'error',

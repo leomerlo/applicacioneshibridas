@@ -24,6 +24,7 @@ const Recipie = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // @ts-ignore
     setIsLiked(recipie.likes?.includes(profile._id) || false);
   }, [recipie]);
 
@@ -46,8 +47,10 @@ const Recipie = () => {
     service(recipie._id as string).then((res) => {
       if(res.status === 201){
         if(isLiked) {
+          // @ts-ignore
           recipie.likes = recipie.likes?.filter((id) => id !== profile._id);
         } else {
+          // @ts-ignore
           recipie.likes?.push(profile._id as string);
         }
         setIsLiked(!isLiked);
