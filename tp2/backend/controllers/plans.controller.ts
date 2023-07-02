@@ -47,7 +47,9 @@ async function getList(req: Request, res: Response) {
       }
 
       Array.from(Object.keys(plan.meals)).forEach((day) => {
+        // @ts-ignore
         Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
+          // @ts-ignore
           plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
             ingredients.push(ingredient);
           });

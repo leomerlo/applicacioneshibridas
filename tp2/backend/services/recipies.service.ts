@@ -10,9 +10,13 @@ async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie
   await client.connect()
   const plan = await planCollection.findOne<Plan>({ profileId: new ObjectId(profileId) });
   let returnRecipie: Recipie = {} as Recipie;
+  // @ts-ignore
   Object.keys(plan?.meals).forEach((day) => {
+    // @ts-ignore
     Object.keys(plan.meals[day]).forEach((meal) => {
+      // @ts-ignore
       if (plan.meals[day][meal].name == recipie) {
+        // @ts-ignore
         returnRecipie = plan.meals[day][meal] as Recipie;
       }
     })
