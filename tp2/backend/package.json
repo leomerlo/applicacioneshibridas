@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
-    "vercel-build": "echo 'Hello'"
+    "prod": "node dist/server.js",
+    "build": "npx tsc"
   },
   "type": "module",
   "repository": {
