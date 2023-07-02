@@ -4,6 +4,9 @@ import profileRouter from './routes/profile.routes.js';
 import plansRouter from './routes/plans.routes.js';
 import recipiesRouter from './routes/recipies.routes.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express()
 app.use(cors())
@@ -16,6 +19,10 @@ app.use('/api', profileRouter);
 app.use('/api', plansRouter);
 app.use('/api', recipiesRouter);
 
-process.env.NODE_ENV === 'production' || 'vercel' ? module.exports = app : app.listen(2023, function () {
-  console.log('FoodGenie API -> http://localhost:2023')
-});
+export default app;
+
+if(process.env.NODE_ENV === 'dev') {
+  app.listen(2023, function () {
+    console.log('FoodGenie API -> http://localhost:2023')
+  });
+}

@@ -4,7 +4,8 @@
   "description": "Backend for FoodGenie",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
+    "vercel-build": "echo 'Hello'"
   },
   "type": "module",
   "repository": {
