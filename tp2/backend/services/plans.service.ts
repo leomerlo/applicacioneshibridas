@@ -71,7 +71,8 @@ async function generateShoppingList(profileId: string, ingredients: Ingredients[
     }
   });
 
-  await db.collection("plans").updateOne({ profileId: new ObjectId(profileId) }, { $set: { shoppingList: unifiedList } });
+  const organizedList = await openApi.generateShoppingList(unifiedList);
+  await db.collection("plans").updateOne({ profileId: new ObjectId(profileId) }, { $set: { shoppingList: JSON.parse(organizedList) } });
 }
 
 export {
