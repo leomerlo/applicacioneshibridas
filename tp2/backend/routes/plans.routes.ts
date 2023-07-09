@@ -4,8 +4,8 @@ import { validateToken, addProfileIdToBody } from '../middleware/token.middlewar
 
 const router = Router();
 
-router.get('/plan/new', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
-router.get('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
+router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
+router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 
 export default router;
