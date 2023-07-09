@@ -1,7 +1,7 @@
 import API from './api.service';
 
 export function newPlan() {
-  return API.call({ uri: 'plan/new' })
+  return API.call({ uri: 'plan', method: 'POST' })
 }
 
 export function getPlan() {
@@ -9,7 +9,7 @@ export function getPlan() {
 }
 
 export function getShoppingList() {
-  return API.call({ uri: 'plan/list' })
+  return API.call({ uri: 'plan/list', method: 'POST' })
 }
 
 export default {
