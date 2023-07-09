@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent, createRef } from "react"
+import { useState, SyntheticEvent } from "react"
 import { redirect } from "react-router-dom";
 import accountService from "../services/account.service"
 import planService from "../services/plan.service"
@@ -17,7 +17,6 @@ const Profile = () => {
   const { updateNotifications } = useNotifications();
   const [loadingPlan, setLoadingPlan] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
-  const formRef = createRef();
 
   const saveHandler = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -64,7 +63,7 @@ const Profile = () => {
           <img src={ProfileImage} />
         </div>
         <h1 className="text-4xl mt-6">Mi Perfil</h1>
-        <form onSubmit={saveHandler} ref={formRef}>
+        <form onSubmit={saveHandler}>
           <div className="mt-4">
             <label className="text-gray-80 block mb-1" htmlFor="name">Nombre</label>
             <input
