@@ -3,20 +3,25 @@ import FeaturedMealCard from "../components/FeaturedMealCard"
 import NextMeals from "../components/NextMeals/NextMeals"
 import { usePlan } from "../contexts/PlanContext";
 import StartPlan from "./StartPlan";
+import { useProfile } from "../contexts/ProfileContext";
+import Loading from "../components/Loading";
 
 const Home = () => {
-  const { plan } = usePlan();
+  const { plan, loadedPlan } = usePlan();
+  const { profile } = useProfile();
 
   return (
     <div className="container mx-auto flex flex-col h-full justify-start">
-      { plan ? <div>
-        <WelcomeCard mode={WelcomeType.h} />
-          <FeaturedMealCard />
-          <NextMeals />
-      </div>
-      :
-      <StartPlan />
-      }
+      { (profile.accountId != '' && loadedPlan ) ? <>
+        { plan ? <div>
+          <WelcomeCard mode={WelcomeType.h} />
+            <FeaturedMealCard />
+            <NextMeals />
+        </div>
+        :
+        <StartPlan />
+        }
+      </> : <Loading action="Estamos cargando tus datos..." /> }
     </div>
   )
 }
