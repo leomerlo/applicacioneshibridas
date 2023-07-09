@@ -42,6 +42,7 @@ const ShoppingListPage = () => {
             <li key={key} className="p-4 font-bold text-xl">
               <span>{ keyToTitle(key) }</span>
             </li>
+            { /* @ts-ignore */ }
             { shoppingList[key].map((ingredient: Ingredients) => (
               <li key={key + ingredient.name}><IngredientItem ingredient={ingredient} /></li>
             )) }
