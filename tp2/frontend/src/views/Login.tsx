@@ -14,11 +14,14 @@ const Login = () => {
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { updateNotifications } = useNotifications();
 
   const login = () => {
+    setLoading(true);
     authService.login({ userName, password }).then((data) => {
+      setLoading(false);
       setError("");
       if(data.status === 200) {
         const response = data.data.token
@@ -56,7 +59,7 @@ const Login = () => {
                 <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
               </div>
               <div className="mt-8">
-                <Button type={ButtonType.submit} full>Ingresá</Button>
+                <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
               </div>
             </form>
             <div className="mt-8 text-center">

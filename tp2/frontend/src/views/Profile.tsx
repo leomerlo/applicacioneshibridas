@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from "react"
+import { useState, SyntheticEvent, createRef } from "react"
 import { redirect } from "react-router-dom";
 import accountService from "../services/account.service"
 import planService from "../services/plan.service"
@@ -15,11 +15,15 @@ const Profile = () => {
   const { updatePlan } = usePlan();
   const [tempProfile, setTempProfile] = useState(profile);
   const { updateNotifications } = useNotifications();
-  const [loading, setLoading] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const formRef = createRef();
 
   const saveHandler = (e: SyntheticEvent) => {
     e.preventDefault();
+    setLoadingButton(true);
     accountService.updateProfile(tempProfile).then((result) => {
+      setLoadingButton(false);
       if(result.status !== 201) {
         updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
       } else {
@@ -30,21 +34,28 @@ const Profile = () => {
   }
 
   const newPlan = () => {
-    setLoading(true);
-    planService.newPlan().then((response) => {
-      setLoading(false);
-      if(response.status === 201) {
-        updatePlan();
-        redirect("/");
+    setLoadingPlan(true);
+    accountService.updateProfile(tempProfile).then((result) => {
+      if(result.status !== 201) {
+        updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
       } else {
-        updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
+        refreshProfile();
+        planService.newPlan().then((response) => {
+          setLoadingPlan(false);
+          if(response.status === 201) {
+            updatePlan();
+            redirect("/");
+          } else {
+            updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
+          }
+        });
       }
-    })
+    });
   }
 
   return (
     <div className="container mx-auto">
-      { loading ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
+      { loadingPlan ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
       <>
         <div className="flex justify-between">
           <GoBack />
@@ -53,7 +64,7 @@ const Profile = () => {
           <img src={ProfileImage} />
         </div>
         <h1 className="text-4xl mt-6">Mi Perfil</h1>
-        <form onSubmit={saveHandler}>
+        <form onSubmit={saveHandler} ref={formRef}>
           <div className="mt-4">
             <label className="text-gray-80 block mb-1" htmlFor="name">Nombre</label>
             <input
@@ -104,7 +115,7 @@ const Profile = () => {
           </div>
           <hr className="my-8" />
           <div className="mt-4">
-            <Button full type={ButtonType.submit}>Guardar</Button>
+            <Button full type={ButtonType.submit} loading={loadingButton}>Guardar</Button>
           </div>
         </form>
       </> }

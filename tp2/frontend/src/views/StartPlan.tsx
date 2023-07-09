@@ -137,7 +137,7 @@ const StartPlan = () => {
           </div>
           <div className="mt-4">
             <p className="text-gray-80 mt-8">
-              <span className="block mt-3 text-gray-400">Ej: Dieta vegetariana, sin huevos, alergia a las nueces.</span>
+              <span className="block mt-3 text-gray-400">Ej: Dieta vegetariana, sin huevos, alergia a las nueces, alergia al gluten.</span>
             </p>
           </div>
         </div>

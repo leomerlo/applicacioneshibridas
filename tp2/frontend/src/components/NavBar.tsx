@@ -26,7 +26,9 @@ const NavBar = () => {
     <nav className={`flex flex-col items-center justify-between fixed z-20 top-0 left-0 w-full bg-white p-2 ${menuOpen ? "h-screen" : "h-navbar"} transition-all duration-500 ease-in-out`}>
       <div className="flex container justify-between items-center">
         <div className="flex items-center flex-shrink-0 mr-6">
-          <img src={logo} aria-hidden="true" className="h-12" />
+          <Link to={'/'} className="block">
+            <img src={logo} aria-hidden="true" className="h-12" />
+          </Link>
         </div>
         <div className="block">
           <button className="flex items-center px-3 py-2 text-primary-main hover:text-primary-secondary transition-colors duration-300 ease-in-out" onClick={() => {setMenuOpen(menuOpen ? false : true)}}>
