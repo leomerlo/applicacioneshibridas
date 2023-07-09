@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from 'dotenv'
 import { ObjectId } from "bson";
+import { Ingredients } from "../types/recipies";
 
 dotenv.config()
 
@@ -90,6 +91,32 @@ async function generatePlan(restrictions: string, preferences: string): Promise<
   return await promptHelper(systemPrompt, userPrompt);
 }
 
+async function generateShoppingList(ingredients: Ingredients[]): Promise<string> {
+  const systemPrompt = `
+    Cuando te pida ayuda, vas a actuar como un jefe de cocina, y tomar los objetos de ingredientes que te pase y organizarlos todos en una lista optimizada por categorias utilizando: produce, meats y others.
+
+    Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
+
+    Ejemplo:
+
+    produce: [
+      {
+        name: "banana",
+        quantity: 1,
+        unit: "unidad"
+      }
+    ]
+  `;
+  const userPrompt = `
+    Quiero una lista de compras organizada con los siguientes ingredientes:
+
+    ${JSON.stringify(ingredients)}
+  `;
+
+  return await promptHelper(systemPrompt, userPrompt);
+}
+
 export {
-  generatePlan
+  generatePlan,
+  generateShoppingList
 }
