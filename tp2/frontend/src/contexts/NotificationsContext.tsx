@@ -7,10 +7,12 @@ export type Notification = {
 
 const initialNotifications: {
   notifications: Notification[],
-  updateNotifications: (notification: Notification) => void
+  updateNotifications: (notification: Notification) => void,
+  closeNotification: (notification: Notification) => void
 } = {
   notifications: [],
-  updateNotifications: () => {}
+  updateNotifications: () => {},
+  closeNotification: () => {}
 }
 
 const NotificationsContext = createContext(initialNotifications)
@@ -24,10 +26,18 @@ function NotificationsProvider({children}: PropsWithChildren){
 
   const updateNotifications = (notification: Notification) => {
     setNotifications([...notifications, notification]);
+    setTimeout(() => {
+      closeNotification(notification);
+    }, 5000);
+  }
+
+  const closeNotification = (notification: Notification) => {
+    const filter = notifications.filter((n) => n !== notification);
+    setNotifications(filter);
   }
   
   return (
-    <NotificationsContext.Provider value={{ notifications, updateNotifications }}>
+    <NotificationsContext.Provider value={{ notifications, updateNotifications, closeNotification }}>
       {children}
     </NotificationsContext.Provider>
   )
