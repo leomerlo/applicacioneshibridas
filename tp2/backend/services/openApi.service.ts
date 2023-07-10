@@ -95,6 +95,8 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
   const systemPrompt = `
     Cuando te pida ayuda, vas a actuar como un jefe de cocina, y tomar los objetos de ingredientes que te pase y organizarlos todos en una lista optimizada por categorias utilizando: produce, meats y others.
 
+    Meats solamente tiene que incluir productos de carne de origen animal. Huevos y proteinas vegetales van en others.
+
     Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
     Ejemplo:
