@@ -9,7 +9,7 @@ export function getPlan() {
 }
 
 export function getShoppingList() {
-  return API.call({ uri: 'plan/list', method: 'POST' })
+  return API.call({ uri: 'plan/list' })
 }
 
 export default {

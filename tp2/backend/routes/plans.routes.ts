@@ -6,6 +6,6 @@ const router = Router();
 
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
-router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
+router.get('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 
 export default router;
