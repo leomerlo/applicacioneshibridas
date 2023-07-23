@@ -50,6 +50,7 @@ const ShoppingListPage = () => {
           <ul className="mt-4">
             { Array.from(Object.keys(shoppingList)).map((key) => (
               <>
+                { /* @ts-ignore */ }
                 { shoppingList[key].length === 0 ? '' : <li key={key} className="p-4 font-bold text-xl">
                   <span>{ keyToTitle(key) }</span>
                 </li> }
