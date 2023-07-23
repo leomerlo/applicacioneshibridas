@@ -50,9 +50,9 @@ const ShoppingListPage = () => {
           <ul className="mt-4">
             { Array.from(Object.keys(shoppingList)).map((key) => (
               <>
-                <li key={key} className="p-4 font-bold text-xl">
+                { shoppingList[key].length === 0 ? '' : <li key={key} className="p-4 font-bold text-xl">
                   <span>{ keyToTitle(key) }</span>
-                </li>
+                </li> }
                 { /* @ts-ignore */ }
                 { shoppingList[key].map((ingredient: Ingredients) => (
                   <li key={key + ingredient.name}><IngredientItem ingredient={ingredient} /></li>
@@ -60,7 +60,7 @@ const ShoppingListPage = () => {
               </>
             ))}
           </ul>
-          <div className="mx-auto w-fit my-4">
+          <div className="mx-auto w-fit mt-8 mb-4">
             <img src={shoppingListImage} />
           </div>
         </>
