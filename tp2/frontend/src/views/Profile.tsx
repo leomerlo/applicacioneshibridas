@@ -59,9 +59,6 @@ const Profile = () => {
         <div className="flex justify-between">
           <GoBack />
         </div>
-        <div className="mx-auto w-fit">
-          <img src={ProfileImage} />
-        </div>
         <h1 className="text-4xl mt-6">Mi Perfil</h1>
         <form onSubmit={saveHandler}>
           <div className="mt-4">
@@ -110,13 +107,15 @@ const Profile = () => {
           </div>
           <hr className="my-8" />
           <div className="mt-4">
-            <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
-          </div>
-          <hr className="my-8" />
-          <div className="mt-4">
             <Button full type={ButtonType.submit} loading={loadingButton}>Guardar</Button>
           </div>
+          <div className="mt-4">
+            <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
+          </div>
         </form>
+        <div className="mx-auto w-fit my-4">
+          <img src={ProfileImage} />
+        </div>
       </> }
     </div>
   )

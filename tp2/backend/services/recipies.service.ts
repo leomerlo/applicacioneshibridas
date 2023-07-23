@@ -35,34 +35,39 @@ async function likeRecipie(recipieName: string, profileId: ObjectId): Promise<vo
   const recipie = await getRecipie(recipieName, profileId);
 
   if (recipie) {
-    if (!recipie.likes) {
-      await likedCollection.insertOne({ ...recipie, profileId: new ObjectId(profileId) });
-    } else {
-      throw new Error(`La receta ya esta likeada`);
-    }
+    await likedCollection.findOneAndUpdate(
+      { name: recipieName },
+      {
+        $setOnInsert: { ...recipie, profileId: new ObjectId(profileId) }
+      },
+      {
+        upsert: true,
+      }
+    );
   } else {
     throw new Error(`No se encontro la receta "${recipieName}"`);
   }
 }
 
-async function unlikeRecipie(recipieId: string, profileId: ObjectId): Promise<void> {
+async function unlikeRecipie(recipieName: string, profileId: ObjectId): Promise<void> {
   await client.connect()
 
-  const recipie = await getRecipie(recipieId, profileId);
+  const recipie = await likedCollection.findOneAndDelete({ name: recipieName, profileId: new ObjectId(profileId) });
 
-  if (recipie) {
-    if (recipie.likes) {
-      await likedCollection.deleteOne({ ...recipie, profileId: new ObjectId(profileId) });
-    } else {
-      throw new Error(`La receta no esta likeada`);
-    }
-  } else {
-    throw new Error(`No se encontro la receta "${recipieId}"`);
+  if (!recipie.value) {
+    throw new Error(`No se encontro la receta "${recipieName}"`);
   }
+}
+
+async function getLikedRecipies(profileId: ObjectId): Promise<Recipie[]> {
+  await client.connect()
+  const likedRecipies = await likedCollection.find({ profileId: new ObjectId(profileId) }).toArray();
+  return likedRecipies as Recipie[];
 }
 
 export {
   getRecipie,
   likeRecipie,
   unlikeRecipie,
+  getLikedRecipies
 }

@@ -19,7 +19,7 @@ async function getRecipie(req: Request, res: Response) {
 }
 
 async function likeRecipie(req: Request, res: Response) {
-  const recipie = req.params.id;
+  const recipie = req.params.name;
   const profileId = req.body.profileId;
 
   recipiesService.likeRecipie(recipie, profileId)
@@ -32,14 +32,29 @@ async function likeRecipie(req: Request, res: Response) {
 }
 
 async function unlikeRecipie(req: Request, res: Response) {
-  const recipie = req.params.id;
+  const recipie = req.params.name;
   const profileId = req.body.profileId;
+
+  console.log('recipie', recipie);
+  console.log('profileId', profileId);
 
   recipiesService.unlikeRecipie(recipie, profileId)
   .then(() => {
-    res.status(201).json({ message: "Receta removida de favoritos" })
+    res.status(200).json({ message: "Receta removida de favoritos" })
   })
   .catch((err: any) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
+async function getLikedRecipies(req: Request, res: Response) {
+  const profileId = req.body.profileId;
+
+  recipiesService.getLikedRecipies(profileId)
+  .then((recipies) => {
+    res.status(200).json(recipies);
+  })
+  .catch((err) => {
     res.status(400).json({ error: { message: err.message } })
   })
 }
@@ -47,5 +62,6 @@ async function unlikeRecipie(req: Request, res: Response) {
 export {
   getRecipie,
   likeRecipie,
-  unlikeRecipie
+  unlikeRecipie,
+  getLikedRecipies
 }

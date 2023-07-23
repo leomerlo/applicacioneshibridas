@@ -46,9 +46,6 @@ const ShoppingListPage = () => {
         <GoBack />
       </div>
       { loadingList ? <Loading action="Estamos cargando tu lista de compras" /> : <>
-          <div className="mx-auto w-fit">
-            <img src={shoppingListImage} />
-          </div>
           <h1 className="text-4xl mt-6">Lista de compras</h1>
           <ul className="mt-4">
             { Array.from(Object.keys(shoppingList)).map((key) => (
@@ -63,6 +60,9 @@ const ShoppingListPage = () => {
               </>
             ))}
           </ul>
+          <div className="mx-auto w-fit my-4">
+            <img src={shoppingListImage} />
+          </div>
         </>
       }
     </div>

@@ -4,8 +4,10 @@ import { Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
+import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
+import { Recipie } from '../types/recipies.js';
 
 async function generatePlan(profileId: ObjectId): Promise<void> {
   await client.connect()
@@ -14,7 +16,12 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     throw new Error('El perfil no existe');
   }
 
-  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '');
+  let likedRecipies: string = '';
+  await recipiesService.getLikedRecipies(profileId).then((recipies) => {
+    likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
+  });
+
+  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies);
 
   const meals = JSON.parse(rawOutput as string);
 
