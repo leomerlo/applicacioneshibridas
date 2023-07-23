@@ -3,35 +3,69 @@ import shoppingListImage from "../assets/shopping.png"
 import IngredientItem from "../components/IngredientItem"
 import { useEffect, useState } from "react"
 import planService from "../services/plan.service"
-import { ShoppingListIngredient } from "../contexts/PlanContext"
+import { Ingredients } from "../contexts/RecipiesContext"
+import { useNotifications } from "../contexts/NotificationsContext"
+import Loading from "../components/Loading"
 
 const ShoppingListPage = () => {
   const [shoppingList, setShoppingList] = useState([]);
+  const [loadingList, setLoadingList] = useState(false);
+  const { updateNotifications } = useNotifications();
 
   useEffect(() => {
+    setLoadingList(true);
     planService.getShoppingList()
     .then((res) => {
-      const sorted = res.data.sort((a: ShoppingListIngredient, b: ShoppingListIngredient) => a.name.localeCompare(b.name));
-      setShoppingList(sorted)
+      setLoadingList(false);
+      if(res.status === 200) {
+        setShoppingList(res.data);
+      } else {
+        updateNotifications({
+          variant: 'error',
+          message: 'Error al obtener la lista de compras'
+        });
+      }
     });
   }, []);
+
+  const keyToTitle = (key: string) => {
+    switch (key) {
+      case 'meats':
+        return 'Carniceria';
+      case 'produce':
+        return 'Verduleria';
+      case 'others':
+      default:
+        return 'Almacen';
+    }
+  }
 
   return (
     <div className="container mx-auto">
       <div className="flex justify-between">
         <GoBack />
       </div>
-      <div className="mx-auto w-fit">
-        <img src={shoppingListImage} />
-      </div>
-      <h1 className="text-4xl mt-6">Lista de compras</h1>
-      <ul className="mt-4">
-        { Array.from(Object.keys(shoppingList)).map((key) => (
-          <li key={key}>
-            <IngredientItem ingredient={shoppingList[key]} />
-          </li>
-        ))}
-      </ul>
+      { loadingList ? <Loading action="Estamos cargando tu lista de compras" /> : <>
+          <h1 className="text-4xl mt-6">Lista de compras</h1>
+          <ul className="mt-4">
+            { Array.from(Object.keys(shoppingList)).map((key) => (
+              <>
+                { /* @ts-ignore */ }
+                { shoppingList[key].length === 0 ? '' : <li key={key} className="p-4 font-bold text-xl">
+                  <span>{ keyToTitle(key) }</span>
+                </li> }
+                { /* @ts-ignore */ }
+                { shoppingList[key].map((ingredient: Ingredients) => (
+                  <li key={key + ingredient.name}><IngredientItem ingredient={ingredient} /></li>
+                )) }
+              </>
+            ))}
+          </ul>
+          <div className="mx-auto w-fit mt-8 mb-4">
+            <img src={shoppingListImage} />
+          </div>
+        </>
+      }
     </div>
   )
 }

@@ -1,10 +1,8 @@
-import { MongoClient, ObjectId } from 'mongodb'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import { Session } from '../types/account.js';
-import { createProfile, getProfileByAccount } from './profile.service.js'
+import { createProfile, getProfileByAccount } from './profile.service.js';
+import { db, client } from './mongo.service.js';
 
-const client = new MongoClient("mongodb://127.0.0.1:27017")
-const db = client.db("foodGenie")
 const accountsCollection = db.collection('accounts')
 
 async function createAccount(account: Session) {

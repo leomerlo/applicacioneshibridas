@@ -19,6 +19,7 @@ const Input = (props: Props) => {
       <label htmlFor={props.name} className="block text-base text-gray-700">{props.label}</label>
       <div className="mt-1">
         { props.type === 'textarea' ? 
+          // @ts-ignore 
           <textarea
             className="shadow-sm py-3 px-4 border border-solid border-gray-300 background-grey-10 block w-full sm:text-sm rounded-md"
             { ...props } />

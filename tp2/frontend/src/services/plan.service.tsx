@@ -1,7 +1,7 @@
 import API from './api.service';
 
 export function newPlan() {
-  return API.call({ uri: 'plan/new' })
+  return API.call({ uri: 'plan', method: 'POST' })
 }
 
 export function getPlan() {

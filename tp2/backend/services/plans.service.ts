@@ -1,13 +1,13 @@
-import { MongoClient, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
 import { Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
+import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
-
-const client = new MongoClient("mongodb://127.0.0.1:27017")
-const db = client.db("foodGenie")
+import { db, client } from './mongo.service.js';
+import { Recipie } from '../types/recipies.js';
 
 async function generatePlan(profileId: ObjectId): Promise<void> {
   await client.connect()
@@ -16,7 +16,12 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     throw new Error('El perfil no existe');
   }
 
-  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '');
+  let likedRecipies: string = '';
+  await recipiesService.getLikedRecipies(profileId).then((recipies) => {
+    likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
+  });
+
+  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies);
 
   const meals = JSON.parse(rawOutput as string);
 
@@ -73,7 +78,8 @@ async function generateShoppingList(profileId: string, ingredients: Ingredients[
     }
   });
 
-  await db.collection("plans").updateOne({ profileId: new ObjectId(profileId) }, { $set: { shoppingList: unifiedList } });
+  const organizedList = await openApi.generateShoppingList(unifiedList);
+  await db.collection("plans").updateOne({ profileId: new ObjectId(profileId) }, { $set: { shoppingList: JSON.parse(organizedList) } });
 }
 
 export {

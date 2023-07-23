@@ -6,7 +6,6 @@ import LoginPage from './views/Login.tsx';
 import RegisterPage from './views/Register.tsx';
 import RecipiePage from './views/Recipie.tsx';
 import ProfilePage from './views/Profile.tsx';
-import PlanPage from './views/Plan.tsx';
 import ShoppingListPage from './views/ShoppingList.tsx';
 import RoutePrivate from './components/RoutePrivate.tsx';
 

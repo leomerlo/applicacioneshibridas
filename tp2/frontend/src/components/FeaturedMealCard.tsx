@@ -20,6 +20,7 @@ const FeaturedMealCard = () => {
     if(plan) {
       if (todayString !== '') {
         setFeaturedMeal({
+          // @ts-ignore
           name: plan.meals[todayString][nextMeal].name,
           meal: nextMealType
         })
@@ -30,6 +31,7 @@ const FeaturedMealCard = () => {
   return (
     <Link to={`/recipie/${featuredMeal.name}`}>
       <div
+        // @ts-ignore 
         style={{'--image-url': `url(${cardGradient})`}}
         className="flex flex-col p-10 bg-[image:var(--image-url)] bg-cover rounded-lg mt-6"
       >

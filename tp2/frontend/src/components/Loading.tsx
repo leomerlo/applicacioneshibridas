@@ -1,6 +1,5 @@
 import loadingGif from '../assets/loading.gif'
 import loadingImage from '../assets/girlPhone.png'
-import GoBack from '../components/GoBack'
 
 export type Props = {
   action: string

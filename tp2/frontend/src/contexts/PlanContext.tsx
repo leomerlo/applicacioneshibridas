@@ -38,6 +38,7 @@ const emptyPlan: {
   todayString: string,
   nextMealType: MealTypes,
   shoppingList?: ShoppingListIngredient[],
+  loadedPlan: boolean
 } = {
   plan: null,
   updatePlan: () => {},
@@ -45,6 +46,7 @@ const emptyPlan: {
   nextMeal: '',
   todayString: '',
   nextMealType: MealTypes.breakfast,
+  loadedPlan: false
 }
 
 const PlanContext = createContext(emptyPlan)
@@ -54,7 +56,8 @@ function usePlan(){
 }
 
 function PlanProvider({children}: PropsWithChildren){
-  const [plan, setPlan] = useState<Plan | null>(emptyPlan.plan)
+  const [plan, setPlan] = useState<Plan | null>(emptyPlan.plan);
+  const [loadedPlan, setLoadedPlan] = useState(emptyPlan.loadedPlan);
   const [today, setToday] = useState<Date>(emptyPlan.today);
   const [todayString, setTodayString] = useState<string>('');
   const [nextMeal, setNextMeal] = useState<string>(emptyPlan.nextMeal);
@@ -66,6 +69,7 @@ function PlanProvider({children}: PropsWithChildren){
 
     planService.getPlan()
     .then((plan) => {
+      setLoadedPlan(true);
       if(plan.data) {
         setPlan(plan.data)
       }
@@ -115,7 +119,7 @@ function PlanProvider({children}: PropsWithChildren){
   };
   
   return (
-    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType }}>
+    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType, loadedPlan }}>
       {children}
     </PlanContext.Provider>
   )

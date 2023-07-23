@@ -4,8 +4,9 @@ import { validateToken, addProfileIdToBody } from '../middleware/token.middlewar
 
 const router = Router();
 
+router.get('/recipie/likes', [validateToken, addProfileIdToBody], controller.getLikedRecipies);
 router.get('/recipie/:recipie', [validateToken, addProfileIdToBody], controller.getRecipie);
-router.get('/recipie/like/:id', [validateToken, addProfileIdToBody], controller.likeRecipie);
-router.get('/recipie/unlike/:id', [validateToken, addProfileIdToBody], controller.unlikeRecipie);
+router.post('/recipie/like/:name', [validateToken, addProfileIdToBody], controller.likeRecipie);
+router.delete('/recipie/unlike/:name', [validateToken, addProfileIdToBody], controller.unlikeRecipie);
 
 export default router;

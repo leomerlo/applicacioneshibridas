@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as planService from '../services/plans.service.js';
-import { Ingredients } from '../types/recipies.js';
+import * as recipiesService from '../services/recipies.service.js';
+import { Ingredients, Recipie } from '../types/recipies.js';
 import { Plan } from '../types/plan.js';
 
 async function generatePlan(req: Request, res: Response) {
@@ -47,7 +48,9 @@ async function getList(req: Request, res: Response) {
       }
 
       Array.from(Object.keys(plan.meals)).forEach((day) => {
+        // @ts-ignore
         Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
+          // @ts-ignore
           plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
             ingredients.push(ingredient);
           });

@@ -6,6 +6,7 @@ const RecipieIngredients = () => {
 
   const onCheckHandler = (checked: boolean, ingredient: string) => {
     if (checked) {
+      // @ts-ignore
       userIngredients.push(ingredient);
       setIngredients(userIngredients);
     } else {

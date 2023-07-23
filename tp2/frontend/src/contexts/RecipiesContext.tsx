@@ -40,8 +40,10 @@ const RecipieContext = createContext({
   recipie: emptyRecipie,
   loading: false,
   userSteps: [],
+  // @ts-ignore
   setSteps: (steps: number[]) => {},
   userIngredients: [],
+  // @ts-ignore
   setIngredients: (ingredients: Ingredients[]) => {},
   recipieError: [],
 })
@@ -81,6 +83,7 @@ function RecipieProvider({children}: PropsWithChildren){
   }
   
   return (
+    // @ts-ignore
     <RecipieContext.Provider value={{ recipie, loading, userSteps, userIngredients, setSteps, setIngredients, recipieError }}>
       {children}
     </RecipieContext.Provider>

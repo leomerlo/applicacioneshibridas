@@ -7,6 +7,7 @@ const RecipieSteps = () => {
 
   const onCheckHandler = (checked: boolean, step: number) => {
     if (checked) {
+      // @ts-ignore
       userSteps.push(step);
       setSteps(userSteps);
     } else {
@@ -17,11 +18,13 @@ const RecipieSteps = () => {
   return (
     <>
       <ul
+        // @ts-ignore
         style={{'--image-url': `url(${DivideLine})`}}
         className="mt-8 bg-[image:var(--image-url)] bg-no-repeat bg-dividerLineSteps"
       >
         { recipie.instructions.map((instruction, index) => {
           return <li key={index}>
+            {/* @ts-ignore */}
             <RecipieStep active={userSteps.includes(index)} step={index} text={instruction} onCheck={onCheckHandler} />
           </li>
         })}

@@ -6,11 +6,12 @@ import Loading from '../components/Loading';
 import planService from '../services/plan.service';
 import Button, { ButtonType } from '../components/Button';
 import Input from '../components/Input';
-import { Profile } from '../contexts/ProfileContext';
+import { Profile, useProfile } from '../contexts/ProfileContext';
 import accountService from '../services/account.service';
 
 const StartPlan = () => {
   const { updatePlan } = usePlan();
+  const { refreshProfile } = useProfile();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState({
     current: 1,
@@ -26,7 +27,6 @@ const StartPlan = () => {
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(e);
     if(step.current < 5) {
       setStep({ ...step, current: step.current + 1 });
     } else {
@@ -41,10 +41,12 @@ const StartPlan = () => {
   }
 
   const newPlan = () => {
+    setLoading(true);
     accountService.updateProfile(tempProfile).then(async (result) => {
       if(result.status !== 201) {
         updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
       } else {
+        refreshProfile();
         planService.newPlan().then((response) => {
           setLoading(false);
           if(response.status === 201) {
@@ -55,7 +57,6 @@ const StartPlan = () => {
         })
       }
     });
-    setLoading(true);
   };
 
   const renderStep = () => {
@@ -105,6 +106,7 @@ const StartPlan = () => {
         <div className="text-left mt-8">
           <h1 className="text-3xl text-gray-90">Te queremos conocer.</h1>
           <div className="mt-4">
+            {/* @ts-ignore */}
             <Input label="¿Cómo querés que te llamemos?" name="name" autoFocus value={tempProfile.name} onInput={(ev) => { setTempProfile({...tempProfile, name: ev.target.value}) }} />
           </div>
         </div>
@@ -131,11 +133,12 @@ const StartPlan = () => {
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */} 
             <Input label="Contanos tus restricciones alimenticias." autoFocus name="restrictions" value={tempProfile.restrictions} onInput={(ev) => { setTempProfile({...tempProfile, restrictions: ev.target.value}) }} />
           </div>
           <div className="mt-4">
             <p className="text-gray-80 mt-8">
-              <span className="block mt-3 text-gray-400">Ej: Dieta vegetariana, sin huevos, alergia a las nueces.</span>
+              <span className="block mt-3 text-gray-400">Ej: Dieta vegetariana, sin huevos, alergia a las nueces, alergia al gluten.</span>
             </p>
           </div>
         </div>
@@ -158,6 +161,7 @@ const StartPlan = () => {
             </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */}
             <Input label="Contanos tus preferencias." name="preferences" autoFocus value={tempProfile.preferences} onInput={(ev) => { setTempProfile({...tempProfile, preferences: ev.target.value}) }} />
           </div>
           <div className="mt-4">
@@ -183,6 +187,7 @@ const StartPlan = () => {
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
+            {/* @ts-ignore */}
             <Input type="number" label="Comensales:" name="diners" autoFocus value={tempProfile.diners} onInput={(ev) => { setTempProfile({...tempProfile, diners: Math.ceil(Number(ev.target.value))}) }} />
           </div>
         </div>

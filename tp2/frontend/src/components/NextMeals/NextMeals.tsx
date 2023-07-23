@@ -1,4 +1,4 @@
-import NextMealItem, { Meal, MealTypes } from "./NextMealItem"
+import NextMealItem, { MealTypes } from "./NextMealItem"
 import DivideLine from "../../assets/dividerLine.png";
 import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
@@ -39,7 +39,9 @@ const NextMeals = () => {
           nextMeals.push({
             day: internalTodayString?.substring(0, 3),
             date: (today.getDate() + date).toString(),
+            // @ts-ignore
             name: plan.meals[internalTodayString][internalNextMeal].name,
+            // @ts-ignore
             meal: MealTypes[internalNextMeal],
           });
         } else {
@@ -63,6 +65,7 @@ const NextMeals = () => {
     <div className="mt-6">
         <h2 className="text-3xl font-bold">Proximas Comidas</h2>
         <ul
+          // @ts-ignore
           style={{'--image-url': `url(${DivideLine})`}}
           className="mt-6 bg-[image:var(--image-url)] bg-no-repeat bg-dividerLineDays"
         >

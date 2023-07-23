@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from 'dotenv'
 import { ObjectId } from "bson";
+import { Ingredients } from "../types/recipies";
 
 dotenv.config()
 
@@ -39,7 +40,7 @@ async function promptHelper(systemPrompt: string, userPrompt: string): Promise<s
   }
 }
 
-async function generatePlan(restrictions: string, preferences: string): Promise<string> {
+async function generatePlan(restrictions: string, preferences: string, recipies: string): Promise<string> {
   const systemPrompt = `
   Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
@@ -55,6 +56,7 @@ async function generatePlan(restrictions: string, preferences: string): Promise<
   - Los pasos deben estar expresados en hasta 10 pasos fáciles de seguir.
   - Los valores nutritivos deben estar expresados junto con su unidad de medida.
   - Las cantidades deben ser representadas en numeros enteros, nunca uses fracciones o decimales.
+  - Usando los ejemplos podés entender que comida le gusta al usuario y proponerle las mismas recetas o cosas similares.
 
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
@@ -85,11 +87,41 @@ async function generatePlan(restrictions: string, preferences: string): Promise<
     Restricciones: ${restrictions}
 
     Preferencias: ${preferences}
+
+    Ejemplos: ${recipies}
+  `;
+
+  return await promptHelper(systemPrompt, userPrompt);
+}
+
+async function generateShoppingList(ingredients: Ingredients[]): Promise<string> {
+  const systemPrompt = `
+    Cuando te pida ayuda, vas a actuar como un jefe de cocina, y tomar los objetos de ingredientes que te pase y organizarlos todos en una lista optimizada por categorias utilizando: produce, meats y others.
+
+    Meats solamente tiene que incluir productos de carne de origen animal. Huevos y proteinas vegetales van en others.
+
+    Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
+
+    Ejemplo:
+
+    produce: [
+      {
+        name: "banana",
+        quantity: 1,
+        unit: "unidad"
+      }
+    ]
+  `;
+  const userPrompt = `
+    Quiero una lista de compras organizada con los siguientes ingredientes:
+
+    ${JSON.stringify(ingredients)}
   `;
 
   return await promptHelper(systemPrompt, userPrompt);
 }
 
 export {
-  generatePlan
+  generatePlan,
+  generateShoppingList
 }

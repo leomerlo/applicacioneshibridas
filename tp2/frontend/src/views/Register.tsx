@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import accountService from '../services/account.service'
 import authService from '../services/auth.service'
@@ -14,12 +14,15 @@ const Register = () => {
 
   const navigate = useNavigate()
   const { updateNotifications } = useNotifications();
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const register = () => {
+    setLoading(true);
     accountService.register({ userName, password }).then((resp) => {
+      setLoading(false);
       setError("");
       if(resp.status === 201) {
         updateNotifications({ variant: 'success', message: 'Usuario creado con éxito' });
@@ -60,7 +63,7 @@ const Register = () => {
               <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
             </div>
             <div className="mt-8">
-              <Button full onClick={register}>Registrate</Button>
+              <Button full loading={loading} onClick={register}>Registrate</Button>
             </div>
             <div className="mt-8 text-center">
               <span className="text-gray-60">¿Ya tienes una cuenta? <Link to={'/login'} className="text-primary-main">Ingresá!</Link></span>
@@ -68,6 +71,7 @@ const Register = () => {
           </div>
         </div>
         <div
+          // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
           className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
