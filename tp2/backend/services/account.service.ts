@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb';
 import { Session, DocSession } from '../types/account.js';
 import * as profileService from './profile.service.js';
 import { DocProfile, Profile } from '../types/profile.js';
@@ -34,15 +35,18 @@ async function createAccount(account: Session | DocSession) {
 
   try {
     const newProfile: Profile | DocProfile = {
-      accountId: createdAccount.insertedId,
+      accountId: new ObjectId(createdAccount.insertedId),
       name: account.userName,
       status: ProfileStatus.inactive
     };
+
+    console.log(newProfile);
   
     if(account.type == ProfileType.doc) {
       const docAccount = account as DocSession;
       const docProfile = newProfile as DocProfile;
   
+      docProfile.accountId = new ObjectId(newProfile.accountId);
       docProfile.status = ProfileStatus.pending;
       docProfile.idDocument = docAccount.idDocument;
       docProfile.idLicense = docAccount.idLicense;
@@ -75,7 +79,11 @@ async function createSession(session: Session) {
     throw new Error('La contraseña es incorrecta.')
   }
 
-  const returnProfile = profileService.getProfileByAccount(accountExist._id);
+  const returnProfile = await profileService.getProfileByAccount(accountExist._id);
+
+  if (!returnProfile) {
+    throw new Error('El perfil que intentas iniciar sesión no existe.')
+  }
 
   return returnProfile
 }

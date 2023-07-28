@@ -9,8 +9,6 @@ const profilesColelction = db.collection('profiles')
 async function createProfile(profile: Profile | DocProfile, type: profileSchema.ProfileType) {
   await client.connect()
 
-  console.log(type);
-
   const schema = type === profileSchema.ProfileType.user ? profileSchema.profile : profileSchema.docProfile;
 
   await schema.validate(profile, { abortEarly: false, stripUnknown: true })
@@ -21,6 +19,8 @@ async function createProfile(profile: Profile | DocProfile, type: profileSchema.
       if (profileExist) {
         throw new Error('El perfil que intentas crear ya existe.')
       }
+
+      console.log(profile);
 
       await profilesColelction.insertOne(profile)
     })

@@ -12,7 +12,7 @@ enum ProfileType {
 }
 
 const profile = yup.object({
-  accountId: yup.string().trim().required(),
+  accountId: yup.mixed<any>().required(),
   name: yup.string().trim(),
   status: yup.mixed<any>().oneOf([ProfileStatus.pending, ProfileStatus.active, ProfileStatus.inactive]).required(),
   restrictions: yup.string().trim(),
@@ -22,7 +22,7 @@ const profile = yup.object({
 });
 
 const docProfile = yup.object({
-  accountId: yup.string().trim().required(),
+  accountId: yup.mixed<any>().required(),
   name: yup.string().trim(),
   status: yup.mixed<any>().oneOf([ProfileStatus.pending, ProfileStatus.active, ProfileStatus.inactive]).required(),
   email: yup.string().trim().required(),
