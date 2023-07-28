@@ -17,13 +17,15 @@ async function updateProfile(req: Request, res: Response) {
 async function getProfile(req: Request, res: Response) {
   const token = req.headers['auth-token'] as string;
   const profile = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
-  profileService.getProfile(profile._id)
-  .then((profile) => {
-    res.status(201).json(profile)
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+  if(profile._id) {
+    profileService.getProfile(profile._id)
+    .then((profile) => {
+      res.status(201).json(profile)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
+  }
 }
 
 export {

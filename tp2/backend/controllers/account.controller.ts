@@ -6,10 +6,10 @@ import { Profile } from '../types/profile.js';
 async function createAccount(req: Request, res: Response) {
   return services.createAccount(req.body)
   .then(() => {
-      res.status(201).json({ message: "Cuenta creada" })
+    res.status(201).json({ message: "Cuenta creada" })
   })
   .catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
+    res.status(400).json({ error: { message: err.message } })
   })
 }
 
