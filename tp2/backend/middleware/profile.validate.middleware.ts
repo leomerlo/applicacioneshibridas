@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as profileSchema from '../schemas/profile.schema.js';
 import * as profileService from '../services/profile.service.js';
@@ -32,7 +33,27 @@ async function validateDoctor(req: Request, res: Response, next: NextFunction) {
   })
 }
 
+async function validatePatient(req: Request, res: Response, next: NextFunction) {
+  const patientId = req.params.patientId;
+  const docId = req.body.profileId;
+  await profileService.getProfile(new ObjectId(patientId))
+  .then((profile) => {
+    if(profile) {
+      if(profile.docId?.equals(docId)) {
+        next()
+        return;
+      }
+    }
+
+    throw new Error('No tenés los permisos correctos para realizar esta acción');
+  })
+  .catch((err) => {
+    res.status(500).json({ error: { message: err.message } })
+  })
+}
+
 export {
   validateProfileData,
-  validateDoctor
+  validateDoctor,
+  validatePatient
 }
