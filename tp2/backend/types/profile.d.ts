@@ -9,6 +9,7 @@ export interface Profile {
   accountId: ObjectId,
   name: string,
   status: ProfileStatus
+  docId?: ObjectId
 }
 
 export interface DocProfile extends Profile {

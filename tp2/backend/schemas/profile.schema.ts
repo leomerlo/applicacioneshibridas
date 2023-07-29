@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import yup from 'yup'
 
 enum ProfileStatus {
@@ -12,13 +13,13 @@ enum ProfileType {
 }
 
 const profile = yup.object({
-  accountId: yup.mixed<any>().required(),
+  accountId: yup.mixed<ObjectId>().required(),
   name: yup.string().trim(),
   status: yup.mixed<any>().oneOf([ProfileStatus.pending, ProfileStatus.active, ProfileStatus.inactive]).required(),
   restrictions: yup.string().trim(),
   preferences: yup.string().trim(),
   diners: yup.number().integer().positive(),
-  docId: yup.string().trim(),
+  docId: yup.mixed<ObjectId>(),
 });
 
 const docProfile = yup.object({

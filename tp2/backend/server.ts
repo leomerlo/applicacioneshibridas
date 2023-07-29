@@ -3,6 +3,7 @@ import accountRouter from './routes/account.routes.js';
 import profileRouter from './routes/profile.routes.js';
 import plansRouter from './routes/plans.routes.js';
 import recipiesRouter from './routes/recipies.routes.js';
+import patientsRouter from './routes/patients.routes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -18,6 +19,7 @@ app.use('/api', accountRouter);
 app.use('/api', profileRouter);
 app.use('/api', plansRouter);
 app.use('/api', recipiesRouter);
+app.use('/api', patientsRouter);
 
 app.listen(2023, function () {
   console.log('FoodGenie API -> http://localhost:2023')
