@@ -11,8 +11,6 @@ const accountsCollection = db.collection('accounts')
 async function createAccount(account: Session | DocSession) {
   await client.connect()
 
-  console.log(account);
-
   if(!account.type) {
     throw new Error('Falta el tipo de cuenta.')
   }
@@ -40,7 +38,9 @@ async function createAccount(account: Session | DocSession) {
       status: ProfileStatus.inactive
     };
 
-    console.log(newProfile);
+    if(account.docId) {
+      newProfile.docId = account.docId;
+    }
   
     if(account.type == ProfileType.doc) {
       const docAccount = account as DocSession;

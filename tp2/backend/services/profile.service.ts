@@ -20,7 +20,7 @@ async function createProfile(profile: Profile | DocProfile, type: profileSchema.
         throw new Error('El perfil que intentas crear ya existe.')
       }
 
-      console.log(profile);
+      console.log('Profile', profile);
 
       await profilesColelction.insertOne(profile)
     })

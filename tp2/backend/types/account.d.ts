@@ -6,6 +6,7 @@ export interface Session {
   userName: string,
   password: string,
   type?: ProfileType
+  docId?: ObjectId
 }
 
 export interface DocSession extends Session {
