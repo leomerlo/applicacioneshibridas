@@ -113,11 +113,25 @@ async function assignPlan(req: Request, res: Response) {
   })
 }
 
+async function deletePlan(req: Request, res: Response) {
+  const docId = req.body.profileId;
+  const planId = req.params.planId;
+
+  planService.deletePlan(docId, planId)
+  .then(() => {
+    res.status(201).json({ message: "Plan eliminado" })
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   generatePlan,
   generateDocPlan,
   getPlans,
   getPlan,
   getList,
-  assignPlan
+  assignPlan,
+  deletePlan
 }

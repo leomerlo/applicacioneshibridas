@@ -134,6 +134,18 @@ async function assignPlan(patientId: string, planId: string): Promise<void> {
   }
 }
 
+async function deletePlan(docId: string, planId: string): Promise<void> {
+  await client.connect()
+
+  const assigned = await db.collection("plans").find({ planId: new ObjectId(planId) }).toArray();
+
+  if (assigned.length > 0) {
+    throw new Error('El plan esta asignado a al menos un paciente.');
+  } else {
+    await db.collection("plans").deleteOne({ docId: new ObjectId(docId), _id: new ObjectId(planId) });
+  }
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -141,5 +153,6 @@ export {
   getList,
   generateShoppingList,
   getPlans,
-  assignPlan
+  assignPlan,
+  deletePlan
 }
