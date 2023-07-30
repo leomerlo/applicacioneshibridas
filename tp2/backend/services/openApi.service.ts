@@ -121,7 +121,57 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
   return await promptHelper(systemPrompt, userPrompt);
 }
 
+async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string): Promise<string> {
+  const systemPrompt = `
+  Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
+  Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
+  Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
+  La comida va a ser para un ${day}, ${meal}.
+
+  Segui las siguientes reglas al crear la receta:
+  - Los ingredientes deben estar expresados en singular y nunca en plural.
+  - Las cantidades de los ingredientes deben estar siempre expresadas en gr y ml. Nunca en tazas, cucharadas o cualquier otra unidad que no sea metrica.
+  - Los ingredientes enteros deben estar expresados en unidades. Nunca en dientes, piezas o cualquier otra unidad.
+  - Los ingredientes y valores nutricionales deben estar expresados para 1 comensales.
+  - Los pasos deben estar expresados en hasta 10 pasos fáciles de seguir.
+  - Los valores nutritivos deben estar expresados junto con su unidad de medida.
+  - Las cantidades deben ser representadas en numeros enteros, nunca uses fracciones o decimales.
+  - Usando los ejemplos podés entender que comida le gusta al usuario y proponerle las mismas recetas o cosas similares.
+
+  Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
+
+  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  {
+    name: yup.string().required(),
+    ingredients: yup.array().of(yup.object({
+      name: yup.string().lowercase().required(),
+      quantity: yup.mixed().required(),
+      unit: yup.string()
+    })).required(),
+    instructions: yup.array().of(yup.string().required()).required(),
+    nutrition: yup.object({
+      calorias: yup.number(),
+      carbohidratos: yup.number(),
+      grasas: yup.number(),
+      proteinas: yup.number()
+    }).required()
+  }
+  `
+
+  const userPrompt = `
+    Quiero una receta que cumpla con las siguientes restricciones y preferencias:
+    Restricciones: ${restrictions}
+
+    Preferencias: ${preferences}
+
+    Ejemplos: ${recipies}
+  `;
+
+  return await promptHelper(systemPrompt, userPrompt);
+}
+
 export {
   generatePlan,
-  generateShoppingList
+  generateShoppingList,
+  generateRecipie
 }

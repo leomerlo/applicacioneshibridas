@@ -7,10 +7,10 @@ import * as profileService from './profile.service.js';
 import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
-import { Recipie } from '../types/recipies.js';
 
 async function generatePlan(profileId: ObjectId): Promise<void> {
   await client.connect()
+
   const profile = await profileService.getProfile(profileId) as Profile;
   if(!profile) {
     throw new Error('El perfil no existe');
@@ -43,6 +43,34 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     .catch((err) => {
       console.log('Validation error', err);
     })
+}
+
+async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
+  await client.connect()
+
+  const rawOutput = await openApi.generatePlan(restrictions, preferences, '');
+
+  const meals = JSON.parse(rawOutput as string);
+
+  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+    .then(async (meals) => {
+      const plan = {
+        meals,
+        title: title,
+        docId: new ObjectId(docId)
+      }
+    
+      await db.collection("plans").insertOne(plan);
+    })
+    .catch((err) => {
+      console.log('Validation error', err);
+    })
+}
+
+async function getPlans(docId: string): Promise<Plan[]> {
+  await client.connect()
+  const plans = await db.collection("plans").find({ docId: new ObjectId(docId) }, { projection: { _id: 0, profileId: 0 } }).toArray();
+  return plans as Plan[];
 }
 
 async function getPlan(profileId: string): Promise<Plan> {
@@ -82,9 +110,62 @@ async function generateShoppingList(profileId: string, ingredients: Ingredients[
   await db.collection("plans").updateOne({ profileId: new ObjectId(profileId) }, { $set: { shoppingList: JSON.parse(organizedList) } });
 }
 
+async function assignPlan(patientId: string, planId: string): Promise<void> {
+  await client.connect()
+
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(planId) }, { projection: { _id: 0, docId: 0, title: 0 } });
+
+  if (!plan) {
+    throw new Error('El plan no existe');
+  }
+
+  const assignedPlan = {
+    ...plan,
+    planId: new ObjectId(planId),
+    profileId: new ObjectId(patientId)
+  }
+
+  const profilePlan = await db.collection("plans").findOne({ profileId: new ObjectId(patientId) }, { projection: { _id: 0, docId: 0 } });
+
+  if(profilePlan) {
+    await db.collection("plans").findOneAndReplace({ profileId: new ObjectId(patientId) }, assignedPlan);
+  } else {
+    await db.collection("plans").insertOne(assignedPlan);
+  }
+}
+
+async function deletePlan(docId: string, planId: string): Promise<void> {
+  await client.connect()
+
+  const assigned = await db.collection("plans").find({ planId: new ObjectId(planId) }).toArray();
+
+  if (assigned.length > 0) {
+    throw new Error('El plan esta asignado a al menos un paciente.');
+  } else {
+    await db.collection("plans").deleteOne({ docId: new ObjectId(docId), _id: new ObjectId(planId) });
+  }
+}
+
+async function editPlan(docId: string, planId: string, plan: Plan): Promise<void> {
+  await client.connect();
+
+  const exists = db.collection("plans").findOne({ docId: new ObjectId(docId), _id: new ObjectId(planId) });
+
+  if (!exists) {
+    throw new Error('El plan no existe');
+  }
+
+  await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
+}
+
 export {
   generatePlan,
+  generateDocPlan,
   getPlan,
   getList,
-  generateShoppingList
+  generateShoppingList,
+  getPlans,
+  assignPlan,
+  deletePlan,
+  editPlan
 }
