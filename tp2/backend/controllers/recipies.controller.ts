@@ -35,9 +35,6 @@ async function unlikeRecipie(req: Request, res: Response) {
   const recipie = req.params.name;
   const profileId = req.body.profileId;
 
-  console.log('recipie', recipie);
-  console.log('profileId', profileId);
-
   recipiesService.unlikeRecipie(recipie, profileId)
   .then(() => {
     res.status(200).json({ message: "Receta removida de favoritos" })
@@ -59,9 +56,30 @@ async function getLikedRecipies(req: Request, res: Response) {
   })
 }
 
+async function newRecipie(req: Request, res: Response) {
+  const preferences = req.body.preferences;
+  const restrictions = req.body.restrictions;
+  const day = req.body.day;
+  const meal = req.body.meal;
+
+  if(!preferences || !restrictions || !day || !meal) {
+    res.status(400).json({ error: { message: 'Faltan datos' } })
+    return;
+  }
+
+  recipiesService.newRecipie(preferences, restrictions, day, meal)
+  .then((recipie) => {
+    res.status(200).json(recipie);
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   getRecipie,
   likeRecipie,
   unlikeRecipie,
-  getLikedRecipies
+  getLikedRecipies,
+  newRecipie
 }

@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb'
 import type { Recipie } from '../types/recipies.d.ts';
 import { Plan } from '../types/plan.js';
 import { db, client } from './mongo.service.js';
+import * as openAIService from './openApi.service.js';
 
 const planCollection = db.collection('plans')
 const likedCollection = db.collection('likes')
@@ -65,9 +66,17 @@ async function getLikedRecipies(profileId: ObjectId): Promise<Recipie[]> {
   return likedRecipies as Recipie[];
 }
 
+async function newRecipie(preferences: string, requirements: string, day: string, meal: string): Promise<Recipie> {
+  await client.connect()
+  const rawOutput = await openAIService.generateRecipie(preferences, requirements, '', day, meal);
+  const recipie = JSON.parse(rawOutput as string);
+  return recipie;
+}
+
 export {
   getRecipie,
   likeRecipie,
   unlikeRecipie,
-  getLikedRecipies
+  getLikedRecipies,
+  newRecipie
 }

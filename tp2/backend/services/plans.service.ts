@@ -146,6 +146,18 @@ async function deletePlan(docId: string, planId: string): Promise<void> {
   }
 }
 
+async function editPlan(docId: string, planId: string, plan: Plan): Promise<void> {
+  await client.connect();
+
+  const exists = db.collection("plans").findOne({ docId: new ObjectId(docId), _id: new ObjectId(planId) });
+
+  if (!exists) {
+    throw new Error('El plan no existe');
+  }
+
+  await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -154,5 +166,6 @@ export {
   generateShoppingList,
   getPlans,
   assignPlan,
-  deletePlan
+  deletePlan,
+  editPlan
 }
