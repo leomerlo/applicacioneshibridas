@@ -6,6 +6,7 @@ const router = Router();
 
 router.get('/recipie/likes', [validateToken, addProfileIdToBody], controller.getLikedRecipies);
 router.get('/recipie/:recipie', [validateToken, addProfileIdToBody], controller.getRecipie);
+router.get('/recipie/', [validateToken, addProfileIdToBody], controller.newRecipie);
 router.post('/recipie/like/:name', [validateToken, addProfileIdToBody], controller.likeRecipie);
 router.delete('/recipie/unlike/:name', [validateToken, addProfileIdToBody], controller.unlikeRecipie);
 
