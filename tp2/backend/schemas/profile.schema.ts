@@ -26,9 +26,9 @@ const docProfile = yup.object({
   accountId: yup.mixed<any>().required(),
   name: yup.string().trim(),
   status: yup.mixed<any>().oneOf([ProfileStatus.pending, ProfileStatus.active, ProfileStatus.inactive]).required(),
-  email: yup.string().trim().required(),
   idDocument: yup.string().trim().required(),
   idLicense: yup.string().trim().required(),
+  accountType: yup.mixed<any>().oneOf([ProfileType.doc]).required(),
 });
 
 export {

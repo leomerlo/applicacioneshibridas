@@ -3,7 +3,7 @@ import * as recipiesService from '../services/recipies.service.js';
 
 async function getRecipie(req: Request, res: Response) {
   const recipie = req.params.recipie;
-  const profileId = req.body.profileId;
+  const profileId = req.params.profileId || req.body.profileId;
 
   recipiesService.getRecipie(recipie, profileId)
   .then(async (response) => {

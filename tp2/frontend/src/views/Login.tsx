@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import authService from '../services/auth.service'
 import { useNavigate } from 'react-router'
 import Button, { ButtonType } from '../components/Button'
@@ -8,12 +8,34 @@ import LoginImage from '../assets/loginImage.png'
 import backGradient from '../assets/backGradient.svg'
 import { Link } from 'react-router-dom'
 import { useNotifications } from '../contexts/NotificationsContext'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-regular-svg-icons' 
+import { faCarrot } from '@fortawesome/free-solid-svg-icons'
 
 const Login = () => {
+  const userTexts = {
+    title: "Bienvenid@ a Food Genie!",
+    splashTitle: "Despierta al chef que llevas dentro.",
+    splashSubtitle: "Con Food Genie, tu asistente culinario personal.",
+    changeButtonText: "Soy Nutricionista",
+    chanceButtonIcon: faCarrot,
+    registerLink: '/register/user'
+  }
+
+  const nutriTexts = {
+    title: "Ingresa como nutricionista",
+    splashTitle: "Bienvenido a Food Genie",
+    splashSubtitle: "Tu plataforma personalizada de asistencia nutricional. ¡Prepárate para transformar la salud a través de la ciencia de la alimentación!",
+    changeButtonText: "Soy Usuario / Paciente",
+    chanceButtonIcon: faUser,
+    registerLink: '/register/nutri'
+  }
 
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState("user");
+  const [uiTexts, setUiTexts] = useState(userTexts);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { updateNotifications } = useNotifications();
@@ -34,6 +56,10 @@ const Login = () => {
     })
   }
 
+  useEffect(() => {
+    setUiTexts(userType === "user" ? userTexts : nutriTexts);
+  }, [userType]);
+
   const userNameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value)
   }
@@ -42,29 +68,40 @@ const Login = () => {
     setPassword(event.target.value)
   }
 
+  const userTypeHandler = (): void => {
+    setUserType(userType === "user" ? "nutri" : "user");
+  }
+
   return (
     <>
       <div className="h-screen flex flex-col lg:flex-row">
-        <div className="basis-1/2 flex justify-center items-center py-16 px-6">
-          <div className="block h-fit max-w-authForm">
-            <form onSubmit={(e) => { e.preventDefault(); login(); }}>
-              <div className="text-center">
-                <h1 className="text-4xl text-gray-80">Bienvenid@ a Food Genie!</h1>
-                <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
+        <div className="basis-1/2 flex flex-col py-16 px-6">
+          <div className="flex justify-center items-center flex-grow">
+            <div className="block h-fit max-w-authForm">
+              <form onSubmit={(e) => { e.preventDefault(); login(); }}>
+                <div className="text-center">
+                  <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
+                  <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
+                </div>
+                <div className="mt-8">
+                  <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
+                </div>
+                <div className="mt-8">
+                  <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
+                </div>
+                <div className="mt-8">
+                  <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
+                </div>
+              </form>
+              <div className="mt-8 text-center">
+                <span className="text-gray-60">¿No tienes una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">Regístrate!</Link></span>
               </div>
-              <div className="mt-8">
-                <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
-              </div>
-              <div className="mt-8">
-                <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
-              </div>
-              <div className="mt-8">
-                <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
-              </div>
-            </form>
-            <div className="mt-8 text-center">
-              <span className="text-gray-60">¿No tienes una cuenta? <Link to={'/register'} className="text-primary-main">Regístrate!</Link></span>
             </div>
+          </div>
+          <div className="mt-4 text-center">
+            <button onClick={userTypeHandler} className="text-primary-main">
+              <FontAwesomeIcon className="me-4" icon={uiTexts.chanceButtonIcon} /> {uiTexts.changeButtonText}
+            </button>
           </div>
         </div>
         <div
@@ -77,8 +114,8 @@ const Login = () => {
             <img src={LoginImage} aria-hidden="true" className="mt-20 mx-auto" />
             <div>
               <p className="text-3xl text-white mt-20">
-                <strong className="block">Despierta al chef que llevas dentro.</strong>
-                Con Food Genie, tu asistente culinario personal.
+                <strong className="block">{uiTexts.splashTitle}</strong>
+                {uiTexts.splashSubtitle}
               </p>
             </div>
           </div>

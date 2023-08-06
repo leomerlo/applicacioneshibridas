@@ -69,13 +69,19 @@ async function generateDocPlan(docId: ObjectId, preferences: string, restriction
 
 async function getPlans(docId: string): Promise<Plan[]> {
   await client.connect()
-  const plans = await db.collection("plans").find({ docId: new ObjectId(docId) }, { projection: { _id: 0, profileId: 0 } }).toArray();
+  const plans = await db.collection("plans").find({ docId: new ObjectId(docId) }, { projection: { profileId: 0 } }).toArray();
   return plans as Plan[];
 }
 
 async function getPlan(profileId: string): Promise<Plan> {
   await client.connect()
   const plan = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) }, { projection: { _id: 0, profileId: 0 } });
+  return plan as Plan;
+}
+
+async function getPlanById(id: string): Promise<Plan> {
+  await client.connect()
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
   return plan as Plan;
 }
 
@@ -113,7 +119,7 @@ async function generateShoppingList(profileId: string, ingredients: Ingredients[
 async function assignPlan(patientId: string, planId: string): Promise<void> {
   await client.connect()
 
-  const plan = await db.collection("plans").findOne({ _id: new ObjectId(planId) }, { projection: { _id: 0, docId: 0, title: 0 } });
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(planId) }, { projection: { _id: 0, docId: 0 } });
 
   if (!plan) {
     throw new Error('El plan no existe');
@@ -162,6 +168,7 @@ export {
   generatePlan,
   generateDocPlan,
   getPlan,
+  getPlanById,
   getList,
   generateShoppingList,
   getPlans,

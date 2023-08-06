@@ -5,7 +5,7 @@ import { ProfileType } from "./profile"
 export interface Session {
   userName: string,
   password: string,
-  type?: ProfileType
+  type?: ProfileType,
   docId?: ObjectId
 }
 
@@ -18,6 +18,7 @@ export interface DocSession extends Session {
 export interface Account {
   _id: ObjectId,
   userName: string,
+  password?: string,
 }
 
 export interface RequestWithAccount extends Request {

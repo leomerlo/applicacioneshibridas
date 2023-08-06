@@ -13,6 +13,17 @@ async function createAccount(req: Request, res: Response) {
   })
 }
 
+async function updateAccount(req: Request, res: Response) {
+  const token = req.headers['auth-token'] as string;
+  return services.updateAccount(token, req.body)
+  .then(() => {
+    res.status(201).json({ message: "Cuenta actualizada" })
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 async function createSession(req: Request, res: Response) {
   return services.createSession(req.body)
   .then(async (profile) => {
@@ -68,6 +79,7 @@ async function resetPassword(req: Request, res: Response) {
 export {
   createAccount,
   createSession,
+  updateAccount,
   deleteSession,
   forgotPassword,
   resetPassword

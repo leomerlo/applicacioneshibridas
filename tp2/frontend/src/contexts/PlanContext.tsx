@@ -17,6 +17,7 @@ export interface ShoppingListIngredient {
 
 export interface Plan {
   _id?: string;
+  title?: string;
   meals: {
     monday: Meals,
     tuesday: Meals,
@@ -113,9 +114,14 @@ function PlanProvider({children}: PropsWithChildren){
 
   const updatePlan = async () => {
     planService.getPlan().then((plan) => {
-      updateNotifications({ variant: 'success', message: 'Plan creado con éxito' });
-      setPlan({...plan.data});
-    })
+      if (plan.status === 200) {
+        updateNotifications({ variant: 'success', message: 'Plan creado con éxito' });
+        setPlan({...plan.data});
+      }
+    }).catch((error) => {
+      updateNotifications({ variant: 'error', message: 'Error al crear el plan' });
+      throw new Error(error);
+    });
   };
   
   return (

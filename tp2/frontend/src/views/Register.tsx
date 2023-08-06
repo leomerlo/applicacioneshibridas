@@ -9,6 +9,7 @@ import Logo from '../assets/logoAlt.svg'
 import LoginImage from '../assets/loginImage.png'
 import backGradient from '../assets/backGradient.svg'
 import { useNotifications } from '../contexts/NotificationsContext'
+import { useParams } from 'react-router-dom'
 
 const Register = () => {
 
@@ -17,11 +18,36 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [idDocument, setIdDocument] = useState("");
+  const [idLicense, setIdLicense] = useState("");
   const [error, setError] = useState("");
+  const { type } = useParams();
+
+  const getUserData = () => {
+    let userData: any = {};
+    if(type === 'nutri') {
+      userData = {
+        userName,
+        password,
+        type: 'doc',
+        idDocument,
+        idLicense,
+        email: userName
+      }
+    } else {
+      userData = {
+        userName,
+        password,
+        type: 'user',
+      }
+    }
+
+    return userData;
+  };
 
   const register = () => {
     setLoading(true);
-    accountService.register({ userName, password }).then((resp) => {
+    accountService.register(getUserData()).then((resp) => {
       setLoading(false);
       setError("");
       if(resp.status === 201) {
@@ -47,6 +73,14 @@ const Register = () => {
     setPassword(event.target.value)
   }
 
+  const idDocumentHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIdDocument(event.target.value)
+  }
+
+  const idLicenseHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIdLicense(event.target.value)
+  }
+
   return (
     <>
       <div className="min-h-screen flex flex-col lg:flex-row">
@@ -60,8 +94,16 @@ const Register = () => {
               <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
             </div>
             <div className="mt-8">
-              <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
+              <Input name="password" label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
             </div>
+            { type === 'nutri' ? <>
+              <div className="mt-8">
+                <Input name="idDocument" label="Documento" value={idDocument} onInput={idDocumentHandler} placeholder="Dni, sin puntos ni espacios" type="text" />
+              </div>
+              <div className="mt-8">
+                <Input name="idLicense" error={error} label="Licencia" value={idLicense} onInput={idLicenseHandler} placeholder="Licencia, sin puntos ni espacios" type="text" />
+              </div>
+            </> : null }
             <div className="mt-8">
               <Button full loading={loading} onClick={register}>Registrate</Button>
             </div>

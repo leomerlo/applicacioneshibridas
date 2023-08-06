@@ -1,17 +1,17 @@
-import NextMealItem, { MealTypes } from "./NextMealItem"
+import { useEffect, useState } from 'react';
+import { Plan, usePlan } from '../../contexts/PlanContext';
+import { MealTypes } from './NextMealItem';
+import { nextMeal } from './NextMeals';
+import NextMealItem from './NextMealItem';
 import DivideLine from "../../assets/dividerLine.png";
-import { usePlan } from "../../contexts/PlanContext";
-import { useEffect, useState } from "react";
+import { Patient } from '../../services/patients.service';
 
-export type nextMeal = {
-  day: string,
-  date: string,
-  name: string,
-  meal: MealTypes
+export type PatientNextMealProps = {
+  plan: Plan,
 }
 
-const NextMeals = () => {
-  const { plan, today, todayString, nextMeal } = usePlan();
+const PatientNextMeal = (props: PatientNextMealProps) => {
+  const { today, todayString, nextMeal } = usePlan();
   const [nextMeals, setNextMeals] = useState<nextMeal[]>([]);
 
   const generateNextMeals = (): nextMeal[] => {
@@ -40,7 +40,7 @@ const NextMeals = () => {
             day: internalTodayString?.substring(0, 3),
             date: (today.getDate() + date).toString(),
             // @ts-ignore
-            name: plan.meals[internalTodayString][internalNextMeal].name,
+            name: props.plan.meals[internalTodayString][internalNextMeal].name,
             // @ts-ignore
             meal: MealTypes[internalNextMeal],
           });
@@ -56,10 +56,8 @@ const NextMeals = () => {
   }
 
   useEffect(() => {
-    if(plan){
-      setNextMeals(generateNextMeals());
-    }
-  }, [plan]);
+    setNextMeals(generateNextMeals());
+  }, []);
 
   return (
     <div className="mt-6">
@@ -79,4 +77,4 @@ const NextMeals = () => {
   )
 }
 
-export default NextMeals
+export default PatientNextMeal

@@ -5,7 +5,14 @@ import * as profileService from '../services/profile.service.js';
 import { DocProfile } from '../types/profile.js';
 
 async function validateProfileData(req: Request, res: Response, next: NextFunction) {
-  return profileSchema.profile.validate(req.body, { abortEarly: false, stripUnknown: true })
+  let userTypeSchema;
+  if(req.body.accountType === 'doc') {
+    userTypeSchema = profileSchema.docProfile;
+  } else {
+    userTypeSchema = profileSchema.profile;
+  }
+
+  return userTypeSchema.validate(req.body, { abortEarly: false, stripUnknown: true })
   .then((account) => {
     req.body = account
     next()

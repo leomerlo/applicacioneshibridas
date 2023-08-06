@@ -53,7 +53,7 @@ function useRecipie(){
 }
 
 function RecipieProvider({children}: PropsWithChildren){
-  const { name } = useParams();
+  const { name, profileId } = useParams();
   const [recipieError, setRecipieError] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recipie, setRecipie] = useState<Recipie>(emptyRecipie);
@@ -62,9 +62,11 @@ function RecipieProvider({children}: PropsWithChildren){
 
   useEffect(() => {
     setLoading(true);
-    console.log('fetch recipie');
-    recipiesService.getRecipie(name as string).then((res) => {
-      console.log('set loading to false');
+    const getRecipieData = {
+      name: name as string,
+      profileId: profileId || null
+    }
+    recipiesService.getRecipie(getRecipieData).then((res) => {
       setLoading(false);
       if(res.status === 200) {
         setRecipie(res.data)

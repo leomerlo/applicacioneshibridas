@@ -12,6 +12,14 @@ import RoutePrivate from './components/RoutePrivate.tsx';
 import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
 import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
+import AddPatient from './views/AddPatient.tsx';
+import AddPlan from './views/AddPlan.tsx';
+import RoutePrivateDoctor from './components/RoutePrivateDoctor.tsx';
+import NoPermissions from './views/NoPermissions.tsx';
+import Patient from './views/Patient.tsx';
+import AssignPlan from './views/AssignPlan.tsx';
+import Plans from './views/Plans.tsx';
+import PlanView from './views/Plan.tsx';
 
 const router = createBrowserRouter([
   {
@@ -35,11 +43,47 @@ const router = createBrowserRouter([
         path: '/shoppingList',
         element: <ShoppingListPage />
       },
+      {
+        path: '/plans',
+        element: <Plans />
+      },
+      {
+        path: '/plan/:planId',
+        element: <PlanView />
+      },
+      {
+        path: '/addPatient',
+        element: <RoutePrivateDoctor><AddPatient /></RoutePrivateDoctor>
+      },
+      {
+        path: '/addPlan',
+        element: <RoutePrivateDoctor><AddPlan /></RoutePrivateDoctor>
+      },
+      {
+        path: '/patient/:id',
+        element: <RoutePrivateDoctor><Patient /></RoutePrivateDoctor>
+      },
+      {
+        path: '/patient/:id/assignPlan',
+        element: <RoutePrivateDoctor><AssignPlan /></RoutePrivateDoctor>
+      },
+      {
+        path: '/notAllowed',
+        element: <NoPermissions />
+      },
+      {
+        path: '/recipie/:profileId/:name',
+        element: <RecipieProvider><RecipiePage /></RecipieProvider>
+      },
     ]
   },
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+    path: '/register/:type',
+    element: <RegisterPage />
   },
   {
     path: '/register',

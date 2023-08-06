@@ -3,6 +3,7 @@ import { Profile, DocProfile } from '../types/profile.js';
 import jwt from 'jsonwebtoken';
 import * as profileSchema from '../schemas/profile.schema.js';
 import { db, client } from './mongo.service.js';
+import { ProfileType } from '../schemas/profile.schema.js';
 
 const profilesColelction = db.collection('profiles')
 
@@ -20,8 +21,6 @@ async function createProfile(profile: Profile | DocProfile, type: profileSchema.
         throw new Error('El perfil que intentas crear ya existe.')
       }
 
-      console.log('Profile', profile);
-
       await profilesColelction.insertOne(profile)
     })
     .catch((err) => {
@@ -30,20 +29,28 @@ async function createProfile(profile: Profile | DocProfile, type: profileSchema.
     })
 }
 
-async function getProfile(profileId: ObjectId): Promise<Profile | null> {
+async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | null> {
   await client.connect()
-  return profilesColelction.findOne<Profile>({ _id: new ObjectId(profileId) })
+  const profile = await profilesColelction.findOne<Profile | DocProfile>({ _id: new ObjectId(profileId) })
+
+  if(!profile) {
+    throw new Error('El perfil que intentas obtener no existe.')
+  }
+
+  profile.accountType = profile.idDocument && profile.idLicense ? ProfileType.doc : ProfileType.user;
+
+  return profile;
 }
 
 async function getProfileByAccount(accountId: ObjectId) {
   await client.connect()
-  return profilesColelction.findOne<Profile>({ accountId: new ObjectId(accountId) })
+  return profilesColelction.findOne<Profile | DocProfile>({ accountId: new ObjectId(accountId) })
 }
 
-async function updateProfile(token: string, profile: Profile) {
+async function updateProfile(token: string, profile: Profile | DocProfile) {
   await client.connect()
 
-  const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
+  const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
 
   const update = {
     ...profile,

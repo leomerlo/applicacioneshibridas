@@ -25,16 +25,16 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
     switch(props.variant) {
       case 'primary':
       default:
-        return 'bg-primary-main focus:bg-primary-focus hover:bg-primary-hover active:bg-primary-pressed text-white';
+        return 'bg-primary-main focus:bg-primary-focus hover:bg-primary-hover active:bg-primary-pressed text-white shadow-md';
       case 'secondary':
-        return 'bg-white focus:bg-secondary-focus hover:bg-secondary-hover active:bg-secondary-pressed text-primary-main';
+        return 'bg-primary-secondary focus:bg-secondary-focus hover:bg-secondary-hover active:bg-secondary-pressed text-primary-main';
       case 'tertiary':
-        return 'bg-tertiary-main focus:bg-tertiary-focus hover:bg-tertiary-hover active:bg-tertiary-pressed text-white';
+        return 'bg-tertiary-main focus:bg-tertiary-focus hover:bg-tertiary-hover active:bg-tertiary-pressed text-white shadow-md';
     }
   }
 
   return (
-    <button type={props.type} className={ `${props.className} py-2.5 px-4 text-base rounded shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${props.full ? 'w-full' : '' } ${variantClasses()} flex items-center` } onClick={props.onClick}>
+    <button type={props.type} disabled={props.loading} className={ `${props.className} py-4 px-4 text-base rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${props.full ? 'w-full' : '' } ${variantClasses()} flex items-center` } onClick={props.onClick}>
       { props.loading ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> : '' }
       <div className="flex-1"> { props.children } </div>
     </button>

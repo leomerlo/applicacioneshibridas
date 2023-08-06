@@ -2,6 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealIcon, { IconSizes } from "../MealIcon";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useProfile } from "../../contexts/ProfileContext";
+import { useEffect, useState } from "react";
 
 export enum MealTypes {
   breakfast = 'Desayuno',
@@ -21,6 +23,8 @@ export type Props = {
 }
 
 const NextMealItem = (props: Props) => {
+  const { patient, profile } = useProfile();
+  const [recipieLink, setRecipieLink] = useState(`/recipie/${props.meal.name}`);
 
   const dayString = (day: string) => {
     switch (day) {
@@ -50,8 +54,14 @@ const NextMealItem = (props: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (profile.accountType === 'doc' && patient) {
+      setRecipieLink(`/recipie/${patient._id}/${props.meal.name}`)
+    }
+  }, [patient]);
+
   return (
-    <Link to={`/recipie/${props.meal.name}`}>
+    <Link to={recipieLink}>
       <div className="flex gap-6">
         <div className="flex grow-0 flex-col items-center justify-center text-gray-70">
           <div className="bg-gray-10 text-center py-2 w-12">
