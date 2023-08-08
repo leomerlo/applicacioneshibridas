@@ -32,13 +32,13 @@ const PlanView = () => {
 
   const deletePlanHandler = () => {
     planService.deletePlan(planId as string).then((resp) => {
-      if(resp.status === 204) {
+      if(resp.status === 202) {
         notifications.updateNotifications({
           variant: 'success',
           message: 'Plan eliminado con éxito'
         });
         refreshPlans();
-        navigate('/plans');
+        navigate(-1);
       } else {
         notifications.updateNotifications({
           variant: 'error',

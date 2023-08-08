@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import authService from '../services/auth.service'
 import { useNavigate } from 'react-router'
 import Button, { ButtonType } from '../components/Button'
 import Input from '../components/Input'
@@ -7,13 +6,13 @@ import Logo from '../assets/logoAlt.svg'
 import LoginImage from '../assets/loginImage.png'
 import backGradient from '../assets/backGradient.svg'
 import { Link } from 'react-router-dom'
-import { useNotifications } from '../contexts/NotificationsContext'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-regular-svg-icons' 
 import { faCarrot } from '@fortawesome/free-solid-svg-icons'
+import accountService from '../services/account.service'
+import { useNotifications } from '../contexts/NotificationsContext'
 import NotificationsBlock from '../components/NotificationsBlock'
 
-const Login = () => {
+const ForgotPassword = () => {
   const userTexts = {
     title: "Bienvenid@ a Food Genie!",
     splashTitle: "Despierta al chef que llevas dentro.",
@@ -34,24 +33,31 @@ const Login = () => {
 
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("user");
   const [uiTexts, setUiTexts] = useState(userTexts);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { updateNotifications } = useNotifications();
+  const notification = useNotifications();
 
-  const login = () => {
+  const resetPassword = () => {
     setLoading(true);
-    authService.login({ userName, password }).then((data) => {
+    console.log('reset')
+    accountService.forgotPassword(userName).then((resp) => {
+      console.log('reset2')
       setLoading(false);
       setError("");
-      if(data.status === 200) {
-        const response = data.data.token
-        localStorage.setItem('token', response.token);
-        navigate('/', {replace: true}) 
+      if(resp.status === 201) {
+        console.log('reset3')
+        navigate('/login');
+        notification.updateNotifications({
+          variant: "success",
+          message: "Se ha enviado un correo con tu nueva contraseña."
+        })
       } else {
-        setError("Usuario o contraseña incorrectos");
+        notification.updateNotifications({
+          variant: "success",
+          message: resp.data.error.message
+        })
       }
     })
   }
@@ -64,14 +70,6 @@ const Login = () => {
     setUserName(event.target.value)
   }
 
-  const passwordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value)
-  }
-
-  const userTypeHandler = (): void => {
-    setUserType(userType === "user" ? "nutri" : "user");
-  }
-
   return (
     <>
       <div className="h-screen flex flex-col lg:flex-row">
@@ -79,33 +77,22 @@ const Login = () => {
         <div className="basis-1/2 flex flex-col py-16 px-6">
           <div className="flex justify-center items-center flex-grow">
             <div className="block h-fit max-w-authForm">
-              <form onSubmit={(e) => { e.preventDefault(); login(); }}>
+              <form onSubmit={(e) => { e.preventDefault(); resetPassword(); }}>
                 <div className="text-center">
-                  <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
-                  <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
+                  <h1 className="text-4xl text-gray-80">Recuperá tu contraseña</h1>
+                  <p className="text-base text-gray-70 mt-3">Ingresa tu email para generar una nueva contraseña.</p>
                 </div>
                 <div className="mt-8">
-                  <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
+                  <Input name="userName" type="email" label="Email" error={error} value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
                 </div>
                 <div className="mt-8">
-                  <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
-                </div>
-                <div className="mt-8">
-                  <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
+                  <Button type={ButtonType.submit} full loading={loading}>Generar nueva contraseña</Button>
                 </div>
               </form>
               <div className="mt-8 text-center">
-                <Link to="/forgotPassword" className="text-primary-main">Olvidé mi contraseña</Link>
-              </div>
-              <div className="mt-8 text-center">
-                <span className="text-gray-60">¿No tienes una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">Regístrate!</Link></span>
+                <span className="text-gray-60">¿Ya tenés una cuenta? <Link to="/login" className="text-primary-main">Ingresá!</Link></span>
               </div>
             </div>
-          </div>
-          <div className="mt-4 text-center">
-            <button onClick={userTypeHandler} className="text-primary-main">
-              <FontAwesomeIcon className="me-4" icon={uiTexts.chanceButtonIcon} /> {uiTexts.changeButtonText}
-            </button>
           </div>
         </div>
         <div
@@ -129,4 +116,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default ForgotPassword

@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import * as patientsService from "../services/patients.service";
 import { useNotifications } from "../contexts/NotificationsContext";
 import type { Patient } from "../services/patients.service";
+import FooterMenu from "../components/FooterMenu";
+import Button from "../components/Button";
 
 const AssignPlan = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +28,10 @@ const AssignPlan = () => {
       }
     });
   }, []);
+
+  const createPlanHandler = () => {
+    navigate(`/addPlan`);
+  }
 
   const planClickHandler = (planId: string) => {
     const planAssignment = {
@@ -55,6 +61,9 @@ const AssignPlan = () => {
       <GoBack />
       <h1 className="text-4xl mt-6 mb-2">Asignar Planes</h1>
       <PlanList onPlanClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
+      <FooterMenu>
+        <Button full onClick={createPlanHandler}>Crear Plan</Button>
+      </FooterMenu>
     </div>
   )
 }

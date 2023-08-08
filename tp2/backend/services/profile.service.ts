@@ -57,6 +57,10 @@ async function updateProfile(token: string, profile: Profile | DocProfile) {
     accountId: new ObjectId(payload.accountId)
   }
 
+  if( payload.docId ) {
+    update.docId = new ObjectId(payload.docId)
+  }
+
   const updated = await profilesColelction.replaceOne({ _id: new ObjectId(payload._id) }, update);
 
   if (updated.matchedCount == 0) {

@@ -20,6 +20,8 @@ import Patient from './views/Patient.tsx';
 import AssignPlan from './views/AssignPlan.tsx';
 import Plans from './views/Plans.tsx';
 import PlanView from './views/Plan.tsx';
+import ForgotPassword from './views/ForgotPassword.tsx';
+import PasswordReset from './views/PasswordReset.tsx';
 
 const router = createBrowserRouter([
   {
@@ -80,6 +82,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+    path: '/forgotPassword',
+    element: <ForgotPassword />
   },
   {
     path: '/register/:type',

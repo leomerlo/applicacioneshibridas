@@ -18,6 +18,7 @@ async function validateProfileData(req: Request, res: Response, next: NextFuncti
     next()
   })
   .catch((err) => {
+    console.log(err);
     res.status(400).json({ error: { message: err.message } })
   })
 }

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons"
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons"
-import RecipieTabs from "../components/RecipieTabs"
 import GoBack from "../components/GoBack"
 import recipie_1 from '../assets/recipie_1.png'
 import recipie_2 from '../assets/recipie_2.png'
@@ -13,6 +12,10 @@ import { useProfile } from "../contexts/ProfileContext"
 import { useRecipie } from "../contexts/RecipiesContext"
 import recipiesService from "../services/recipies.service"
 import Loading from "../components/Loading"
+import RecipieIngredients from "../components/RecipieIngredients"
+import RecipieSteps from "../components/RecipieSteps"
+import RecipieNutrition from "../components/RecipieNutrition"
+import HeadDivider from "../components/HeadDivider"
 
 const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
@@ -68,15 +71,7 @@ const Recipie = () => {
           </>
           :
           <>
-            <div className="flex justify-between">
-              <GoBack />
-              <div>
-                <button className="flex items-center justify-between" onClick={likeButtonHandler}>
-                  <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} className="text-xl" />
-                  <span className="text-gray-90 ms-2">{recipie.likes?.length || 0}</span>
-                </button>
-              </div>
-            </div>
+            <GoBack />
             {
               recipieError && recipieError.length > 0 
               ?
@@ -94,11 +89,31 @@ const Recipie = () => {
               <>
                 <div className="mt-6">
                   <div className="text-4xl mx-auto w-fit">
-                    <img src={image} aria-hidden />
+                    {/* <img src={image} aria-hidden /> */}
                   </div>
-                  <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">{recipie.name}</h1>
+                  <h1 className="text-4xl text-gray-90 text-left mt-3 capitalize">{recipie.name}</h1>
                 </div>
-                <RecipieTabs />
+
+                <HeadDivider>
+                  <button className="flex items-center justify-between" onClick={likeButtonHandler}>
+                    <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} className="text-xl" />
+                    <span className="text-gray-90 ms-2">{recipie.likes?.length || 0}</span>
+                  </button>
+                </HeadDivider>
+
+                <div className="pb-4 bg-dividerLineBlocks bg-dividerLineBlocksBottom">
+                  <div className="pt-6">
+                    <span className="font-bold text-xl">Ingredientes</span>
+                  </div>
+
+                  <RecipieIngredients />
+                </div>
+
+                <div className="pt-6">
+                  <span className="font-bold text-xl">Receta</span>
+                </div>
+                
+                <RecipieSteps />
               </>
             }
           </>

@@ -12,6 +12,7 @@ import { faCarrot } from "@fortawesome/free-solid-svg-icons"
 import PatientNextMeal from "../components/NextMeals/PatientNextMeal"
 import { useProfile } from "../contexts/ProfileContext"
 import FooterMenu from "../components/FooterMenu"
+import HeadDivider from "../components/HeadDivider"
 
 const Patient = () => {
   const { id } = useParams();
@@ -59,14 +60,14 @@ const Patient = () => {
         <div className="flex-grow">
           <h1 className="text-4xl mt-6">{activePatient.name}</h1>
           { activePatient.plan ? <>
-            <div className="mt-8 border border-l-0 border-r-0 py-6">
+            <HeadDivider>
               <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
               <span className="text-gray-80 font-bold">Plan activo: {activePatient.plan.title}</span>
-            </div>
+            </HeadDivider>
             <PatientNextMeal plan={activePatient.plan} />
           </> : <>
             <img src={LoginImage} aria-hidden="true" className="w-1/2 mx-auto my-8" />
-            <h2 className="text-2xl text-gray-80 text-center font-bold">El paciente todavía no tiene ningún plan asignado</h2>
+            <h2 className="text-2xl text-gray-80 text-center font-bold">Este paciente todavía no tiene ningún plan asignado</h2>
           </> }
         </div>
         <FooterMenu>
@@ -74,17 +75,10 @@ const Patient = () => {
             <FontAwesomeIcon icon={faPenToSquare} className="me-2" />
             Editar Perfil
           </Button>
-          { activePatient.plan ? <>
-            <Button variant="secondary" onClick={assignPlanHandler} full>
-              <FontAwesomeIcon icon={faCarrot} className="me-2" />
-              Cambiar Plan
-            </Button>
-          </> : <>
-            <Button full onClick={assignPlanHandler}>
-              <FontAwesomeIcon icon={faCarrot} className="me-2" />
-              Asignar Plan
-            </Button>
-          </> }
+          <Button variant={activePatient.plan ? "secondary" : "primary"} onClick={assignPlanHandler} full>
+            <FontAwesomeIcon icon={faCarrot} className="me-2" />
+            { activePatient.plan ? 'Cambiar Plan' : 'Asignar Plan'}
+          </Button>
         </FooterMenu>
       </div>
     </div>

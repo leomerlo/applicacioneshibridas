@@ -131,7 +131,7 @@ async function deletePlan(req: Request, res: Response) {
 
   planService.deletePlan(docId, planId)
   .then(() => {
-    res.status(204).json({ message: "Plan eliminado" })
+    res.status(202).json({ message: "Plan eliminado" })
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })

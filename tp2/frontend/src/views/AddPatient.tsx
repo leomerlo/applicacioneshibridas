@@ -12,7 +12,7 @@ const AddPatient = () => {
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const notifications = useNotifications();
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   const { refreshProfile } = useProfile();
 
   const userNameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,12 +34,11 @@ const AddPatient = () => {
       setLoading(false);
       if (resp.status === 201) {
         refreshProfile();
-        navigation('/');
-        setLoading(false);
         notifications.updateNotifications({
           variant: 'success',
           message: 'Paciente creado con éxito'
         });
+        navigate(-1);
       } else {
         notifications.updateNotifications({
           variant: 'error',

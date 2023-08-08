@@ -9,7 +9,13 @@ const likedCollection = db.collection('likes')
 
 async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie> {
   await client.connect()
-  const plan = await planCollection.findOne<Plan>({ profileId: new ObjectId(profileId) });
+
+  const plan = await planCollection.findOne<Plan>({$or: [{ profileId: new ObjectId(profileId) },{ _id: new ObjectId(profileId) }]});
+
+  if(!plan) {
+    throw new Error('No se encontro el plan');
+  }
+
   let returnRecipie: Recipie = {} as Recipie;
   // @ts-ignore
   Object.keys(plan?.meals).forEach((day) => {

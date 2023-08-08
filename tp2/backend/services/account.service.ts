@@ -9,9 +9,9 @@ import { ProfileType, ProfileStatus } from '../schemas/profile.schema.js';
 import { db, client } from './mongo.service.js';
 import * as tokenService from './token.service.js';
 import transporter from './email.service.js';
+import generator from 'generate-password';
 
 const accountsCollection = db.collection('accounts')
-const profileCollection = db.collection('profiles')
 
 async function createAccount(account: Session | DocSession) {
   await client.connect()
@@ -32,11 +32,9 @@ async function createAccount(account: Session | DocSession) {
     password: account.password,
   }
   const salt = await bcrypt.genSalt(10)
-  account.password = await bcrypt.hash(account.password, salt)
+  newAccount.password = await bcrypt.hash(account.password, salt)
 
   const createdAccount = await accountsCollection.insertOne(newAccount)
-
-  console.log('created account', newAccount.userName);
 
   try {
     const newProfile: Profile = {
@@ -94,6 +92,7 @@ async function createSession(session: Session) {
     throw new Error('El perfil que intentas iniciar sesión no existe.')
   }
 
+  returnProfile.email = session.userName;
   returnProfile.accountType = returnProfile.idDocument && returnProfile.idLicense ? ProfileType.doc : ProfileType.user;
 
   return returnProfile
@@ -128,60 +127,23 @@ async function forgotPassword(email: string) {
   }
 
   await tokenService.findAndDeleteToken(user._id);
-  const profile = await profileService.getProfileByAccount(user._id);
 
-  if (!profile) {
-    throw new Error('El perfil no existe.');
-  }
+  const newPassword = generator.generate({
+    length: 10,
+    numbers: true
+  });
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-  const resetToken = await tokenService.createToken(profile as Profile);
-
-  const link = `https://localhost:8080/passwordReset?token=${resetToken}&id=${user._id}`;
+  accountsCollection.findOneAndUpdate({ _id: new ObjectId(user._id) }, { $set: { password: hashedPassword } });
 
   try {
     await transporter.sendMail({
       from: '"FoodGenie.ai" <account@foodgenie.ai>',
       to: email,
-      subject: "Recuperación de contraseña",
-      text: "Recuperación de contraseña",
-      html: `<a href="${link}">Click aquí para recuperar tu contraseña</a>`,
-    });
-  } catch (e: any) {
-    throw new Error(e.message);
-  }
-
-  return link;
-}
-
-async function resetPassword(accountId: string, token: string, password: string) {
-  const dbToken = await tokenService.findToken(accountId);
-  if (!dbToken) {
-    throw new Error('El token no existe.');
-  }
-
-  const isValid = token === dbToken.token;
-
-  if (!isValid) {
-    throw new Error("El token es invalido o expiró.");
-  }
-
-  try {
-    const salt = await bcrypt.genSalt(10)
-    const hash = await bcrypt.hash(password, salt);
-    const user = await accountsCollection.findOne({ _id: new ObjectId(accountId) });
-
-    if (!user) {
-      throw new Error('El usuario no existe.');
-    }
-
-    await accountsCollection.updateOne({ _id: new ObjectId(accountId) }, { $set: { password: hash } });
-
-    await transporter.sendMail({
-      from: '"Leandro Merlo" <merloleandro@gmail.com>',
-      to: user.userName,
-      subject: "Contraseña reestablecida",
-      text: "Contraseña reestablecida",
-      html: `La contraseña se reestablecio correctamente.`,
+      subject: "Cambio de contraseña",
+      text: "Cambio de contraseña",
+      html: `Hola, pediste un cambio de contraseña. Tu nueva contraseña es: ${newPassword}`,
     });
   } catch (e: any) {
     throw new Error(e.message);
@@ -192,6 +154,5 @@ export {
   createAccount,
   createSession,
   updateAccount,
-  forgotPassword,
-  resetPassword
+  forgotPassword
 }

@@ -21,9 +21,19 @@ export function updateAccount(accountData: {
   return API.call({ uri: 'account', method: 'PATCH', body: accountData })
 }
 
+export function forgotPassword(email: string) {
+  return API.call({ uri: 'account/forgot', method: 'POST', body: { email } })
+}
+
+export function resetPassword({ accountId, token, password }: { accountId: string, token: string, password: string }) {
+  return API.call({ uri: 'account/passwordReset', method: 'POST', body: { accountId, token, password } });
+}
+
 export default {
   register,
   getSession,
   updateProfile,
-  updateAccount
+  updateAccount,
+  forgotPassword,
+  resetPassword
 }

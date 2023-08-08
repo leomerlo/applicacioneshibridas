@@ -1,5 +1,5 @@
 import { useState, SyntheticEvent, useEffect } from "react"
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 import accountService from "../services/account.service"
 import planService from "../services/plan.service"
 import { useProfile } from "../contexts/ProfileContext"
@@ -13,6 +13,7 @@ import Input from "../components/Input";
 
 const Profile = () => {
   const { profile, refreshProfile } = useProfile();
+  const navigate = useNavigate();
   const { updatePlan } = usePlan();
   const [tempProfile, setTempProfile] = useState(profile);
   const { updateNotifications } = useNotifications();
@@ -59,7 +60,7 @@ const Profile = () => {
           setLoadingPlan(false);
           if(response.status === 201) {
             updatePlan();
-            redirect("/");
+            navigate("/");
           } else {
             updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
           }
@@ -95,40 +96,43 @@ const Profile = () => {
               type="password"
             />
           </div>
+          { profile.docId }
           { profile.accountType === 'user' ? <>
-            <div className="mt-4">
-              <label className="text-gray-80 block mb-1" htmlFor="restrictions">Restricciones y alergias</label>
-              <textarea
-                className="input rounded border border-gray-50 p-2 text-sm w-full"
-                name="restrictions"
-                id="restrictions"
-                value={tempProfile.restrictions}
-                placeholder="Gluten-free, vegetariano, alergia al tofu, etc."
-                onChange={(e) => setTempProfile({...tempProfile, restrictions: e.target.value})}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="text-gray-80 block mb-1" htmlFor="preferences">Preferencias</label>
-              <textarea
-                className="input rounded border border-gray-50 p-2 text-sm w-full"
-                name="preferences"
-                id="preferences"
-                value={tempProfile.preferences}
-                placeholder="Alta en proteinas, fideos los jueves, pizza los sabados, etc."
-                onChange={(e) => setTempProfile({...tempProfile, preferences: e.target.value})}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="text-gray-80 block mb-1" htmlFor="diners">Comensales</label>
-              <input
-                type="number"
-                className="input rounded border border-gray-50 p-2 text-sm w-full"
-                name="diners"
-                id="diners"
-                value={tempProfile.diners}
-                onChange={(e) => setTempProfile({...tempProfile, diners: Number(e.target.value)})}
-              />
-            </div>
+            { !profile.docId ? <>
+              <div className="mt-4">
+                <label className="text-gray-80 block mb-1" htmlFor="restrictions">Restricciones y alergias</label>
+                <textarea
+                  className="input rounded border border-gray-50 p-2 text-sm w-full"
+                  name="restrictions"
+                  id="restrictions"
+                  value={tempProfile.restrictions}
+                  placeholder="Gluten-free, vegetariano, alergia al tofu, etc."
+                  onChange={(e) => setTempProfile({...tempProfile, restrictions: e.target.value})}
+                />
+              </div>
+              <div className="mt-4">
+                <label className="text-gray-80 block mb-1" htmlFor="preferences">Preferencias</label>
+                <textarea
+                  className="input rounded border border-gray-50 p-2 text-sm w-full"
+                  name="preferences"
+                  id="preferences"
+                  value={tempProfile.preferences}
+                  placeholder="Alta en proteinas, fideos los jueves, pizza los sabados, etc."
+                  onChange={(e) => setTempProfile({...tempProfile, preferences: e.target.value})}
+                />
+              </div>
+              <div className="mt-4">
+                <label className="text-gray-80 block mb-1" htmlFor="diners">Comensales</label>
+                <input
+                  type="number"
+                  className="input rounded border border-gray-50 p-2 text-sm w-full"
+                  name="diners"
+                  id="diners"
+                  value={tempProfile.diners}
+                  onChange={(e) => setTempProfile({...tempProfile, diners: Number(e.target.value)})}
+                />
+              </div>
+            </> : <></>}
           </> : <>
             <div className="mt-4">
               <Input
@@ -156,9 +160,11 @@ const Profile = () => {
           <div className="mt-4">
             <Button full type={ButtonType.submit} loading={loadingButton}>Guardar</Button>
           </div>
-          <div className="mt-4">
-            <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
-          </div>
+          { profile.accountType === 'user' && !profile.docId ? <>
+            <div className="mt-4">
+              <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
+            </div>
+          </> : <></>}
         </form>
         <div className="mx-auto w-fit my-4">
           <img src={ProfileImage} />

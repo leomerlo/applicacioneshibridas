@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealIcon, { IconSizes } from "../MealIcon";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useProfile } from "../../contexts/ProfileContext";
 import { useEffect, useState } from "react";
 
@@ -23,8 +23,10 @@ export type Props = {
 }
 
 const NextMealItem = (props: Props) => {
-  const { patient, profile } = useProfile();
-  const [recipieLink, setRecipieLink] = useState(`/recipie/${props.meal.name}`);
+  const { patient } = useProfile();
+  const { planId } = useParams();
+  const location = useLocation();
+  const [recipieLink, setRecipieLink] = useState(`/recipie/${planId}/${props.meal.name}`);
 
   const dayString = (day: string) => {
     switch (day) {
@@ -55,7 +57,7 @@ const NextMealItem = (props: Props) => {
   }
 
   useEffect(() => {
-    if (profile.accountType === 'doc' && patient) {
+    if (location.pathname.includes('patient') && patient) {
       setRecipieLink(`/recipie/${patient._id}/${props.meal.name}`)
     }
   }, [patient]);

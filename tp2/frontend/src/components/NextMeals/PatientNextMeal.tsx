@@ -4,7 +4,6 @@ import { MealTypes } from './NextMealItem';
 import { nextMeal } from './NextMeals';
 import NextMealItem from './NextMealItem';
 import DivideLine from "../../assets/dividerLine.png";
-import { Patient } from '../../services/patients.service';
 
 export type PatientNextMealProps = {
   plan: Plan,

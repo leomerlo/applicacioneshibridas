@@ -5,6 +5,8 @@ async function getRecipie(req: Request, res: Response) {
   const recipie = req.params.recipie;
   const profileId = req.params.profileId || req.body.profileId;
 
+  console.log('Recipie');
+
   recipiesService.getRecipie(recipie, profileId)
   .then(async (response) => {
     if(response) {

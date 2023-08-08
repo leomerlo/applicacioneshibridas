@@ -58,29 +58,10 @@ async function forgotPassword(req: Request, res: Response) {
   })
 }
 
-async function resetPassword(req: Request, res: Response) {
-  const accountId = req.body.accountId;
-  const token = req.body.token;
-  const password = req.body.password;
-  
-  if(!accountId || !token || !password) {
-    res.status(400).json({ error: { message: "Faltan datos" } })
-  }
-
-  return services.resetPassword(accountId, token, password)
-  .then(() => {
-    res.status(201).json({ message: "Contraseña reestablecida." })
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
-}
-
 export {
   createAccount,
   createSession,
   updateAccount,
   deleteSession,
-  forgotPassword,
-  resetPassword
+  forgotPassword
 }

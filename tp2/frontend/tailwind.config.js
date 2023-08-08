@@ -51,7 +51,17 @@ export default {
       },
       backgroundPosition: {
         dividerLineSteps: 'left 9px top 8px',
-        dividerLineDays: 'left 22px top 8px'
+        dividerLineDays: 'left 22px top 8px',
+        dividerLineBlocks: '-11px 0px',
+        dividerLineBlocksBottom: '-11px -1px',
+      },
+      backgroundImage: {
+        dividerLineBlocks: `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23C2C2C2' stroke-width='2' stroke-dasharray='6%2c 10' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e")`
+      },
+      backgroundSize: {
+        dividerLineBlocks: 'calc(100% + 12px) 100%',
+        dividerLineBlocksTop: 'calc(100% + 12px) calc(100% + 1px)',
+        dividerLineBlocksBottom: 'calc(100% + 12px) calc(100% + 1px)',
       }
     },
   },

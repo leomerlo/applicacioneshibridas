@@ -17,6 +17,7 @@ async function updateProfile(req: Request, res: Response) {
 async function getProfile(req: Request, res: Response) {
   const token = req.headers['auth-token'] as string;
   const tokenProfile = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
+  console.log('TokenProfile', tokenProfile)
   if(tokenProfile._id) {
     profileService.getProfile(tokenProfile._id)
     .then((profile) => {

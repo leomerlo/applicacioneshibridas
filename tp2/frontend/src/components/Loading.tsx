@@ -18,7 +18,7 @@ const Loading = (props: Props) => {
         <img src={loadingImage} aria-hidden className="mt-4" />
       </div>
       <h1 className="text-4xl text-gray-90 text-center mt-3">{props.action}</h1>
-      <p className="text-xl text-gray-60 text-center mt-2">{props.subtext || "Aguardá unos instantes."}</p>
+      <p className="text-xl text-gray-60 text-center mt-2">{props.subtext || "Esto puede tardar unos minutos."}</p>
     </div>
     </>
   )

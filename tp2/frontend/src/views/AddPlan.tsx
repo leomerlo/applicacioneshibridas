@@ -14,7 +14,7 @@ const AddPlan = () => {
   const [preferences, setPreferences] = useState("");
   const [loading, setLoading] = useState(false);
   const notifications = useNotifications();
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   const { refreshProfile } = useProfile();
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ const AddPlan = () => {
           message: 'Plan creado con éxito'
         });
         refreshProfile();
-        navigation('/');
+        navigate(-1);
       } else {
         notifications.updateNotifications({
           variant: 'error',

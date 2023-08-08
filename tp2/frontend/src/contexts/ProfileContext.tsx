@@ -18,6 +18,7 @@ export type Profile = {
   idDocument?: string,
   idLicense?: string,
   password?: string
+  docId?: string
 }
 
 export type Account = {
