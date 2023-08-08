@@ -6,10 +6,10 @@ import { Profile } from '../types/profile.js';
 async function createAccount(req: Request, res: Response) {
   return services.createAccount(req.body)
   .then(() => {
-      res.status(201).json({ message: "Cuenta creada" })
+    res.status(201).json({ message: "Cuenta creada" })
   })
   .catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
+    res.status(400).json({ error: { message: err.message } })
   })
 }
 
@@ -37,8 +37,38 @@ async function deleteSession(req: Request, res: Response) {
   })
 }
 
+async function forgotPassword(req: Request, res: Response) {
+  return services.forgotPassword(req.body.email)
+  .then(() => {
+    res.status(201).json({ message: "Se envio el email para reestablecer la contraseña." })
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
+async function resetPassword(req: Request, res: Response) {
+  const accountId = req.body.accountId;
+  const token = req.body.token;
+  const password = req.body.password;
+  
+  if(!accountId || !token || !password) {
+    res.status(400).json({ error: { message: "Faltan datos" } })
+  }
+
+  return services.resetPassword(accountId, token, password)
+  .then(() => {
+    res.status(201).json({ message: "Contraseña reestablecida." })
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   createAccount,
   createSession,
-  deleteSession
+  deleteSession,
+  forgotPassword,
+  resetPassword
 }

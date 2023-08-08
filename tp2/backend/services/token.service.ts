@@ -38,8 +38,20 @@ async function deleteToken(token: string) {
   await tokensCollection.deleteOne({ token })
 }
 
+async function findAndDeleteToken(accountId: string) {
+  await client.connect()
+  await tokensCollection.findOneAndDelete({ accountId: new ObjectId(accountId) })
+}
+
+async function findToken(accountId: string) {
+  await client.connect()
+  return await tokensCollection.findOne({ accountId: new ObjectId(accountId) })
+}
+
 export {
   createToken,
   deleteToken,
-  validateToken
+  validateToken,
+  findAndDeleteToken,
+  findToken
 }
