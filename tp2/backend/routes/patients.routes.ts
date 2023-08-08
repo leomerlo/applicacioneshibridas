@@ -3,7 +3,6 @@ import * as controller from '../controllers/patients.controller.js';
 import { validateToken } from '../middleware/token.middleware.js';
 import { addProfileIdToBody } from '../middleware/token.middleware.js';
 import { validateDoctor } from '../middleware/profile.validate.middleware.js';
-import { validateProfileData } from '../middleware/profile.validate.middleware.js';
 
 const router = Router();
 

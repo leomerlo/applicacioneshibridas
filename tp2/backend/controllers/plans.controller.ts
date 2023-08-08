@@ -20,14 +20,14 @@ async function generateDocPlan(req: Request, res: Response) {
   const docId = req.body.profileId;
   const title = req.body.title;
   const preferences = req.body.preferences;
-  const requirements = req.body.requirements;
+  const restrictions = req.body.restrictions;
 
-  if(!preferences || !requirements || !title) {
+  if(!preferences || !restrictions || !title) {
     res.status(400).json({ error: { message: "Faltan detalles para generar el plan." } });
     return;
   }
   
-  planService.generateDocPlan(docId, preferences, requirements, title)
+  planService.generateDocPlan(docId, preferences, restrictions, title)
   .then(() => {
     res.status(201).json({ message: "Nuevo plan creado" })
   })
@@ -41,7 +41,7 @@ async function getPlans(req: Request, res: Response) {
 
   planService.getPlans(profileId)
   .then((plans) => {
-    res.status(201).json(plans)
+    res.status(200).json(plans)
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })
@@ -53,7 +53,19 @@ async function getPlan(req: Request, res: Response) {
 
   planService.getPlan(profileId)
   .then((plan) => {
-    res.status(201).json(plan)
+    res.status(200).json(plan)
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
+async function getPlanById(req: Request, res: Response) {
+  const planId = req.params.planId;
+
+  planService.getPlanById(planId)
+  .then((plan) => {
+    res.status(200).json(plan)
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })
@@ -119,7 +131,7 @@ async function deletePlan(req: Request, res: Response) {
 
   planService.deletePlan(docId, planId)
   .then(() => {
-    res.status(201).json({ message: "Plan eliminado" })
+    res.status(202).json({ message: "Plan eliminado" })
   })
   .catch((err) => {
     res.status(400).json({ error: { message: err.message } })
@@ -131,6 +143,7 @@ export {
   generateDocPlan,
   getPlans,
   getPlan,
+  getPlanById,
   getList,
   assignPlan,
   deletePlan

@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom';
 import Button from './Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { usePlan } from '../contexts/PlanContext';
 
 
 const NavBar = () => {
-
+  const { plan } = usePlan();
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -40,7 +41,7 @@ const NavBar = () => {
         <div className="text-sm mt-4">
           <Link to={'/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Home</Link>
           <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Mi Perfil</Link>
-          <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link>
+          { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
         </div>
         <div>
           <Button onClick={logout} full>Logout</Button>

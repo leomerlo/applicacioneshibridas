@@ -3,7 +3,7 @@ import DivideLine from "../../assets/dividerLine.png";
 import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
 
-type nextMeal = {
+export type nextMeal = {
   day: string,
   date: string,
   name: string,
