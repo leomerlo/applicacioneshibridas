@@ -38,12 +38,12 @@ async function deleteToken(token: string) {
   await tokensCollection.deleteOne({ token })
 }
 
-async function findAndDeleteToken(accountId: string) {
+async function findAndDeleteToken(accountId: ObjectId) {
   await client.connect()
   await tokensCollection.findOneAndDelete({ accountId: new ObjectId(accountId) })
 }
 
-async function findToken(accountId: string) {
+async function findToken(accountId: ObjectId) {
   await client.connect()
   return await tokensCollection.findOne({ accountId: new ObjectId(accountId) })
 }

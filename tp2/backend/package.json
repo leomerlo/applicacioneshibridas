@@ -4,7 +4,7 @@
   "description": "Backend for FoodGenie",
   "scripts": {
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
-    "prod": "node dist/server.js",
+    "prod": "build && node dist/server.js",
     "start": "node dist/server.js",
     "build": "npm install && npx tsc"
   },

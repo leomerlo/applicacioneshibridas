@@ -98,8 +98,8 @@ async function forgotPassword(email: string) {
     throw new Error('El usuario no existe.');
   }
 
-  await tokenService.findAndDeleteToken(user._id);
-  const profile = await profileService.getProfileByAccount(user._id);
+  await tokenService.findAndDeleteToken(user._id as ObjectId);
+  const profile = await profileService.getProfileByAccount(user._id as ObjectId);
 
   if (!profile) {
     throw new Error('El perfil no existe.');
@@ -125,7 +125,7 @@ async function forgotPassword(email: string) {
 }
 
 async function resetPassword(accountId: string, token: string, password: string) {
-  const dbToken = await tokenService.findToken(accountId);
+  const dbToken = await tokenService.findToken(accountId as unknown as ObjectId);
   if (!dbToken) {
     throw new Error('El token no existe.');
   }
