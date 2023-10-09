@@ -50,7 +50,11 @@ const router = createBrowserRouter([
         element: <Plans />
       },
       {
-        path: '/plan/:planId',
+        path: '/plan/',
+        element: <PlanView />
+      },
+      {
+        path: '/plan/:id',
         element: <PlanView />
       },
       {

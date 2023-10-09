@@ -40,6 +40,7 @@ const NavBar = () => {
       <div className={`container flex flex-col justify-between bg-white flex-grow ${menuOpen ? "" : "h-0"} overflow-y-hidden`}>
         <div className="text-sm mt-4">
           <Link to={'/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Home</Link>
+          <Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Mi Plan</Link>
           <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Mi Perfil</Link>
           { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
         </div>

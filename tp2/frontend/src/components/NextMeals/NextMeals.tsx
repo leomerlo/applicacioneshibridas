@@ -4,8 +4,6 @@ import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
 
 export type nextMeal = {
-  day: string,
-  date: string,
   name: string,
   meal: MealTypes
 }
@@ -48,7 +46,7 @@ const NextMeals = () => {
           internalTodayString = 'monday';
           internalNextMeal = 'breakfast';
         }
-      } while(nextMeals.length < 19)
+      } while(nextMeals.length < 3)
       return nextMeals;
     }
 
@@ -63,7 +61,7 @@ const NextMeals = () => {
 
   return (
     <div className="mt-6">
-        <h2 className="text-3xl font-bold">Proximas Comidas</h2>
+        <h2 className="text-3xl font-bold">Siguientes comidas</h2>
         <ul
           // @ts-ignore
           style={{'--image-url': `url(${DivideLine})`}}
