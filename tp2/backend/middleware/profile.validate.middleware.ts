@@ -6,6 +6,8 @@ import { DocProfile } from '../types/profile.js';
 
 async function validateProfileData(req: Request, res: Response, next: NextFunction) {
   let userTypeSchema;
+  const body = req.body;
+
   if(req.body.accountType === 'doc') {
     userTypeSchema = profileSchema.docProfile;
   } else {

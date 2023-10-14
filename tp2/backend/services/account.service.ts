@@ -89,7 +89,7 @@ async function createSession(session: Session) {
   const returnProfile = await profileService.getProfileByAccount(accountExist._id);
 
   if (!returnProfile) {
-    throw new Error('El perfil que intentas iniciar sesión no existe.')
+    throw new Error('El perfil que intentas iniciar sesión no existe o se encuentra desactivado.')
   }
 
   returnProfile.email = session.userName;
