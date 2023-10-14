@@ -1,5 +1,4 @@
 import NextMealItem, { MealTypes } from "./NextMealItem"
-import DivideLine from "../../assets/dividerLine.png";
 import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
 
@@ -64,12 +63,11 @@ const NextMeals = () => {
         <h2 className="text-3xl font-bold">Siguientes comidas</h2>
         <ul
           // @ts-ignore
-          style={{'--image-url': `url(${DivideLine})`}}
-          className="mt-6 bg-[image:var(--image-url)] bg-no-repeat bg-dividerLineDays"
+          className="mt-6"
         >
           { nextMeals.map((meal, index) => {
             return <li className="mt-3" key={index}>
-              <NextMealItem day={meal.day} date={meal.date} meal={ { name: meal.name, type: meal.meal } } />
+              <NextMealItem day="" meal={ { name: meal.name, type: meal.meal } } />
             </li>
           })} 
         </ul>

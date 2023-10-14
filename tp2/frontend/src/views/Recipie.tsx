@@ -14,7 +14,6 @@ import recipiesService from "../services/recipies.service"
 import Loading from "../components/Loading"
 import RecipieIngredients from "../components/RecipieIngredients"
 import RecipieSteps from "../components/RecipieSteps"
-import RecipieNutrition from "../components/RecipieNutrition"
 import HeadDivider from "../components/HeadDivider"
 
 const Recipie = () => {

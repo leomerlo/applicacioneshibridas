@@ -64,7 +64,7 @@ function RecipieProvider({children}: PropsWithChildren){
     setLoading(true);
     const getRecipieData = {
       name: name as string,
-      profileId: profileId || null
+      profileId: profileId || undefined
     }
     recipiesService.getRecipie(getRecipieData).then((res) => {
       setLoading(false);
