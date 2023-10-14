@@ -75,7 +75,7 @@ async function getPlans(docId: string): Promise<Plan[]> {
 
 async function getPlan(profileId: string): Promise<Plan> {
   await client.connect()
-  const plan = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) }, { projection: { _id: 0, profileId: 0 } });
+  const plan = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) }, { projection: { profileId: 0 } });
   return plan as Plan;
 }
 
