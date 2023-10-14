@@ -31,7 +31,7 @@ async function createProfile(profile: Profile | DocProfile, type: profileSchema.
 
 async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | null> {
   await client.connect()
-  const profile = await profilesColelction.findOne<Profile | DocProfile>({ _id: new ObjectId(profileId) })
+  const profile = await profilesColelction.findOne<Profile | DocProfile>({ _id: new ObjectId(profileId), 'status': { $exists: true } })
 
   if(!profile) {
     throw new Error('El perfil que intentas obtener no existe.')
@@ -44,7 +44,7 @@ async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | n
 
 async function getProfileByAccount(accountId: ObjectId) {
   await client.connect()
-  return profilesColelction.findOne<Profile | DocProfile>({ accountId: new ObjectId(accountId) })
+  return profilesColelction.findOne<Profile | DocProfile>({ accountId: new ObjectId(accountId), 'status': { $exists: true } })
 }
 
 async function updateProfile(token: string, profile: Profile | DocProfile) {
