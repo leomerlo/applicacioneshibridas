@@ -16,11 +16,15 @@ async function updateProfile(req: Request, res: Response) {
 
 async function getProfile(req: Request, res: Response) {
   const token = req.headers['auth-token'] as string;
-  const profile = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
-  if(profile._id) {
-    profileService.getProfile(profile._id)
+  const tokenProfile = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
+  console.log('TokenProfile', tokenProfile)
+  if(tokenProfile._id) {
+    profileService.getProfile(tokenProfile._id)
     .then((profile) => {
-      res.status(201).json(profile)
+      if(profile) {
+        profile.email = tokenProfile.email;
+        res.status(200).json(profile)
+      }
     })
     .catch((err) => {
       res.status(400).json({ error: { message: err.message } })

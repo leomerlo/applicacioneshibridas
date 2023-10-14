@@ -22,7 +22,7 @@ const RecipieStep = (props: Props) => {
   }, [])
 
   return (
-    <div className="flex gap-4 mt-4" onClick={checkStep}>
+    <div className="flex gap-4 mt-4 pb-4" onClick={checkStep}>
       <div>
         <FalseCheck checked={checked} onClick={checkStep} />
       </div>

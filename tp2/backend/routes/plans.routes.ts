@@ -6,6 +6,7 @@ import { validateDoctor, validatePatient } from '../middleware/profile.validate.
 const router = Router();
 
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
+router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlanById);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.get('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 

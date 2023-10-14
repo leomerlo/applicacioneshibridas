@@ -6,6 +6,6 @@ import { validateProfileData } from '../middleware/profile.validate.middleware.j
 const router = Router();
 
 router.get('/profile', [validateToken], controller.getProfile);
-router.post('/profile', [validateToken, validateProfileData], controller.updateProfile);
+router.patch('/profile', [validateToken, validateProfileData], controller.updateProfile);
 
 export default router;

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { ProfileStatus } from '../schemas/profile.schema.js';
+import { ProfileType } from '../schemas/profile.schema.js';
 
 export interface Profile {
   _id?: ObjectId,
@@ -8,12 +9,13 @@ export interface Profile {
   diners?: number
   accountId: ObjectId,
   name: string,
-  status: ProfileStatus
-  docId?: ObjectId
+  status: ProfileStatus,
+  docId?: ObjectId,
+  accountType: ProfileType.doc | ProfileType.user,
+  email?: string
 }
 
 export interface DocProfile extends Profile {
-  email: string,
   idDocument: string,
   idLicense: string
 }

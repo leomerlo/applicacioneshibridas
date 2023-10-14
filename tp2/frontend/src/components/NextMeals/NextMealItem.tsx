@@ -1,7 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealIcon, { IconSizes } from "../MealIcon";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useAsyncError, useLocation, useParams } from "react-router-dom";
+import { useProfile } from "../../contexts/ProfileContext";
+import { useEffect, useState } from "react";
+import { usePlan } from "../../contexts/PlanContext";
 
 export enum MealTypes {
   breakfast = 'Desayuno',
@@ -16,49 +19,33 @@ export type Meal = {
 
 export type Props = {
   day: string;
-  date: string;
   meal: Meal;
 }
 
 const NextMealItem = (props: Props) => {
+  const { patient } = useProfile();
+  const { plan } = usePlan();
+  const { id } = useParams();
+  const location = useLocation();
+  const [recipieLink, setRecipieLink] = useState('');
 
-  const dayString = (day: string) => {
-    switch (day) {
-      case 'mon':
-        return 'lun'
-
-      case 'tue':
-        return 'mar'
-
-      case 'wed':
-        return 'mie'
-      
-      case 'thu':
-        return 'jue'
-
-      case 'fri':
-        return 'vie'
-
-      case 'sat':
-        return 'sáb'
-      
-      case 'sun':
-        return 'dom'
-
-      default:
-        return ''
+  useEffect(() => {
+    if (location.pathname.includes('patient') && patient) {
+      setRecipieLink(`/recipie/${patient._id}/${props.meal.name}`)
     }
-  }
+  }, [patient]);
+
+  useEffect(() => {
+    if( !id ) {
+      setRecipieLink(`/recipie/${plan?._id}/${props.meal.name}`);
+    } else {
+      setRecipieLink(`/recipie/${id}/${props.meal.name}`);
+    }
+  }, [plan]);
 
   return (
-    <Link to={`/recipie/${props.meal.name}`}>
+    <Link to={recipieLink}>
       <div className="flex gap-6">
-        <div className="flex grow-0 flex-col items-center justify-center text-gray-70">
-          <div className="bg-gray-10 text-center py-2 w-12">
-            <span className="uppercase block">{dayString(props.day)}</span>
-            <span className="block">{props.date}</span>
-          </div>
-        </div>
         <div className="grow border rounded-lg border-gray-30">
           <div className="flex items-center gap-4 p-4">
             <MealIcon background size={IconSizes.small} type={props.meal.type} />

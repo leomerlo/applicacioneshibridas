@@ -11,17 +11,17 @@ import accountService from '../services/account.service';
 
 const StartPlan = () => {
   const { updatePlan } = usePlan();
-  const { refreshProfile } = useProfile();
+  const { profile, refreshProfile } = useProfile();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState({
     current: 1,
     label: 'Comenzar'
   });
   const [tempProfile, setTempProfile] = useState<Profile>({
+    ...profile,
     name: '',
     preferences: '',
     restrictions: '',
-    diners: 1
   });
   const { updateNotifications } = useNotifications();
 
@@ -44,6 +44,8 @@ const StartPlan = () => {
     setLoading(true);
     accountService.updateProfile(tempProfile).then(async (result) => {
       if(result.status !== 201) {
+        console.log('What happened?');
+        setLoading(false);
         updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
       } else {
         refreshProfile();

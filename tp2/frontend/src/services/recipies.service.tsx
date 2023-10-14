@@ -1,7 +1,8 @@
 import API from './api.service';
 
-export function getRecipie(name: string) {
-  return API.call({ uri: `recipie/${name}` })
+export function getRecipie({ name, profileId }: { name: string, profileId?: string}) {
+  const uri = profileId ? `recipie/${profileId}/${name}` : `recipie/${name}`;
+  return API.call({ uri })
 }
 
 export function likeRecipie(id: string) {

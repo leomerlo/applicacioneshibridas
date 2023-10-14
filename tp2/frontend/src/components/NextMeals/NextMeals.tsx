@@ -1,11 +1,8 @@
 import NextMealItem, { MealTypes } from "./NextMealItem"
-import DivideLine from "../../assets/dividerLine.png";
 import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
 
-type nextMeal = {
-  day: string,
-  date: string,
+export type nextMeal = {
   name: string,
   meal: MealTypes
 }
@@ -48,7 +45,7 @@ const NextMeals = () => {
           internalTodayString = 'monday';
           internalNextMeal = 'breakfast';
         }
-      } while(nextMeals.length < 19)
+      } while(nextMeals.length < 3)
       return nextMeals;
     }
 
@@ -63,15 +60,14 @@ const NextMeals = () => {
 
   return (
     <div className="mt-6">
-        <h2 className="text-3xl font-bold">Proximas Comidas</h2>
+        <h2 className="text-3xl font-bold">Siguientes comidas</h2>
         <ul
           // @ts-ignore
-          style={{'--image-url': `url(${DivideLine})`}}
-          className="mt-6 bg-[image:var(--image-url)] bg-no-repeat bg-dividerLineDays"
+          className="mt-6"
         >
           { nextMeals.map((meal, index) => {
             return <li className="mt-3" key={index}>
-              <NextMealItem day={meal.day} date={meal.date} meal={ { name: meal.name, type: meal.meal } } />
+              <NextMealItem day="" meal={ { name: meal.name, type: meal.meal } } />
             </li>
           })} 
         </ul>
