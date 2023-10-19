@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import * as planService from '../services/plans.service.js';
-import * as recipiesService from '../services/recipies.service.js';
-import { Ingredients, Recipie } from '../types/recipies.js';
+import { Ingredients } from '../types/recipies.js';
 import { Plan } from '../types/plan.js';
+import type { ObjectId } from 'mongodb';
 
 async function generatePlan(req: Request, res: Response) {
   const profileId = req.body.profileId;
@@ -80,10 +80,8 @@ async function getList(req: Request, res: Response) {
     const list = await planService.getList(profileId);
 
     if(list) {
-      console.log('List already exists');
       return res.status(200).json(list);
     } else {
-      console.log('List does not exits, generating...');
       
       const plan: Plan = await planService.getPlan(profileId);
 
@@ -138,6 +136,25 @@ async function deletePlan(req: Request, res: Response) {
   })
 }
 
+async function replaceRecipie(req: Request, res: Response) {
+  const profileId = req.body.profileId;
+  const day = req.params.day;
+  const meal = req.params.meal;
+  
+  if(!day || !meal) {
+    res.status(400).json({ error: { message: 'Faltan datos' } })
+    return;
+  }
+
+  planService.replaceRecipie(profileId, day, meal)
+  .then((recipie) => {
+    res.status(200).json(recipie);
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -146,5 +163,6 @@ export {
   getPlanById,
   getList,
   assignPlan,
-  deletePlan
+  deletePlan,
+  replaceRecipie
 }

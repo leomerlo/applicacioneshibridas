@@ -83,5 +83,5 @@ export {
   likeRecipie,
   unlikeRecipie,
   getLikedRecipies,
-  newRecipie
+  newRecipie,
 }

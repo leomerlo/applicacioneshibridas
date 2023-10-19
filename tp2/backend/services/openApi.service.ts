@@ -24,10 +24,11 @@ async function promptHelper(systemPrompt: string, userPrompt: string): Promise<s
     });
     const timeEnd = new Date();
     const timeDiff = Math.abs((timeStart.getTime() - timeEnd.getTime()) / 1000);
-    console.log('End OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
-    console.log('Query time: ', timeDiff + 'segs');
     let result = completion.data.choices[0].message?.content;
+    console.log("Result: ", completion.data.choices[0].message?.content);
     console.log("openAi usage: ", completion.data.usage);
+    console.log('End OpenAI fetch', timeEnd.getHours(), timeEnd.getMinutes(), timeEnd.getSeconds());
+    console.log('Query time: ', timeDiff + 'segs');
     return result as string;
   } catch (error: any) {
     if (error.response) {
@@ -142,6 +143,55 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
 
   Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
   {
+    name: yup.string().lowercase().required(),
+    ingredients: yup.array().of(yup.object({
+      name: yup.string().lowercase().required(),
+      quantity: yup.number().required(),
+      unit: yup.string().oneOf(['gr', 'kg', 'ml', 'l', 'un'])
+    })).required(),
+    instructions: yup.array().of(yup.string().required()).required(),
+    likes: yup.array().of(yup.string().required()),
+    nutrition: yup.object({
+      calorias: yup.number().required(),
+      carbohidratos: yup.number().required(),
+      grasas: yup.number().required(),
+      proteinas: yup.number().required()
+    }).required()
+  }
+  `
+
+  const userPrompt = `
+    Quiero una receta que cumpla con las siguientes restricciones y preferencias:
+    Restricciones: ${restrictions}
+
+    Preferencias: ${preferences}
+
+    Ejemplos: ${recipies}
+  `;
+
+  return await promptHelper(systemPrompt, userPrompt);
+}
+
+async function replaceRecipie(plan: Object, day: string, meal: string, restrictions: string, preferences: string) {
+  const systemPrompt = `
+  Cuando te pida ayuda, vas a actuar como un jefe de cocina y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
+  Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
+  Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
+
+  Segui las siguientes reglas al crear la receta:
+  - Los ingredientes deben estar expresados en singular y nunca en plural.
+  - Las cantidades de los ingredientes deben estar siempre expresadas en gr y ml. Nunca en tazas, cucharadas o cualquier otra unidad que no sea metrica.
+  - Los ingredientes enteros deben estar expresados en unidades. Nunca en dientes, piezas o cualquier otra unidad.
+  - Los ingredientes y valores nutricionales deben estar expresados para 1 comensales.
+  - Los pasos deben estar expresados en hasta 10 pasos fáciles de seguir.
+  - Los valores nutritivos deben estar expresados junto con su unidad de medida.
+  - Las cantidades deben ser representadas en numeros enteros, nunca uses fracciones o decimales.
+  - Usando los ejemplos podés entender que comida le gusta al usuario y proponerle las mismas recetas o cosas similares.
+
+  Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
+
+  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  {
     name: yup.string().required(),
     ingredients: yup.array().of(yup.object({
       name: yup.string().lowercase().required(),
@@ -159,12 +209,13 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
   `
 
   const userPrompt = `
-    Quiero una receta que cumpla con las siguientes restricciones y preferencias:
+    Quiero que de este plan, reemplaces ${ meal } del ${ day } con otra comida que cumpla con las siguientes restricciones y preferencias y me devuelvas un plan semanal.
+
+    Plan: ${ plan }
+
     Restricciones: ${restrictions}
 
     Preferencias: ${preferences}
-
-    Ejemplos: ${recipies}
   `;
 
   return await promptHelper(systemPrompt, userPrompt);
@@ -173,5 +224,6 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
 export {
   generatePlan,
   generateShoppingList,
-  generateRecipie
+  generateRecipie,
+  replaceRecipie
 }

@@ -1,8 +1,9 @@
 import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
+import * as recipieSchema from '../schemas/recipies.schema.js';
 import { Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
-import { Ingredients } from '../types/recipies.js';
+import { Ingredients, Recipie } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
 import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
@@ -91,7 +92,7 @@ async function getList(profileId: string): Promise<Ingredients[]> {
   return list?.shoppingList as Ingredients[];
 }
 
-async function generateShoppingList(profileId: string, ingredients: Ingredients[]): Promise<void> {
+async function generateShoppingList(profileId: ObjectId, ingredients: Ingredients[]): Promise<void> {
   await client.connect()
   const unifiedList: Ingredients[] = [];
 
@@ -164,6 +165,41 @@ async function editPlan(docId: string, planId: string, plan: Plan): Promise<void
   await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
 }
 
+async function replaceRecipie(profileId: ObjectId, day: string, meal: string): Promise<void> {
+  await client.connect()
+  const plan = await db.collection("plans").findOne<Plan>({$or: [{ profileId: new ObjectId(profileId) },{ _id: new ObjectId(profileId) }]});
+  const profile = await db.collection("profiles").findOne<Profile>({_id: new ObjectId(profileId)});
+  
+  if (!plan && !profile) {
+    throw new Error(`No se encontro el perfil.`);
+  }
+
+  const rawOutput = await openApi.generateRecipie(profile?.restrictions || "", profile?.preferences || "", "", day, meal);
+  const result = JSON.parse(rawOutput as string);
+
+  recipieSchema.recipie.validate(result, { abortEarly: false, stripUnknown: true })
+    .then(async (recipie) => {
+      if (plan != undefined) {
+        plan.meals[day][meal] = recipie;
+      }
+      const ingredients: Ingredients[] = [];
+
+      Array.from(Object.keys(plan.meals)).forEach((day) => {
+        // @ts-ignore
+        Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
+          // @ts-ignore
+          plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
+            ingredients.push(ingredient);
+          });
+        });
+      });
+
+      await generateShoppingList(profileId, ingredients);
+    }).catch((err) => {
+      console.log('Validation error', err);
+    });
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -174,5 +210,6 @@ export {
   getPlans,
   assignPlan,
   deletePlan,
-  editPlan
+  editPlan,
+  replaceRecipie
 }
