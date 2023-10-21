@@ -165,39 +165,57 @@ async function editPlan(docId: string, planId: string, plan: Plan): Promise<void
   await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
 }
 
-async function replaceRecipie(profileId: ObjectId, day: string, meal: string): Promise<void> {
+async function replaceRecipie(profileId: ObjectId, day: string, meal: string): Promise<Recipie> {
   await client.connect()
   const plan = await db.collection("plans").findOne<Plan>({$or: [{ profileId: new ObjectId(profileId) },{ _id: new ObjectId(profileId) }]});
   const profile = await db.collection("profiles").findOne<Profile>({_id: new ObjectId(profileId)});
   
-  if (!plan && !profile) {
-    throw new Error(`No se encontro el perfil.`);
+  if (!plan || !profile) {
+    return Promise.reject();
   }
 
-  const rawOutput = await openApi.generateRecipie(profile?.restrictions || "", profile?.preferences || "", "", day, meal);
+  // Un listado de los nombres de todas las recetas del Plan
+  const recipies: string[] = [];
+  Array.from(Object.keys(plan.meals)).forEach((day) => {
+    // @ts-ignore
+    Array.from(Object.keys(plan?.meals[day])).forEach((meal: string) => {
+      // @ts-ignore
+      recipies.push(plan?.meals[day][meal].name);
+    });
+  });
+
+  const mealToReplace = plan?.meals[day][meal].name;
+
+  console.log(recipies.join(", "));
+
+  const rawOutput = await openApi.generateRecipie(profile?.restrictions || "", profile?.preferences || recipies.join(", "), "", day, meal, mealToReplace);
   const result = JSON.parse(rawOutput as string);
 
-  recipieSchema.recipie.validate(result, { abortEarly: false, stripUnknown: true })
-    .then(async (recipie) => {
-      if (plan != undefined) {
-        plan.meals[day][meal] = recipie;
-      }
-      const ingredients: Ingredients[] = [];
+  const recipie = await recipieSchema.recipie.validate(result, { abortEarly: false, stripUnknown: true }) as Recipie;
 
-      Array.from(Object.keys(plan.meals)).forEach((day) => {
-        // @ts-ignore
-        Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
-          // @ts-ignore
-          plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
-            ingredients.push(ingredient);
-          });
-        });
+  if (plan != undefined) {
+    plan.meals[day][meal] = recipie;
+  } else {
+    Promise.reject();
+  }
+
+  const ingredients: Ingredients[] = [];
+
+  Array.from(Object.keys(plan.meals)).forEach((day) => {
+    // @ts-ignore
+    Array.from(Object.keys(plan.meals[day])).forEach((meal: string) => {
+      // @ts-ignore
+      plan.meals[day][meal].ingredients.forEach((ingredient: Ingredients) => {
+        ingredients.push(ingredient);
       });
-
-      await generateShoppingList(profileId, ingredients);
-    }).catch((err) => {
-      console.log('Validation error', err);
     });
+  });
+
+  // await generateShoppingList(profileId, ingredients);
+
+  await db.collection("plans").findOneAndReplace({ _id: new ObjectId(plan?._id) }, plan);
+
+  return Promise.resolve(recipie);
 }
 
 export {

@@ -28,6 +28,10 @@ export function deletePlan(id: string) {
   return API.call({ uri: `plan/${id}`, method: 'DELETE' })
 }
 
+export function replaceRecipie(day: string, meal: string) {
+  return API.call({ uri: `plan/replace/${day}/${meal}`, method: 'POST' });
+}
+
 export default {
   newPlan,
   getPlan,
@@ -35,5 +39,6 @@ export default {
   getPlans,
   newDocPlan,
   getShoppingList,
-  deletePlan
+  deletePlan,
+  replaceRecipie
 }

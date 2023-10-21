@@ -10,10 +10,11 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-const model = "gpt-3.5-turbo-16k";
+const model3 = "gpt-3.5-turbo-16k";
+const model4 = "gpt-4";
 const temperature = 0;
 
-async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
+async function promptHelper(systemPrompt: string, userPrompt: string, model = model3): Promise<string> {
   try {
     const timeStart = new Date();
     console.log('Start OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
@@ -123,11 +124,12 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
 }
 
 async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string): Promise<string> {
-  const systemPrompt = `
-  Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
+  const systemPrompt = `Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
   Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
-  La comida va a ser para un ${day}, ${meal}.
+  ${meal === 'breakfast' ? "La receta es para un desayuno" : ""}
+
+  Otras comidas de la semana: 
 
   Segui las siguientes reglas al crear la receta:
   - Los ingredientes deben estar expresados en singular y nunca en plural.
@@ -150,7 +152,6 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
       unit: yup.string().oneOf(['gr', 'kg', 'ml', 'l', 'un'])
     })).required(),
     instructions: yup.array().of(yup.string().required()).required(),
-    likes: yup.array().of(yup.string().required()),
     nutrition: yup.object({
       calorias: yup.number().required(),
       carbohidratos: yup.number().required(),
@@ -161,61 +162,12 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
   `
 
   const userPrompt = `
-    Quiero una receta que cumpla con las siguientes restricciones y preferencias:
+    Quiero una receta con las siguientes restricciones y preferencias:
     Restricciones: ${restrictions}
 
     Preferencias: ${preferences}
 
-    Ejemplos: ${recipies}
-  `;
-
-  return await promptHelper(systemPrompt, userPrompt);
-}
-
-async function replaceRecipie(plan: Object, day: string, meal: string, restrictions: string, preferences: string) {
-  const systemPrompt = `
-  Cuando te pida ayuda, vas a actuar como un jefe de cocina y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
-  Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
-  Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
-
-  Segui las siguientes reglas al crear la receta:
-  - Los ingredientes deben estar expresados en singular y nunca en plural.
-  - Las cantidades de los ingredientes deben estar siempre expresadas en gr y ml. Nunca en tazas, cucharadas o cualquier otra unidad que no sea metrica.
-  - Los ingredientes enteros deben estar expresados en unidades. Nunca en dientes, piezas o cualquier otra unidad.
-  - Los ingredientes y valores nutricionales deben estar expresados para 1 comensales.
-  - Los pasos deben estar expresados en hasta 10 pasos fáciles de seguir.
-  - Los valores nutritivos deben estar expresados junto con su unidad de medida.
-  - Las cantidades deben ser representadas en numeros enteros, nunca uses fracciones o decimales.
-  - Usando los ejemplos podés entender que comida le gusta al usuario y proponerle las mismas recetas o cosas similares.
-
-  Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
-
-  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
-  {
-    name: yup.string().required(),
-    ingredients: yup.array().of(yup.object({
-      name: yup.string().lowercase().required(),
-      quantity: yup.mixed().required(),
-      unit: yup.string()
-    })).required(),
-    instructions: yup.array().of(yup.string().required()).required(),
-    nutrition: yup.object({
-      calorias: yup.number(),
-      carbohidratos: yup.number(),
-      grasas: yup.number(),
-      proteinas: yup.number()
-    }).required()
-  }
-  `
-
-  const userPrompt = `
-    Quiero que de este plan, reemplaces ${ meal } del ${ day } con otra comida que cumpla con las siguientes restricciones y preferencias y me devuelvas un plan semanal.
-
-    Plan: ${ plan }
-
-    Restricciones: ${restrictions}
-
-    Preferencias: ${preferences}
+    La receta no debe ser ninguna ni muy similar a estas: ${recipies}
   `;
 
   return await promptHelper(systemPrompt, userPrompt);
@@ -224,6 +176,5 @@ async function replaceRecipie(plan: Object, day: string, meal: string, restricti
 export {
   generatePlan,
   generateShoppingList,
-  generateRecipie,
-  replaceRecipie
+  generateRecipie
 }

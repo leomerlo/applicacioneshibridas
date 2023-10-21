@@ -36,6 +36,7 @@ export const emptyProfile: {
   plans: Plan[],
   setCurrentPatient: (id: string) => void,
   patient: Patient,
+  isUser: boolean
 } = {
   profile: {
     accountId: '',
@@ -59,6 +60,7 @@ export const emptyProfile: {
     diners: 1
   },
   setCurrentPatient: (id: string) => {},
+  isUser: false
 }
 
 const ProfileContext = createContext(emptyProfile)
@@ -69,6 +71,7 @@ function useProfile(){
 
 function ProfileProvider({children}: PropsWithChildren){
   const navigate = useNavigate();
+  const [isUser, setIsUser] = useState(emptyProfile.isUser);
   const [profile, setProfile] = useState<Profile>(emptyProfile.profile)
   const [patients, setPatients] = useState<Patient[]>(emptyProfile.patients);
   const [patient, setPatient] = useState<Patient>(emptyProfile.patient);
@@ -77,6 +80,7 @@ function ProfileProvider({children}: PropsWithChildren){
 
   useEffect(() => {
     refreshProfile();
+    setIsUser(profile.accountType === 'user');
   }, [])
 
   const refreshProfile = async (): Promise<void> => {
@@ -142,7 +146,8 @@ function ProfileProvider({children}: PropsWithChildren){
       patients,
       plans,
       setCurrentPatient,
-      patient
+      patient,
+      isUser
     }}>
       {children}
     </ProfileContext.Provider>
