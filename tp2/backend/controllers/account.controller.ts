@@ -2,8 +2,16 @@ import { Request, Response } from 'express';
 import * as services from '../services/account.service.js';
 import * as tokenService from '../services/token.service.js';
 import { Profile } from '../types/profile.js';
+import { ProfileType } from '../schemas/profile.schema.js';
 
 async function createAccount(req: Request, res: Response) {
+  const type = req.body.type;
+
+  if(type === ProfileType.admin) {
+    res.status(500).json({ error: { message: "No podés crear admins" } });
+    return;
+  }
+
   return services.createAccount(req.body)
   .then(() => {
     res.status(201).json({ message: "Cuenta creada" })
