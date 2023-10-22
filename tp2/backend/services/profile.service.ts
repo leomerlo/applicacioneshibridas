@@ -7,10 +7,10 @@ import { ProfileType } from '../schemas/profile.schema.js';
 
 const profilesColelction = db.collection('profiles')
 
-async function createProfile(profile: Profile | DocProfile, type: profileSchema.ProfileType) {
+async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
   await client.connect()
 
-  const schema = type === profileSchema.ProfileType.user ? profileSchema.profile : profileSchema.docProfile;
+  const schema = type === ProfileType.user || ProfileType.admin ? profileSchema.profile : profileSchema.docProfile;
 
   await schema.validate(profile, { abortEarly: false, stripUnknown: true })
     .then(async (profile) => {
@@ -37,7 +37,7 @@ async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | n
     throw new Error('El perfil que intentas obtener no existe.')
   }
 
-  profile.accountType = profile.idDocument && profile.idLicense ? ProfileType.doc : ProfileType.user;
+  profile.accountType = profile.accountType || ProfileType.user;
 
   return profile;
 }

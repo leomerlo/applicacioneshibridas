@@ -14,7 +14,7 @@ export type Profile = {
   restrictions?: string
   _id?: string,
   status: 'pending' | 'active' | 'inactive',
-  accountType: 'doc' | 'user',
+  accountType: 'doc' | 'user' | 'admin',
   idDocument?: string,
   idLicense?: string,
   password?: string
@@ -69,10 +69,9 @@ function useProfile(){
 
 function ProfileProvider({children}: PropsWithChildren){
   const navigate = useNavigate();
-  const [account, setAccount] = useState<Account | null>(null);
   const [profile, setProfile] = useState<Profile>(emptyProfile.profile)
-  const [patients, setPatients] = useState<Patient[]>();
-  const [patient, setPatient] = useState<Patient | null>(null);
+  const [patients, setPatients] = useState<Patient[]>(emptyProfile.patients);
+  const [patient, setPatient] = useState<Patient>(emptyProfile.patient);
   const [plans, setPlans] = useState<Plan[]>([])
   const { updateNotifications } = useNotifications();
 
@@ -80,7 +79,7 @@ function ProfileProvider({children}: PropsWithChildren){
     refreshProfile();
   }, [])
 
-  const refreshProfile = () => {
+  const refreshProfile = async (): Promise<void> => {
     accountService.getSession()
     .then((profile) => {
       if (profile.status === 200) {
@@ -100,7 +99,7 @@ function ProfileProvider({children}: PropsWithChildren){
     })
   }
 
-  const refreshPlans = (): Promise<void> => {
+  const refreshPlans = async (): Promise<void> => {
     return planService.getPlans()
     .then((resp) => {
       if (resp.status === 200) {
@@ -113,7 +112,7 @@ function ProfileProvider({children}: PropsWithChildren){
     })
   }
 
-  const refreshPatients = () => {
+  const refreshPatients = async (): Promise<void> => {
     patientsService.getPatients()
     .then((patients) => {
       if (patients.status === 200) {

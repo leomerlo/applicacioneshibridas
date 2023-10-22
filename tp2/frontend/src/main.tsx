@@ -21,7 +21,9 @@ import AssignPlan from './views/AssignPlan.tsx';
 import Plans from './views/Plans.tsx';
 import PlanView from './views/Plan.tsx';
 import ForgotPassword from './views/ForgotPassword.tsx';
-import PasswordReset from './views/PasswordReset.tsx';
+import BackOffice from './views/backoffice/BackOffice.tsx';
+import Dashboard from './views/backoffice/Dashboard.tsx';
+import RouteAdmin from './components/RouteAdmin.tsx';
 
 const router = createBrowserRouter([
   {
@@ -81,6 +83,17 @@ const router = createBrowserRouter([
         path: '/recipie/:profileId/:name',
         element: <RecipieProvider><RecipiePage /></RecipieProvider>
       },
+    ]
+  },
+  {
+    path: '/admin',
+    element: <RoutePrivate><BackOffice /></RoutePrivate>,
+    // errorElement: <Error404Page />,
+    children: [
+      {
+        path: '',
+        element: <RouteAdmin><Dashboard /></RouteAdmin>,
+      }
     ]
   },
   {

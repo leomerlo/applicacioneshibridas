@@ -9,7 +9,8 @@ enum ProfileStatus {
 
 enum ProfileType {
   user = 'user',
-  doc = 'doc'
+  doc = 'doc',
+  admin = 'admin'
 }
 
 const profile = yup.object({
@@ -20,6 +21,7 @@ const profile = yup.object({
   preferences: yup.string().trim(),
   diners: yup.number().integer().positive(),
   docId: yup.mixed<ObjectId>(),
+  accountType: yup.mixed<any>().oneOf([ProfileType.user, ProfileType.admin]).required(),
 });
 
 const docProfile = yup.object({

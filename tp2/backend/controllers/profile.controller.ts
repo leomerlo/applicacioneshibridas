@@ -21,6 +21,7 @@ async function getProfile(req: Request, res: Response) {
   if(tokenProfile._id) {
     profileService.getProfile(tokenProfile._id)
     .then((profile) => {
+      console.log('obtained profile', profile);
       if(profile) {
         profile.email = tokenProfile.email;
         res.status(200).json(profile)

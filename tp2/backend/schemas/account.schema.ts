@@ -6,7 +6,7 @@ const account = yup.object({
   _id: yup.mixed<ObjectId>(),
   userName: yup.string().trim().required().min(3),
   password: yup.string().required().min(3),
-  type: yup.mixed<any>().oneOf([ProfileType.user, ProfileType.doc]),
+  type: yup.mixed<any>().oneOf([ProfileType.user, ProfileType.doc, ProfileType.admin]),
 });
 
 export {
