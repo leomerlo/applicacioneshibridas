@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as profileSchema from '../schemas/profile.schema.js';
 import * as profileService from '../services/profile.service.js';
 import { DocProfile } from '../types/profile.js';
+import { ProfileType } from '../schemas/profile.schema.js';
 
 async function validateProfileData(req: Request, res: Response, next: NextFunction) {
   let userTypeSchema;
@@ -62,8 +63,24 @@ async function validatePatient(req: Request, res: Response, next: NextFunction) 
   })
 }
 
+async function validateAdmin(req: Request, res: Response, next: NextFunction) {
+  await profileService.getProfileByAccount(new ObjectId(req.body.accountId))
+  .then((profile) => {
+    if(profile && profile.accountType === ProfileType.admin) {
+      next()
+      return;
+    }
+
+    throw new Error('No tenés los permisos correctos para realizar esta acción');
+  })
+  .catch((err) => {
+    res.status(500).json({ error: { message: err.message } })
+  })
+}
+
 export {
   validateProfileData,
   validateDoctor,
-  validatePatient
+  validatePatient,
+  validateAdmin
 }
