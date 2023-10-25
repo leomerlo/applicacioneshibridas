@@ -3,9 +3,11 @@ import type { Recipie } from '../types/recipies.d.ts';
 import { Plan } from '../types/plan.js';
 import { db, client } from './mongo.service.js';
 import * as openAIService from './openApi.service.js';
+import { Profile } from '../types/profile.js';
 
 const planCollection = db.collection('plans')
 const likedCollection = db.collection('likes')
+const profileCollection = db.collection('profiles')
 
 async function getRecipie(recipie: string, profileId: ObjectId): Promise<Recipie> {
   await client.connect()
@@ -84,5 +86,5 @@ export {
   likeRecipie,
   unlikeRecipie,
   getLikedRecipies,
-  newRecipie
+  newRecipie,
 }

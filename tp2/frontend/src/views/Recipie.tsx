@@ -15,12 +15,17 @@ import Loading from "../components/Loading"
 import RecipieIngredients from "../components/RecipieIngredients"
 import RecipieSteps from "../components/RecipieSteps"
 import HeadDivider from "../components/HeadDivider"
+import Button from "../components/Button"
+import planService from "../services/plan.service"
+import { usePlan } from "../contexts/PlanContext"
+import { redirect } from "react-router-dom"
 
 const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
   const { name } = useParams();
   const { recipie, loading, recipieError } = useRecipie();
-  const profile = useProfile();
+  const { profile, isUser } = useProfile();
+  const { plan, updatePlan } = usePlan();
   const [image, setImage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +65,40 @@ const Recipie = () => {
     })
   }
 
+  const replaceRecipieHandler = async () => {
+    let replaceDay = '';
+    let replaceMeal = ''; 
+    const days = plan.meals;
+
+    for (const key in days) {
+      if (days.hasOwnProperty(key)) {
+        const meals  = days[key];
+        for (const mealKey in meals) {
+          const mealRecipie = meals[mealKey];
+          if(recipie.name === mealRecipie.name) {
+            replaceDay = key;
+            replaceMeal = mealKey;
+            break;
+          }
+        }
+      }
+    }
+
+    console.log(replaceDay, replaceMeal);
+
+    const replace = await planService.replaceRecipie(replaceDay, replaceMeal);
+
+    console.log(replace.status);
+
+    if(replace.status === 200) {
+      await updatePlan();
+
+      redirect('/plan');
+    } else {
+      console.error('Falló el replace');
+    }
+  }
+
   return (
     <div className="container mx-auto">
       <div>
@@ -87,10 +126,10 @@ const Recipie = () => {
               :
               <>
                 <div className="mt-6">
-                  <div className="text-4xl mx-auto w-fit">
-                    {/* <img src={image} aria-hidden /> */}
+                  <div className="flex justify-between">
+                    <h1 className="text-4xl text-gray-90 text-left mt-3 capitalize">{recipie.name}</h1>
+                    { isUser ? <Button variant="secondary" onClick={replaceRecipieHandler}>Reemplazar esta receta</Button> : '' }
                   </div>
-                  <h1 className="text-4xl text-gray-90 text-left mt-3 capitalize">{recipie.name}</h1>
                 </div>
 
                 <HeadDivider>
