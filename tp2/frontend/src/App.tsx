@@ -6,6 +6,7 @@ import { PlanProvider } from './contexts/PlanContext';
 import NotificationsBlock from './components/NotificationsBlock';
 
 function App() {
+
   return (
     <PlanProvider>
     <ProfileProvider>

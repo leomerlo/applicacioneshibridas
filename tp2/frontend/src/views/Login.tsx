@@ -49,7 +49,11 @@ const Login = () => {
       if(data.status === 200) {
         const response = data.data.token
         localStorage.setItem('token', response.token);
-        navigate('/', {replace: true}) 
+        if(response.profile.accountType === 'admin') {
+          navigate('/admin', {replace: true});
+        } else {
+          navigate('/', {replace: true});
+        }
       } else {
         setError("Usuario o contraseña incorrectos");
       }

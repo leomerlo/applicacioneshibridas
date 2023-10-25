@@ -93,7 +93,7 @@ async function createSession(session: Session) {
   }
 
   returnProfile.email = session.userName;
-  returnProfile.accountType = returnProfile.idDocument && returnProfile.idLicense ? ProfileType.doc : ProfileType.user;
+  returnProfile.accountType = returnProfile.accountType;
 
   return returnProfile
 }
