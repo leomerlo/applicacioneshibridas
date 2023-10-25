@@ -127,7 +127,7 @@ const Recipie = () => {
               <>
                 <div className="mt-6">
                   <div className="flex justify-between">
-                    <h1 className="text-4xl text-gray-90 text-left mt-3 capitalize">{recipie.name}</h1>
+                    <h1 className="text-4xl text-gray-90 text-left mt-3">{recipie.name}</h1>
                     { isUser ? <Button variant="secondary" onClick={replaceRecipieHandler}>Reemplazar esta receta</Button> : '' }
                   </div>
                 </div>
