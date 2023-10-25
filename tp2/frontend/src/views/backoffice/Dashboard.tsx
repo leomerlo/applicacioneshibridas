@@ -37,12 +37,12 @@ const Dashboard = () => {
           <span className="text-6xl text-white">{dashboard.plans}</span>
         </GradientCard>
       </div>
-      <div className="my-6 flex">
+      <div className="my-6 flex gap-6">
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">Últimos usuarios</h2>
           <ul>
-            { dashboard.users.reverse().map((user: any) => (
-              <li key={user.accountId}>{user.name}</li>
+            { dashboard.users.splice(-5).map((user: any) => (
+              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>{user.name}</li>
             ))}
           </ul>
         </div>
@@ -50,7 +50,7 @@ const Dashboard = () => {
           <h2 className="text-2xl text-gray-80">Esperando aprobación</h2>
           <ul>
             { dashboard.awaiting.reverse().map((user: any) => (
-              <li key={user.accountId}>{user.name}</li>
+              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>{user.name}</li>
             ))}
           </ul>
         </div>

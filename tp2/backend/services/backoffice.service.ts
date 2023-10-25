@@ -16,13 +16,13 @@ export type Dashboard = {
 async function getDashboard(): Promise<Dashboard> {
   await client.connect()
 
-  const users = await profileColelction.find({}).toArray();
+  const users = await profileColelction.find({}, { projection: { name: 1, accountId: 1 }}).toArray();
   const docs = await profileColelction.find({ accountType: ProfileType.doc }).toArray();
   const awaiting = await profileColelction.find({ status: 'pending' }).toArray();
   const plans = await planColelction.find({}).toArray();
 
   return {
-    users: users.splice(-10),
+    users: users,
     docs: docs.length,
     awaiting: awaiting,
     plans: plans.length,
