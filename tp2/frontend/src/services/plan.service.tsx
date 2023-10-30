@@ -28,8 +28,13 @@ export function deletePlan(id: string) {
   return API.call({ uri: `plan/${id}`, method: 'DELETE' })
 }
 
-export function replaceRecipie(day: string, meal: string) {
-  return API.call({ uri: `plan/replace/${day}/${meal}`, method: 'POST' });
+export function replaceRecipie(day: string, meal: string, dataCB: (data: any) => void, dataEnd: (response: any) => void) {
+  return API.callStream({
+    uri: `plan/replace/${day}/${meal}`,
+    method: 'POST',
+    dataCB,
+    dataEnd
+  });
 }
 
 export default {

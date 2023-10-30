@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from 'dotenv'
-import { ObjectId } from "bson";
+import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
 
 dotenv.config()
@@ -31,6 +31,49 @@ async function promptHelper(systemPrompt: string, userPrompt: string, model = mo
     console.log('End OpenAI fetch', timeEnd.getHours(), timeEnd.getMinutes(), timeEnd.getSeconds());
     console.log('Query time: ', timeDiff + 'segs');
     return result as string;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+    throw new Error(error);
+  }
+}
+
+async function promptHelperStream(systemPrompt: string, userPrompt: string, model = model3, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
+  try {
+    const completion = await openai.createChatCompletion({
+      model,
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
+      temperature,
+      stream: true,
+    }, { responseType: "stream" });
+
+    let fullStream = "";
+
+    completion.data.on('data', data => {
+      const lines = data.toString().split('\n').filter(line => line.trim() !== '');
+      for (const line of lines) {
+        const message = line.replace(/^data: /, '');
+        if (message === '[DONE]') {
+          console.log('Response end');
+          dataEnd(fullStream);
+          return;
+        }
+        try {
+          const parsed = JSON.parse(message);
+          if (parsed.choices[0].delta.content) {
+            fullStream = fullStream + parsed.choices[0].delta.content;
+            dataCB(parsed.choices[0].delta.content);
+          }
+        } catch (error) {
+          console.error('Could not JSON parse stream message', message, error);
+        }
+      }
+    });
+
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -123,7 +166,7 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string): Promise<string> {
+async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<Stream> {
   const systemPrompt = `Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
   Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
@@ -170,7 +213,7 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
     La receta no debe ser ninguna ni muy similar a estas: ${recipies}
   `;
 
-  return await promptHelper(systemPrompt, userPrompt);
+  return await promptHelperStream(systemPrompt, userPrompt, model3, dataCB, dataEnd);
 }
 
 export {

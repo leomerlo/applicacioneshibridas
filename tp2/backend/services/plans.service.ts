@@ -165,7 +165,7 @@ async function editPlan(docId: string, planId: string, plan: Plan): Promise<void
   await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
 }
 
-async function replaceRecipie(profileId: ObjectId, day: string, meal: string): Promise<Recipie> {
+async function replaceRecipie(profileId: ObjectId, day: string, meal: string, recipie: Recipie): Promise<Recipie> {
   await client.connect()
   const plan = await db.collection("plans").findOne<Plan>({$or: [{ profileId: new ObjectId(profileId) },{ _id: new ObjectId(profileId) }]});
   const profile = await db.collection("profiles").findOne<Profile>({_id: new ObjectId(profileId)});
@@ -184,14 +184,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     });
   });
 
-  const mealToReplace = plan?.meals[day][meal].name;
-
-  console.log(recipies.join(", "));
-
-  const rawOutput = await openApi.generateRecipie(profile?.restrictions || "", profile?.preferences || recipies.join(", "), "", day, meal, mealToReplace);
-  const result = JSON.parse(rawOutput as string);
-
-  const recipie = await recipieSchema.recipie.validate(result, { abortEarly: false, stripUnknown: true }) as Recipie;
+  await recipieSchema.recipie.validate(recipie, { abortEarly: false, stripUnknown: true }) as Recipie;
 
   if (plan != undefined) {
     plan.meals[day][meal] = recipie;
@@ -199,7 +192,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     Promise.reject();
   }
 
-  const ingredients: Ingredients[] = [];
+  /* const ingredients: Ingredients[] = [];
 
   Array.from(Object.keys(plan.meals)).forEach((day) => {
     // @ts-ignore
@@ -211,7 +204,9 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     });
   });
 
-  // await generateShoppingList(profileId, ingredients);
+  await generateShoppingList(profileId, ingredients); */
+
+  console.log(plan.meals.sunday.breakfast);
 
   await db.collection("plans").findOneAndReplace({ _id: new ObjectId(plan?._id) }, plan);
 

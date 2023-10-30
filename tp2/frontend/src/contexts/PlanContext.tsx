@@ -117,6 +117,7 @@ function PlanProvider({children}: PropsWithChildren){
       if (plan.status === 200) {
         updateNotifications({ variant: 'success', message: 'Plan creado con éxito' });
         setPlan({...plan.data});
+        console.log('plan actualizado', plan.data);
       }
     }).catch((error) => {
       updateNotifications({ variant: 'error', message: 'Error al crear el plan' });
