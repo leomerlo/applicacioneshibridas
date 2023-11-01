@@ -1,7 +1,7 @@
 import API from './api.service';
 
-export function newPlan() {
-  return API.call({ uri: 'plan', method: 'POST' })
+export function newPlan(dataCB: (data: any) => void, dataEnd: (response: any) => void) {
+  return API.callStream({ uri: 'plan', method: 'POST', dataCB, dataEnd })
 }
 
 export function newDocPlan({ title, preferences, restrictions }: { title: string, preferences: string, restrictions: string}) {

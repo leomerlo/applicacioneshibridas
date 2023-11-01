@@ -56,7 +56,9 @@ const Profile = () => {
         updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
       } else {
         refreshProfile();
-        planService.newPlan().then((response) => {
+        planService.newPlan((data) => {
+          console.log(data);
+        }, (response) => {
           setLoadingPlan(false);
           if(response.status === 201) {
             updatePlan();
