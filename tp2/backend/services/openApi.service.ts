@@ -2,6 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 import dotenv from 'dotenv'
 import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
+import { Meals } from "../types/plan";
 
 dotenv.config()
 
@@ -85,7 +86,7 @@ async function promptHelperStream(systemPrompt: string, userPrompt: string, mode
   }
 }
 
-async function generatePlan(restrictions: string, preferences: string, recipies: string): Promise<string> {
+async function generatePlan(restrictions: string, preferences: string, recipies: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
   const systemPrompt = `
   Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
@@ -136,7 +137,7 @@ async function generatePlan(restrictions: string, preferences: string, recipies:
     Ejemplos: ${recipies}
   `;
 
-  return await promptHelper(systemPrompt, userPrompt);
+  return await promptHelperStream(systemPrompt, userPrompt, "", dataCB, dataEnd);
 }
 
 async function generateShoppingList(ingredients: Ingredients[]): Promise<string> {
@@ -166,7 +167,7 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<Stream> {
+async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
   const systemPrompt = `Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
   Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.

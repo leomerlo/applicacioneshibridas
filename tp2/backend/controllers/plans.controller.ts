@@ -4,18 +4,33 @@ import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
 import { Ingredients } from '../types/recipies.js';
 import { Plan } from '../types/plan.js';
-import { Configuration, OpenAIApi } from 'openai';
+import type { Profile } from '../types/profile.js';
 
 async function generatePlan(req: Request, res: Response) {
   const profileId = req.body.profileId;
+  const profile = await profileService.getProfile(profileId) as Profile;
 
-  planService.generatePlan(profileId)
-    .then(() => {
-      res.status(201).json({ message: "Nuevo plan creado" })
-    })
-    .catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
-    })
+  if(!profile) {
+    throw new Error('El perfil no existe');
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+
+  let likedRecipies: string = '';
+  // await recipiesService.getLikedRecipies(profileId).then((recipies) => {
+  //   likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
+  // });
+
+  try {
+    openAiService.generateRecipie(profile.restrictions || '', profile.preferences || '', likedRecipies, "monday", "dinner", (data) => {
+      res.write(data);
+    }, async (data: string) => {
+      await planService.savePlan(profileId, JSON.parse(data))
+      res.end(201);
+    });
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 async function generateDocPlan(req: Request, res: Response) {
@@ -157,12 +172,16 @@ async function replaceRecipie(req: Request, res: Response) {
     return;
   }
 
-  openAiService.generateRecipie(profile.restrictions as string, profile.preferences as string, "", day, meal, (data) => {
-    res.write(data);
-  }, async (data) => {
-    await planService.replaceRecipie(profileId, day, meal, JSON.parse(data))
-    res.end();
-  });
+  try {
+    openAiService.generateRecipie(profile.restrictions as string, profile.preferences as string, "", day, meal, (data) => {
+      res.write(data);
+    }, async (data) => {
+      await planService.replaceRecipie(profileId, day, meal, JSON.parse(data))
+      res.end(201);
+    });
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 export {

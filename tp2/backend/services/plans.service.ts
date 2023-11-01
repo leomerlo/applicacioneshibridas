@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
 import * as recipieSchema from '../schemas/recipies.schema.js';
-import { Plan } from '../types/plan.js';
+import { Meals, Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients, Recipie } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
@@ -22,7 +22,11 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
   });
 
-  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies);
+  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
+
+  }, (data) => {
+
+  });
 
   const meals = JSON.parse(rawOutput as string);
 
@@ -46,12 +50,31 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     })
 }
 
-async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
+async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   await client.connect()
 
-  const rawOutput = await openApi.generatePlan(restrictions, preferences, '');
+  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+  .then(async (meals) => {
+    const plan = {
+      meals,
+      profileId: new ObjectId(profileId)
+    }
+  
+    const planExists = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
+  
+    if (planExists) {
+      await db.collection("plans").findOneAndReplace({ profileId: new ObjectId(profileId) }, plan);
+    } else {
+      await db.collection("plans").insertOne(plan);
+    }
+  })
+  .catch((err) => {
+    console.log('Validation error', err);
+  })
+}
 
-  const meals = JSON.parse(rawOutput as string);
+async function generateDocPlan(docId: ObjectId, meals: Meals, title: string): Promise<void> {
+  await client.connect()
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
     .then(async (meals) => {
@@ -215,6 +238,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
 
 export {
   generatePlan,
+  savePlan,
   generateDocPlan,
   getPlan,
   getPlanById,
