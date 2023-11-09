@@ -18,7 +18,6 @@ export type Meal = {
 } 
 
 export type Props = {
-  day: string;
   meal: Meal;
 }
 
@@ -41,7 +40,7 @@ const NextMealItem = (props: Props) => {
     } else {
       setRecipieLink(`/recipie/${id}/${props.meal.name}`);
     }
-  }, [plan]);
+  }, [plan, props.meal]);
 
   return (
     <Link to={recipieLink}>

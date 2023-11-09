@@ -96,11 +96,11 @@ const Recipie = () => {
       includesInstructions(fullChunk);
       includesNutrition(fullChunk);
     }, async () => {
-      setTimeout(async () => {
-        await updatePlan();
+      await updatePlan();
+      setTimeout(() => {
         setIsLoading(false);
         navigate('/plan');
-      }, 5000);
+      }, 1000);
     });
   }
 

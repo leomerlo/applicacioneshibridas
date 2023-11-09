@@ -13,15 +13,16 @@ import DaysCarousel from "../components/DaysCarousel/DaysCarousel"
 
 const PlanView = () => {
   const { id } = useParams();
-  const { plan, todayString } = usePlan();
+  const { plan, todayString, planSelectedDay, setPlanSelectedDay } = usePlan();
   const [planData, setPlanData] = useState<Plan>();
-  const [day, setDay] = useState<string>(todayString);
   const notifications = useNotifications();
   const navigate = useNavigate();
   const { refreshPlans } = useProfile();
 
   useEffect(() => {
-    setDay(todayString);
+    if(!planSelectedDay){
+      setPlanSelectedDay(todayString);
+    }
   }, [todayString]);
 
   useEffect(() => {
@@ -39,10 +40,14 @@ const PlanView = () => {
     } else {
       setPlanData(plan as Plan);
     }
-  }, [plan]);
+  }, []);
+
+  useEffect(() => {
+    setPlanData(plan as Plan);
+  }, [plan])
 
   const changeDayHandler = (day: string) => {
-    setDay(day);
+    setPlanSelectedDay(day);
   }
 
   const deletePlanHandler = () => {
@@ -70,8 +75,8 @@ const PlanView = () => {
         { planData ? <>
           <h1 className="text-4xl mt-6 mb-2">{
             id ? planData.title : "Mi Plan alimenticio"}</h1>
-          <DaysCarousel day={day} onDayChange={changeDayHandler} />
-          <PatientNextMeal day={day} plan={planData as Plan} />
+          <DaysCarousel day={planSelectedDay} onDayChange={changeDayHandler} />
+          <PatientNextMeal day={planSelectedDay} plan={planData as Plan} />
         </>: null }
       </div>
       { id ? 

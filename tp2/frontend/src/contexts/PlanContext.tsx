@@ -39,7 +39,9 @@ const emptyPlan: {
   todayString: string,
   nextMealType: MealTypes,
   shoppingList?: ShoppingListIngredient[],
-  loadedPlan: boolean
+  loadedPlan: boolean,
+  planSelectedDay: string,
+  setPlanSelectedDay: (day: string) => void
 } = {
   plan: null,
   updatePlan: () => {},
@@ -47,7 +49,9 @@ const emptyPlan: {
   nextMeal: '',
   todayString: '',
   nextMealType: MealTypes.breakfast,
-  loadedPlan: false
+  loadedPlan: false,
+  planSelectedDay: '',
+  setPlanSelectedDay: (day: string) => { return day; },
 }
 
 const PlanContext = createContext(emptyPlan)
@@ -63,9 +67,11 @@ function PlanProvider({children}: PropsWithChildren){
   const [todayString, setTodayString] = useState<string>('');
   const [nextMeal, setNextMeal] = useState<string>(emptyPlan.nextMeal);
   const [nextMealType, setNextMealType] = useState<MealTypes>(emptyPlan.nextMealType);
+  const [planSelectedDay, setPlanSelectedDay] = useState(todayString);
   const { updateNotifications } = useNotifications();
 
   useEffect(() => {
+    console.log('setea today');
     setToday(new Date());
 
     planService.getPlan()
@@ -115,18 +121,17 @@ function PlanProvider({children}: PropsWithChildren){
   const updatePlan = async () => {
     planService.getPlan().then((plan) => {
       if (plan.status === 200) {
-        updateNotifications({ variant: 'success', message: 'Plan creado con éxito' });
+        updateNotifications({ variant: 'success', message: 'Plan actualizado' });
         setPlan({...plan.data});
-        console.log('plan actualizado', plan.data);
       }
     }).catch((error) => {
-      updateNotifications({ variant: 'error', message: 'Error al crear el plan' });
+      updateNotifications({ variant: 'error', message: 'Error al actualizar el plan' });
       throw new Error(error);
     });
   };
   
   return (
-    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType, loadedPlan }}>
+    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType, loadedPlan, planSelectedDay, setPlanSelectedDay }}>
       {children}
     </PlanContext.Provider>
   )
