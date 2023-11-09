@@ -22,11 +22,11 @@ async function generatePlan(req: Request, res: Response) {
   // });
 
   try {
-    openAiService.generateRecipie(profile.restrictions || '', profile.preferences || '', likedRecipies, "monday", "dinner", (data) => {
+    openAiService.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
       res.write(data);
-    }, async (data: string) => {
-      await planService.savePlan(profileId, JSON.parse(data))
-      res.end(201);
+    }, async (data: any) => {
+      // await planService.savePlan(profileId, JSON.parse(data))
+      res.end(data);
     });
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
@@ -172,12 +172,15 @@ async function replaceRecipie(req: Request, res: Response) {
     return;
   }
 
+  let newRecipie = "";
+
   try {
     openAiService.generateRecipie(profile.restrictions as string, profile.preferences as string, "", day, meal, (data) => {
+      newRecipie += data;
       res.write(data);
     }, async (data) => {
-      await planService.replaceRecipie(profileId, day, meal, JSON.parse(data))
-      res.end(201);
+      await planService.replaceRecipie(profileId, day, meal, JSON.parse(newRecipie))
+      res.end(data);
     });
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
