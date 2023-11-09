@@ -20,13 +20,13 @@ const HomeUser = () => {
 
   return (
     <div className="container mx-auto flex flex-col h-full justify-start">
-      { (profile.accountId != '' && loadedPlan ) ? <>
-        { plan ? <div>
+      {(profile.accountId != '' && loadedPlan) ? <>
+        {plan ? <div>
           <WelcomeCard mode={WelcomeType.h} />
-            <FeaturedMealCard />
-            <NextMeals />
+          <FeaturedMealCard />
+          <NextMeals />
         </div>
-        :
+          :
           profile.docId ? <>
             <div className="w-fit lg:w-6/12 mx-auto flex flex-col h-full">
               <div className="mx-auto w-3/4 mt-8 -translate-x-8">
@@ -49,7 +49,7 @@ const HomeUser = () => {
             </div>
           </> : <StartPlan />
         }
-      </> : <Loading action="Estamos cargando tus datos..." /> }
+      </> : <Loading action="Estamos cargando tus datos..." />}
     </div>
   )
 }

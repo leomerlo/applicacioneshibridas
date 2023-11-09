@@ -1,28 +1,27 @@
-import { Configuration, OpenAIApi } from "openai";
+import { OpenAI } from "openai";
 import dotenv from 'dotenv'
-import { ObjectId } from "bson";
+import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
+import { Meals } from "../types/plan";
 
 dotenv.config()
 
-const configuration = new Configuration({
-  organization: process.env.OPENAI_ORGANIZATION,
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 const model3 = "gpt-3.5-turbo-16k";
-const model4 = "gpt-4";
+const model4 = "gpt-4-1106-preview";
 const temperature = 0;
 
-async function promptHelper(systemPrompt: string, userPrompt: string, model = model3): Promise<string> {
+async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
   try {
     const timeStart = new Date();
     console.log('Start OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
-    const completion = await openai.createChatCompletion({
-      model,
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-16k",
       messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
-      temperature
-    });
+      temperature: 0
+    })
     const timeEnd = new Date();
     const timeDiff = Math.abs((timeStart.getTime() - timeEnd.getTime()) / 1000);
     let result = completion.data.choices[0].message?.content;
@@ -42,7 +41,44 @@ async function promptHelper(systemPrompt: string, userPrompt: string, model = mo
   }
 }
 
-async function generatePlan(restrictions: string, preferences: string, recipies: string): Promise<string> {
+async function promptHelperStream(systemPrompt: string, userPrompt: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-1106",
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
+      temperature: 0,
+      stream: true,
+      response_format: { 
+        type: "json_object"
+      }
+    })
+
+    let fullStream = "";
+
+    console.log("Start streaming response");
+
+    for await (const chunk of completion) {
+      if(chunk.choices[0].delta.content != undefined) {
+        fullStream = chunk.choices[0].delta.content;
+        dataCB(fullStream);
+      } else {
+        console.log("End streaming response");
+        dataEnd(fullStream);
+      }
+    }
+
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+    throw new Error(error);
+  }
+}
+
+async function generatePlan(restrictions: string, preferences: string, recipies: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
   const systemPrompt = `
   Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
@@ -66,18 +102,18 @@ async function generatePlan(restrictions: string, preferences: string, recipies:
   {
     "monday": {
       "breakfast": {
-        name: yup.string().required(),
-        ingredients: yup.array().of(yup.object({
-          name: yup.string().lowercase().required(),
-          quantity: yup.mixed().required(),
-          unit: yup.string()
+        "name": yup.string().required(),
+        "ingredients": yup.array().of(yup.object({
+          "name": yup.string().lowercase().required(),
+          "quantity": yup.mixed().required(),
+          "unit": yup.string()
         })).required(),
-        instructions: yup.array().of(yup.string().required()).required(),
-        nutrition: yup.object({
-          calorias: yup.number(),
-          carbohidratos: yup.number(),
-          grasas: yup.number(),
-          proteinas: yup.number()
+        "instructions": yup.array().of(yup.string().required()).required(),
+        "nutrition": yup.object({
+          "calorias": yup.number(),
+          "carbohidratos": yup.number(),
+          "grasas": yup.number(),
+          "proteinas": yup.number()
         }).required()
       }
     }
@@ -123,13 +159,11 @@ async function generateShoppingList(ingredients: Ingredients[]): Promise<string>
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string): Promise<string> {
+async function generateRecipie(restrictions: string, preferences: string, recipies: string, day: string, meal: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
   const systemPrompt = `Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar una receta para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
   Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
   ${meal === 'breakfast' ? "La receta es para un desayuno" : ""}
-
-  Otras comidas de la semana: 
 
   Segui las siguientes reglas al crear la receta:
   - Los ingredientes deben estar expresados en singular y nunca en plural.
@@ -144,19 +178,20 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
   Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+
   {
-    name: yup.string().lowercase().required(),
-    ingredients: yup.array().of(yup.object({
-      name: yup.string().lowercase().required(),
-      quantity: yup.number().required(),
-      unit: yup.string().oneOf(['gr', 'kg', 'ml', 'l', 'un'])
+    "name": yup.string().lowercase().required(),
+    "ingredients": yup.array().of(yup.object({
+      "name": yup.string().lowercase().required(),
+      "quantity": yup.number().required(),
+      "unit": yup.string().oneOf(['gr', 'kg', 'ml', 'l', 'un'])
     })).required(),
-    instructions: yup.array().of(yup.string().required()).required(),
-    nutrition: yup.object({
-      calorias: yup.number().required(),
-      carbohidratos: yup.number().required(),
-      grasas: yup.number().required(),
-      proteinas: yup.number().required()
+    "instructions": yup.array().of(yup.string().required()).required(),
+    "nutrition": yup.object({
+      "calorias": yup.number().required(),
+      "carbohidratos": yup.number().required(),
+      "grasas": yup.number().required(),
+      "proteinas": yup.number().required()
     }).required()
   }
   `
@@ -170,7 +205,7 @@ async function generateRecipie(restrictions: string, preferences: string, recipi
     La receta no debe ser ninguna ni muy similar a estas: ${recipies}
   `;
 
-  return await promptHelper(systemPrompt, userPrompt);
+  return await promptHelperStream(systemPrompt, userPrompt, dataCB, dataEnd);
 }
 
 export {

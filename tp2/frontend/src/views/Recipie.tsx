@@ -18,7 +18,7 @@ import HeadDivider from "../components/HeadDivider"
 import Button from "../components/Button"
 import planService from "../services/plan.service"
 import { usePlan } from "../contexts/PlanContext"
-import { redirect } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
@@ -29,6 +29,10 @@ const Recipie = () => {
   const [image, setImage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingIngredients, setLoadingIngredients] = useState(false);
+  const [loadingInstructions, setLoadingInstructions] = useState(false);
+  const [loadingNutrition, setLoadingNutrition] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // @ts-ignore
@@ -38,10 +42,6 @@ const Recipie = () => {
   useEffect(() => {
     setImage(recipieImages[Math.floor(Math.random() * recipieImages.length)]);
   }, [name]);
-
-  useEffect(() => {
-    setIsLoading(!isLoading);
-  }, [loading]);
 
   const likeButtonHandler = () => {
     let service;
@@ -69,6 +69,7 @@ const Recipie = () => {
     let replaceDay = '';
     let replaceMeal = ''; 
     const days = plan.meals;
+    let fullChunk = "";
 
     for (const key in days) {
       if (days.hasOwnProperty(key)) {
@@ -84,18 +85,40 @@ const Recipie = () => {
       }
     }
 
-    console.log(replaceDay, replaceMeal);
+    await setLoadingIngredients(true);
+    await setLoadingInstructions(true);
+    await setLoadingNutrition(true);
+    await setIsLoading(true);
 
-    const replace = await planService.replaceRecipie(replaceDay, replaceMeal);
-
-    console.log(replace.status);
-
-    if(replace.status === 200) {
+    planService.replaceRecipie(replaceDay, replaceMeal, (data: any) => {
+      fullChunk += new TextDecoder().decode(data);
+      includesIngredients(fullChunk);
+      includesInstructions(fullChunk);
+      includesNutrition(fullChunk);
+    }, async () => {
       await updatePlan();
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/plan');
+      }, 1000);
+    });
+  }
 
-      redirect('/plan');
-    } else {
-      console.error('Falló el replace');
+  const includesIngredients = (stream: string) => {
+    if (stream.includes('"ingredients":')) {
+      setLoadingIngredients(false);
+    }
+  }
+
+  const includesInstructions = (stream: string) => {
+    if (stream.includes('"instructions":')) {
+      setLoadingInstructions(false);
+    }
+  }
+
+  const includesNutrition = (stream: string) => {
+    if (stream.includes('"nutrition":')) {
+      setLoadingNutrition(false);
     }
   }
 
@@ -103,9 +126,22 @@ const Recipie = () => {
     <div className="container mx-auto">
       <div>
         {
-          loading ?
+          isLoading || loading ?
           <>
-            <Loading action="Cargando receta..." />
+            <Loading action="Cargando receta..." items={[
+              {
+                label: 'Ingredientes',
+                loading: loadingIngredients
+              },
+              {
+                label: 'Instrucciones',
+                loading: loadingInstructions
+              },
+              {
+                label: 'Nutrición',
+                loading: loadingNutrition
+              }
+            ]} />
           </>
           :
           <>

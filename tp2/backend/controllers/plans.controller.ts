@@ -1,19 +1,36 @@
 import { Request, Response } from 'express';
 import * as planService from '../services/plans.service.js';
+import * as openAiService from '../services/openApi.service.js';
+import * as profileService from '../services/profile.service.js';
 import { Ingredients } from '../types/recipies.js';
 import { Plan } from '../types/plan.js';
-import type { ObjectId } from 'mongodb';
+import type { Profile } from '../types/profile.js';
 
 async function generatePlan(req: Request, res: Response) {
   const profileId = req.body.profileId;
-  
-  planService.generatePlan(profileId)
-  .then(() => {
-    res.status(201).json({ message: "Nuevo plan creado" })
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+  const profile = await profileService.getProfile(profileId) as Profile;
+
+  if(!profile) {
+    throw new Error('El perfil no existe');
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+
+  let likedRecipies: string = '';
+  // await recipiesService.getLikedRecipies(profileId).then((recipies) => {
+  //   likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
+  // });
+
+  try {
+    openAiService.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
+      res.write(data);
+    }, async (data: any) => {
+      // await planService.savePlan(profileId, JSON.parse(data))
+      res.end(data);
+    });
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 async function generateDocPlan(req: Request, res: Response) {
@@ -22,54 +39,54 @@ async function generateDocPlan(req: Request, res: Response) {
   const preferences = req.body.preferences;
   const restrictions = req.body.restrictions;
 
-  if(!preferences || !restrictions || !title) {
+  if (!preferences || !restrictions || !title) {
     res.status(400).json({ error: { message: "Faltan detalles para generar el plan." } });
     return;
   }
-  
+
   planService.generateDocPlan(docId, preferences, restrictions, title)
-  .then(() => {
-    res.status(201).json({ message: "Nuevo plan creado" })
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then(() => {
+      res.status(201).json({ message: "Nuevo plan creado" })
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function getPlans(req: Request, res: Response) {
   const profileId = req.body.profileId;
 
   planService.getPlans(profileId)
-  .then((plans) => {
-    res.status(200).json(plans)
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then((plans) => {
+      res.status(200).json(plans)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function getPlan(req: Request, res: Response) {
   const profileId = req.body.profileId;
 
   planService.getPlan(profileId)
-  .then((plan) => {
-    res.status(200).json(plan)
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then((plan) => {
+      res.status(200).json(plan)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function getPlanById(req: Request, res: Response) {
   const planId = req.params.planId;
 
   planService.getPlanById(planId)
-  .then((plan) => {
-    res.status(200).json(plan)
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then((plan) => {
+      res.status(200).json(plan)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function getList(req: Request, res: Response) {
@@ -79,13 +96,13 @@ async function getList(req: Request, res: Response) {
   try {
     const list = await planService.getList(profileId);
 
-    if(list) {
+    if (list) {
       return res.status(200).json(list);
     } else {
-      
+
       const plan: Plan = await planService.getPlan(profileId);
 
-      if(!plan) {
+      if (!plan) {
         return res.status(400).json({ message: 'El plan no existe aun para este perfil.' });
       }
 
@@ -115,12 +132,12 @@ async function assignPlan(req: Request, res: Response) {
   const planId = req.params.planId;
 
   planService.assignPlan(patientId, planId)
-  .then(() => {
-    res.status(201).json({ message: "Plan asignado" })
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then(() => {
+      res.status(201).json({ message: "Plan asignado" })
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function deletePlan(req: Request, res: Response) {
@@ -128,31 +145,46 @@ async function deletePlan(req: Request, res: Response) {
   const planId = req.params.planId;
 
   planService.deletePlan(docId, planId)
-  .then(() => {
-    res.status(202).json({ message: "Plan eliminado" })
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+    .then(() => {
+      res.status(202).json({ message: "Plan eliminado" })
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
 }
 
 async function replaceRecipie(req: Request, res: Response) {
   const profileId = req.body.profileId;
   const day = req.params.day;
   const meal = req.params.meal;
-  
-  if(!day || !meal) {
+
+  res.setHeader('Content-Type', 'application/json');
+
+  if (!day || !meal) {
     res.status(400).json({ error: { message: 'Faltan datos' } })
     return;
   }
 
-  planService.replaceRecipie(profileId, day, meal)
-  .then((recipie) => {
-    res.status(200).json(recipie);
-  })
-  .catch((err) => {
-    res.status(400).json({ error: { message: err.message } })
-  })
+  const profile = await profileService.getProfile(profileId);
+
+  if (!profile) {
+    res.status(400).json({ error: { message: 'El perfil no existe' } })
+    return;
+  }
+
+  let newRecipie = "";
+
+  try {
+    openAiService.generateRecipie(profile.restrictions as string, profile.preferences as string, "", day, meal, (data) => {
+      newRecipie += data;
+      res.write(data);
+    }, async (data) => {
+      await planService.replaceRecipie(profileId, day, meal, JSON.parse(newRecipie))
+      res.end(data);
+    });
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 export {

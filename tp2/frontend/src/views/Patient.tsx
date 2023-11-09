@@ -11,12 +11,16 @@ import { faPenToSquare, faCircleCheck } from "@fortawesome/free-regular-svg-icon
 import { faCarrot } from "@fortawesome/free-solid-svg-icons"
 import PatientNextMeal from "../components/NextMeals/PlanNextMeal"
 import { useProfile } from "../contexts/ProfileContext"
+import { usePlan } from "../contexts/PlanContext"
 import FooterMenu from "../components/FooterMenu"
 import HeadDivider from "../components/HeadDivider"
+import DaysCarousel from "../components/DaysCarousel/DaysCarousel"
 
 const Patient = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { todayString } = usePlan();
+  const [day, setDay] = useState<string>(todayString);
   const notifications = useNotifications();
   const { setCurrentPatient, patients } = useProfile();
   const [activePatient, setActivePatient] = useState<Patient>({
@@ -31,6 +35,10 @@ const Patient = () => {
   if (!id) {
     navigate('/');
   }
+
+  useEffect(() => {
+    setDay(todayString);
+  }, [todayString]);
 
   useEffect(() => {
     patientsService.getPatient(id as string).then((resp) => {
@@ -51,6 +59,10 @@ const Patient = () => {
     navigate(`/patient/${id}/assignPlan`);
   }
 
+  const changeDayHandler = (day: string) => {
+    setDay(day);
+  }
+
   return (
     <div className="container mx-auto h-full">
       <div className="flex flex-col h-full pb-20">
@@ -64,7 +76,8 @@ const Patient = () => {
               <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
               <span className="text-gray-80 font-bold">Plan activo: {activePatient.plan.title}</span>
             </HeadDivider>
-            <PatientNextMeal plan={activePatient.plan} />
+            <DaysCarousel day={day} onDayChange={changeDayHandler} />
+            <PatientNextMeal plan={activePatient.plan} day={day} />
           </> : <>
             <img src={LoginImage} aria-hidden="true" className="w-1/2 mx-auto my-8" />
             <h2 className="text-2xl text-gray-80 text-center font-bold">Este paciente todavía no tiene ningún plan asignado</h2>

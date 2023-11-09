@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as controller from '../controllers/plans.controller.js';
 import { validateToken, addProfileIdToBody } from '../middleware/token.middleware.js';
 import { validateDoctor, validatePatient } from '../middleware/profile.validate.middleware.js';
+import { Request, Response } from 'express';
 
 const router = Router();
 

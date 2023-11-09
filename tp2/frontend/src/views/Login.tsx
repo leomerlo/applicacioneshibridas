@@ -15,9 +15,9 @@ import NotificationsBlock from '../components/NotificationsBlock'
 
 const Login = () => {
   const userTexts = {
-    title: "Bienvenid@ a Food Genie!",
+    title: "Bienvenid@ a SAZ!",
     splashTitle: "Despierta al chef que llevas dentro.",
-    splashSubtitle: "Con Food Genie, tu asistente culinario personal.",
+    splashSubtitle: "Con SAZ!, tu asistente culinario personal.",
     changeButtonText: "Soy Nutricionista",
     chanceButtonIcon: faCarrot,
     registerLink: '/register/user'
@@ -25,7 +25,7 @@ const Login = () => {
 
   const nutriTexts = {
     title: "Ingresa como nutricionista",
-    splashTitle: "Bienvenido a Food Genie",
+    splashTitle: "Bienvenido a SAZ!",
     splashSubtitle: "Tu plataforma personalizada de asistencia nutricional. ¡Prepárate para transformar la salud a través de la ciencia de la alimentación!",
     changeButtonText: "Soy Usuario / Paciente",
     chanceButtonIcon: faUser,
@@ -86,7 +86,7 @@ const Login = () => {
               <form onSubmit={(e) => { e.preventDefault(); login(); }}>
                 <div className="text-center">
                   <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
-                  <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de Food Genie.</p>
+                  <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de SAZ!.</p>
                 </div>
                 <div className="mt-8">
                   <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
@@ -118,7 +118,7 @@ const Login = () => {
           className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="w-fit h-fit text-center">
-            <img src={Logo} alt="Food Genie" className="mx-auto" />
+            <img src={Logo} alt="SAZ!" className="mx-auto" />
             <img src={LoginImage} aria-hidden="true" className="mt-20 mx-auto" />
             <div>
               <p className="text-3xl text-white mt-20">

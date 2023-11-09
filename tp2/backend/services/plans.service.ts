@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
 import * as recipieSchema from '../schemas/recipies.schema.js';
-import { Plan } from '../types/plan.js';
+import { Meals, Plan } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients, Recipie } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
@@ -22,7 +22,11 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
   });
 
-  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies);
+  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
+
+  }, (data) => {
+
+  });
 
   const meals = JSON.parse(rawOutput as string);
 
@@ -46,12 +50,31 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     })
 }
 
-async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
+async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   await client.connect()
 
-  const rawOutput = await openApi.generatePlan(restrictions, preferences, '');
+  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+  .then(async (meals) => {
+    const plan = {
+      meals,
+      profileId: new ObjectId(profileId)
+    }
+  
+    const planExists = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
+  
+    if (planExists) {
+      await db.collection("plans").findOneAndReplace({ profileId: new ObjectId(profileId) }, plan);
+    } else {
+      await db.collection("plans").insertOne(plan);
+    }
+  })
+  .catch((err) => {
+    console.log('Validation error', err);
+  })
+}
 
-  const meals = JSON.parse(rawOutput as string);
+async function generateDocPlan(docId: ObjectId, meals: Meals, title: string): Promise<void> {
+  await client.connect()
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
     .then(async (meals) => {
@@ -165,7 +188,7 @@ async function editPlan(docId: string, planId: string, plan: Plan): Promise<void
   await db.collection("plans").findOneAndReplace({ docId: new ObjectId(docId), _id: new ObjectId(planId) }, plan);
 }
 
-async function replaceRecipie(profileId: ObjectId, day: string, meal: string): Promise<Recipie> {
+async function replaceRecipie(profileId: ObjectId, day: string, meal: string, recipie: Recipie): Promise<Recipie> {
   await client.connect()
   const plan = await db.collection("plans").findOne<Plan>({$or: [{ profileId: new ObjectId(profileId) },{ _id: new ObjectId(profileId) }]});
   const profile = await db.collection("profiles").findOne<Profile>({_id: new ObjectId(profileId)});
@@ -184,14 +207,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     });
   });
 
-  const mealToReplace = plan?.meals[day][meal].name;
-
-  console.log(recipies.join(", "));
-
-  const rawOutput = await openApi.generateRecipie(profile?.restrictions || "", profile?.preferences || recipies.join(", "), "", day, meal, mealToReplace);
-  const result = JSON.parse(rawOutput as string);
-
-  const recipie = await recipieSchema.recipie.validate(result, { abortEarly: false, stripUnknown: true }) as Recipie;
+  await recipieSchema.recipie.validate(recipie, { abortEarly: false, stripUnknown: true }) as Recipie;
 
   if (plan != undefined) {
     plan.meals[day][meal] = recipie;
@@ -199,7 +215,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     Promise.reject();
   }
 
-  const ingredients: Ingredients[] = [];
+  /* const ingredients: Ingredients[] = [];
 
   Array.from(Object.keys(plan.meals)).forEach((day) => {
     // @ts-ignore
@@ -211,7 +227,9 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
     });
   });
 
-  // await generateShoppingList(profileId, ingredients);
+  await generateShoppingList(profileId, ingredients); */
+
+  console.log(plan.meals.sunday.breakfast);
 
   await db.collection("plans").findOneAndReplace({ _id: new ObjectId(plan?._id) }, plan);
 
@@ -220,6 +238,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string): P
 
 export {
   generatePlan,
+  savePlan,
   generateDocPlan,
   getPlan,
   getPlanById,

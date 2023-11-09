@@ -7,6 +7,7 @@ import patientsRouter from './routes/patients.routes.js';
 import backofficeRouter from './routes/backoffice.routes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { Router } from 'express';
 
 dotenv.config();
 
