@@ -1,24 +1,28 @@
 import { useProfile } from "../../contexts/ProfileContext";
 import GradientCard from "../../components/GradientCard";
 import { useEffect, useState } from "react";
-import backofficeService from "../../services/backoffice.service";
+import { useAdmin } from "../../contexts/AdminContext";
 
 const Dashboard = () => {
   const { profile } = useProfile();
+  const { users } = useAdmin();
   const [dashboard, setDashboard] = useState({
     docs: 0,
     awaiting: [],
-    plans: 0,
     users: []
   })
 
   useEffect(() => {
-    backofficeService.getDashboard().then((response) => {
-      if (response.status === 200) {
-        setDashboard(response.data);
-      }
-    }); 
-  }, []);
+    if(users.length > 0) {
+      const awaiting = users.filter((e) => { return e.status === "pending" });
+      const docs = users.filter((e) => { return e.accountType === "doc" });
+      setDashboard({
+        users,
+        docs: docs.length,
+        awaiting
+      });
+    }
+  }, [users]);
 
   return (
     <div className="container mx-auto h-full">
@@ -32,9 +36,6 @@ const Dashboard = () => {
         </GradientCard>
         <GradientCard title="Esperando aprobación">
           <span className="text-6xl text-white">{dashboard.awaiting.length}</span>
-        </GradientCard>
-        <GradientCard title="Planes generados">
-          <span className="text-6xl text-white">{dashboard.plans}</span>
         </GradientCard>
       </div>
       <div className="my-6 flex gap-6">

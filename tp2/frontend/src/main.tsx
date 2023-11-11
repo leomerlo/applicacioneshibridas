@@ -12,6 +12,7 @@ import RoutePrivate from './components/RoutePrivate.tsx';
 import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
 import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
+import { AdminProvider } from './contexts/AdminContext.tsx';
 import AddPatient from './views/AddPatient.tsx';
 import AddPlan from './views/AddPlan.tsx';
 import RoutePrivateDoctor from './components/RoutePrivateDoctor.tsx';
@@ -24,6 +25,7 @@ import ForgotPassword from './views/ForgotPassword.tsx';
 import BackOffice from './views/backoffice/BackOffice.tsx';
 import Dashboard from './views/backoffice/Dashboard.tsx';
 import RouteAdmin from './components/RouteAdmin.tsx';
+import Users from './views/backoffice/Users.tsx';
 
 const router = createBrowserRouter([
   {
@@ -87,12 +89,16 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <RoutePrivate><BackOffice /></RoutePrivate>,
+    element: <RoutePrivate><AdminProvider><BackOffice /></AdminProvider></RoutePrivate>,
     // errorElement: <Error404Page />,
     children: [
       {
         path: '',
         element: <RouteAdmin><Dashboard /></RouteAdmin>,
+      },
+      {
+        path: '/admin/users',
+        element: <RouteAdmin><Users /></RouteAdmin>,
       }
     ]
   },
