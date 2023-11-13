@@ -5,8 +5,10 @@ import { useNotifications } from "./NotificationsContext"
 
 const initialAdmin: {
   users: Profile[],
+  updateUsers: () => void
 } = {
   users: [],
+  updateUsers: () => {}
 }
 
 const AdminContext = createContext(initialAdmin)
@@ -20,20 +22,23 @@ function AdminProvider({children}: PropsWithChildren){
   const [users, setUsers] = useState<Profile[]>(initialAdmin.users)
 
   useEffect(() => {
-    backofficeService.getDashboard().then((response) => {
-      if(response.status === 200) {
-        setUsers(response.data.users);
-      } else {
-        updateNotifications({
-          variant: "error",
-          message: "No se pudo cargar los usuarios."
-        })
-      }
-    });
+    updateUsers();
   }, []);
+
+  async function updateUsers() {
+    const response = await backofficeService.getDashboard()
+    if(response.status === 200) {
+      setUsers(response.data.users);
+    } else {
+      updateNotifications({
+        variant: "error",
+        message: "No se pudo cargar los usuarios."
+      })
+    }
+  }
   
   return (
-    <AdminContext.Provider value={{ users }}>
+    <AdminContext.Provider value={{ users, updateUsers }}>
       {children}
     </AdminContext.Provider>
   )

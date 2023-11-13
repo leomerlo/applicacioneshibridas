@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAdmin } from '../../contexts/AdminContext'
 import Button from '../../components/Button';
+import { Link } from 'react-router-dom';
 
 const Users = () => {
   const { users } = useAdmin();
@@ -35,6 +36,10 @@ const Users = () => {
     }
   }, [filters]);
 
+  useEffect(() => {
+    clearFilters();
+  }, [users]);
+
   function statusUpdate(filter: string): void {
     const updatedFilters = {
       ...filters,
@@ -54,6 +59,7 @@ const Users = () => {
   return (
     <div className="container mx-auto h-full">
       <h1 className="text-4xl text-gray-80">Lista de usuarios</h1>
+      <Link to="/admin/addUser">Agregar Usuario</Link>
       <span>Filtros: <Button onClick={() => { statusUpdate('pending')}}>Pendientes</Button> <Button onClick={clearFilters}>Clear</Button></span>
       <div className="flex-1">
         <ul>

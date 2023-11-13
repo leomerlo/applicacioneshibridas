@@ -6,7 +6,7 @@ export function getPatients() {
   return API.call({ uri: 'patients', method: 'GET' })
 }
 
-export function addPatient({ userName, password, type }: { userName: string, password: string, type: "user" | "doc" } ) {
+export function addPatient({ userName, password, type }: { userName: string, password: string, type: "user" | "doc" | "admin" } ) {
   return API.call({ uri: 'patient', method: 'POST', body: { userName, password, type } })
 }
 

@@ -10,7 +10,7 @@ async function getDashboard(req: Request, res: Response) {
   })
 }
 
-async function createAdmin(req: Request, res: Response) {
+async function createUser(req: Request, res: Response) {
   return accountServices.createAccount(req.body)
   .then(() => {
     res.status(201).json({ message: "Cuenta creada" })
@@ -22,5 +22,5 @@ async function createAdmin(req: Request, res: Response) {
 
 export {
   getDashboard,
-  createAdmin
+  createUser
 }
