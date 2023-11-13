@@ -76,19 +76,19 @@ const AddUser = (props: Props) => {
         </div>
         <div className="flex-grow">
           <h1 className="text-4xl text-gray-80 mt-5">Agregar { userTypeText(userType) }</h1>
-          <div className="mt-8">
+          { !userType ? <div className="mt-8">
             <select>
               <option value="user">Usuario</option>
               <option value="doc">Nutricionista</option>
               <option value="user">Admin</option>
             </select>
-          </div>
+          </div> : <></> }
           <div className="mt-8">
             <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
           </div>
         </div>
         <div>
-          <Button full loading={loading} onClick={createPatient}>Crear Paciente</Button>
+          <Button full loading={loading} onClick={createPatient}>Crear {userTypeText(userType)}</Button>
         </div>
       </div>
     </div>
