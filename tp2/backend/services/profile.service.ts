@@ -51,22 +51,31 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
   await client.connect()
   const updateId = profileId ? profileId : profile._id;
 
+  console.log('profileAccountId', profile.accountId);
+
   const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
 
   if(profileId && payload.accountType !== ProfileType.admin) {
     throw new Error('No tienes permisos para modificar este perfil.')
   }
 
-  console.log(profile);
-
   const update = {
-    ...profile,
-    accountId: new ObjectId(updateId)
+    ...profile
   }
 
-  if( payload.docId ) {
+  console.log(update);
+
+  if(!profile.accountId) {
+    update.accountId = new ObjectId(payload._id)
+  } else {
+    update.accountId = new ObjectId(profile.accountId)
+  }
+
+  if(payload.docId) {
     update.docId = new ObjectId(payload.docId)
   }
+
+  console.log('final update', update);
 
   const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
 

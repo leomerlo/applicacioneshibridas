@@ -26,7 +26,7 @@ async function editUser(req: Request, res: Response) {
   const token = req.headers['auth-token'] as string;
   const profileId = req.params.profileId;
 
-  return profileServices.updateProfile(token, req.body, new ObjectId(profileId))
+  return profileServices.updateProfile(token, req.body.user, new ObjectId(profileId))
   .then(() => {
     res.status(200).json({ message: "Cuenta editada" })
   })

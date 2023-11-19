@@ -26,7 +26,8 @@ import BackOffice from './views/backoffice/BackOffice.tsx';
 import Dashboard from './views/backoffice/Dashboard.tsx';
 import RouteAdmin from './components/RouteAdmin.tsx';
 import Users from './views/backoffice/Users.tsx';
-import AddUserPage from './views/backoffice/AddUserPage.tsx'
+import AddUserPage from './views/backoffice/AddUserPage.tsx';
+import UserView from './views/backoffice/UserView.tsx';
 
 const router = createBrowserRouter([
   {
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
       {
         path: '/admin/addUser',
         element: <RouteAdmin><AddUserPage /></RouteAdmin>,
+      },
+      {
+        path: '/admin/user/:id',
+        element: <RouteAdmin><UserView /></RouteAdmin>,
       }
     ]
   },

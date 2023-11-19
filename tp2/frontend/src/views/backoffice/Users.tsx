@@ -64,7 +64,9 @@ const Users = () => {
       <div className="flex-1">
         <ul>
           { filteredList.map((user: any) => (
-            <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>{user.name}</li>
+            <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
+              <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+            </li>
           ))}
         </ul>
       </div>

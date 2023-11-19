@@ -2,6 +2,7 @@ import { useProfile } from "../../contexts/ProfileContext";
 import GradientCard from "../../components/GradientCard";
 import { useEffect, useState } from "react";
 import { useAdmin } from "../../contexts/AdminContext";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { profile } = useProfile();
@@ -43,15 +44,20 @@ const Dashboard = () => {
           <h2 className="text-2xl text-gray-80">Últimos usuarios</h2>
           <ul>
             { dashboard.users.splice(-5).map((user: any) => (
-              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>{user.name}</li>
+              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
+                <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+              </li>
             ))}
           </ul>
+          <Link to="/admin/users">Ver todos</Link>
         </div>
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">Esperando aprobación</h2>
           <ul>
             { dashboard.awaiting.reverse().map((user: any) => (
-              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>{user.name}</li>
+              <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
+                <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+              </li>
             ))}
           </ul>
         </div>

@@ -7,7 +7,7 @@ import { ProfileType } from '../schemas/profile.schema.js';
 
 async function validateProfileData(req: Request, res: Response, next: NextFunction) {
   let userTypeSchema;
-  const body = req.body;
+  const body = req.body.user ? req.body.user : req.body;
 
   if(req.body.accountType === 'doc') {
     userTypeSchema = profileSchema.docProfile;
@@ -15,9 +15,14 @@ async function validateProfileData(req: Request, res: Response, next: NextFuncti
     userTypeSchema = profileSchema.profile;
   }
 
-  return userTypeSchema.validate(req.body, { abortEarly: false, stripUnknown: true })
+  return userTypeSchema.validate(body, { abortEarly: false, stripUnknown: true })
   .then((account) => {
-    req.body = account
+    if (req.body.user) {
+      req.body.user = account
+    } else {
+      req.body = account
+    }
+    
     next()
   })
   .catch((err) => {
