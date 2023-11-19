@@ -47,21 +47,28 @@ async function getProfileByAccount(accountId: ObjectId) {
   return profilesColelction.findOne<Profile | DocProfile>({ accountId: new ObjectId(accountId), 'status': { $exists: true } })
 }
 
-async function updateProfile(token: string, profile: Profile | DocProfile) {
+async function updateProfile(token: string, profile: Profile | DocProfile, profileId: ObjectId | null = null) {
   await client.connect()
+  const updateId = profileId ? profileId : profile._id;
 
   const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
 
+  if(profileId && payload.accountType !== ProfileType.admin) {
+    throw new Error('No tienes permisos para modificar este perfil.')
+  }
+
+  console.log(profile);
+
   const update = {
     ...profile,
-    accountId: new ObjectId(payload.accountId)
+    accountId: new ObjectId(updateId)
   }
 
   if( payload.docId ) {
     update.docId = new ObjectId(payload.docId)
   }
 
-  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(payload._id) }, update);
+  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
 
   if (updated.matchedCount == 0) {
     throw new Error('El perfil que intentas modificar no existe.')

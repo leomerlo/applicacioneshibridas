@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import * as services from '../services/backoffice.service.js';
 import * as accountServices from '../services/account.service.js';
+import * as profileServices from '../services/profile.service.js';
 import type { Dashboard } from '../services/backoffice.service.js';
+import { ObjectId } from 'mongodb';
 
 async function getDashboard(req: Request, res: Response) {
   await services.getDashboard()
@@ -20,7 +22,35 @@ async function createUser(req: Request, res: Response) {
   })
 }
 
+async function editUser(req: Request, res: Response) {
+  const token = req.headers['auth-token'] as string;
+  const profileId = req.params.profileId;
+
+  return profileServices.updateProfile(token, req.body, new ObjectId(profileId))
+  .then(() => {
+    res.status(200).json({ message: "Cuenta editada" })
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
+async function getUser(req: Request, res: Response) {
+  const profileId = req.params.profileId;
+
+  console.log(profileId);
+
+  return profileServices.getProfile(new ObjectId(profileId))
+  .then((profile) => {
+    res.status(200).json(profile)
+  })
+  .catch((err) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   getDashboard,
-  createUser
-}
+  createUser,
+  editUser,
+  getUser
