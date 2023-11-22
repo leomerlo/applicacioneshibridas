@@ -49,11 +49,8 @@ async function getProfileByAccount(accountId: ObjectId) {
 
 async function updateProfile(token: string, profile: Profile | DocProfile, profileId: ObjectId | null = null) {
   await client.connect()
-  const updateId = profileId ? profileId : profile._id;
-
-  console.log('profileAccountId', profile.accountId);
-
   const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
+  const updateId = profileId ? profileId : payload._id;
 
   if(profileId && payload.accountType !== ProfileType.admin) {
     throw new Error('No tienes permisos para modificar este perfil.')
@@ -63,10 +60,8 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
     ...profile
   }
 
-  console.log(update);
-
-  if(!profile.accountId) {
-    update.accountId = new ObjectId(payload._id)
+  if(!profileId) {
+    update.accountId = new ObjectId(payload.accountId)
   } else {
     update.accountId = new ObjectId(profile.accountId)
   }
@@ -75,9 +70,16 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
     update.docId = new ObjectId(payload.docId)
   }
 
-  console.log('final update', update);
-
   const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
+
+  if (updated.matchedCount == 0) {
+    throw new Error('El perfil que intentas modificar no existe.')
+  }
+}
+
+async function deactivateProfile(profileId: ObjectId) {
+  await client.connect()
+  const updated = await profilesColelction.updateOne({ _id: new ObjectId(profileId) }, { $set: { status: "inactive" } })
 
   if (updated.matchedCount == 0) {
     throw new Error('El perfil que intentas modificar no existe.')
@@ -88,5 +90,6 @@ export {
   createProfile,
   getProfile,
   updateProfile,
-  getProfileByAccount
+  getProfileByAccount,
+  deactivateProfile
 }

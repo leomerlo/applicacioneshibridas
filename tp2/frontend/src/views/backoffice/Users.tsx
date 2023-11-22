@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useAdmin } from '../../contexts/AdminContext'
 import Button from '../../components/Button';
-import { Link } from 'react-router-dom';
+import GoBack from '../../components/GoBack';
+import { Link, useNavigate } from 'react-router-dom';
+import Input from '../../components/Input';
 
 const Users = () => {
   const { users } = useAdmin();
   const [filteredList, setFilteredList] = useState(users)
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<{
     status: null | string,
     type: null | string,
@@ -21,11 +24,17 @@ const Users = () => {
       const filteredUsers = users.filter((e) => {
         if (filters.status && filters.status === e.status) {
           return true;
-        } else if (filters.type && filters.type === e.accountType) {
+        }
+        
+        if (filters.type && filters.type === e.accountType) {
           return true;
-        } else if (filters.name && filters.name === e.name) {
+        }
+        
+        if (filters.name && e.name.indexOf(filters.name) > -1) {
           return true;
-        } else if (!filters.status && !filters.type && !filters.name) {
+        }
+        
+        if (!filters.status && !filters.type && !filters.name) {
           return true;
         }
 
@@ -41,12 +50,39 @@ const Users = () => {
   }, [users]);
 
   function statusUpdate(filter: string): void {
-    const updatedFilters = {
-      ...filters,
-      status: filter
+    if (filters.status === filter) {
+      setFilters({
+        ...filters,
+        status: null
+      });
+    } else {
+      setFilters({
+        ...filters,
+        status: filter
+      });
     }
-    setFilters(updatedFilters);
   }
+
+  function typeUpdate(filter: string): void {
+    if(filters.type === filter) {
+      setFilters({
+        ...filters,
+        type: null
+      });
+    } else {
+      setFilters({
+        ...filters,
+        type: filter
+      });
+    }
+  }
+
+  const nameUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({
+      ...filters,
+      name: event.target.value
+    });
+  };
 
   function clearFilters(): void {
     setFilters({
@@ -58,14 +94,34 @@ const Users = () => {
 
   return (
     <div className="container mx-auto h-full">
+      <div className="mb-4">
+        <GoBack />
+      </div>
       <h1 className="text-4xl text-gray-80">Lista de usuarios</h1>
-      <Link to="/admin/addUser">Agregar Usuario</Link>
-      <span>Filtros: <Button onClick={() => { statusUpdate('pending')}}>Pendientes</Button> <Button onClick={clearFilters}>Clear</Button></span>
+      <Button className="mt-4" onClick={
+        () => {
+          navigate("/admin/addUser")
+        }
+      }>
+        Agregar Usuario
+      </Button>
+      <div className="my-4">
+        <span>Filtros:</span>
+      </div>
+      <div className="flex gap-3 mb-4">
+        <Button onClick={() => { statusUpdate('pending')}} variant={ filters.status === 'pending' ? 'primary' : 'secondary'}>Pendientes</Button>
+        <Button onClick={() => { statusUpdate('inactive')}} variant={ filters.status === 'inactive' ? 'primary' : 'secondary'}>Inactivos</Button>
+        <Button onClick={() => { typeUpdate('doc')}} variant={ filters.type === 'doc' ? 'primary' : 'secondary'}>Nutricionistas</Button>
+        <Button onClick={clearFilters} className="ml-auto">Limpiar Filtros</Button>
+      </div>
+      <div className="my-4">
+        <Input onInput={nameUpdate} name="filter-name" value={filters.name as string} label="Buscar por nombre"></Input> 
+      </div>
       <div className="flex-1">
         <ul>
           { filteredList.map((user: any) => (
             <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
-              <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+              <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
             </li>
           ))}
         </ul>

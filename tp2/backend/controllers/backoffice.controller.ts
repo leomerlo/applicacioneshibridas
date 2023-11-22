@@ -49,8 +49,22 @@ async function getUser(req: Request, res: Response) {
   })
 }
 
+async function deleteUser(req: Request, res: Response) {
+  const profileId = req.params.profileId;
+
+  return profileServices.deactivateProfile(new ObjectId(profileId))
+  .then(() => {
+    res.status(200).json({ message: "Cuenta eliminada" })
+  })
+  .catch((err: Error) => {
+    res.status(400).json({ error: { message: err.message } })
+  })
+}
+
 export {
   getDashboard,
   createUser,
   editUser,
-  getUser
+  getUser,
+  deleteUser
+}

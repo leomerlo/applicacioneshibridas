@@ -3,9 +3,12 @@ import GradientCard from "../../components/GradientCard";
 import { useEffect, useState } from "react";
 import { useAdmin } from "../../contexts/AdminContext";
 import { Link } from "react-router-dom";
+import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { profile } = useProfile();
+  const navigate = useNavigate();
   const { users } = useAdmin();
   const [dashboard, setDashboard] = useState({
     docs: 0,
@@ -45,21 +48,30 @@ const Dashboard = () => {
           <ul>
             { dashboard.users.splice(-5).map((user: any) => (
               <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
-                <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+                <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
               </li>
             ))}
           </ul>
-          <Link to="/admin/users">Ver todos</Link>
+          <Button className="ml-auto" onClick={
+            () => {
+              navigate("/admin/users");
+            }
+          }>Ver todos</Button>
         </div>
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">Esperando aprobación</h2>
           <ul>
             { dashboard.awaiting.reverse().map((user: any) => (
               <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
-                <Link to={`/admin/user/${user._id}`}>{user.name}</Link>
+                <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
               </li>
             ))}
           </ul>
+          <Button className="ml-auto" onClick={
+            () => {
+              navigate("/admin/users");
+            }
+          }>Ver todos</Button>
         </div>
       </div>
     </div>
