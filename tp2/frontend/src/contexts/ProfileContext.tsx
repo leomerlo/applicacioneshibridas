@@ -95,7 +95,7 @@ function ProfileProvider({children}: PropsWithChildren){
         }
       } else {
         navigate('/login');
-        updateNotifications({ variant: 'error', message: 'Error al recuperar el perfil.' });
+        updateNotifications({ variant: 'error', message: 'Hubo un error al recuperar el perfil.' });
       }
     })
     .catch((error) => {

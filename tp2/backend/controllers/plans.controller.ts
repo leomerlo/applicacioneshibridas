@@ -14,20 +14,10 @@ async function generatePlan(req: Request, res: Response) {
     throw new Error('El perfil no existe');
   }
 
-  res.setHeader('Content-Type', 'application/json');
-
-  let likedRecipies: string = '';
-  // await recipiesService.getLikedRecipies(profileId).then((recipies) => {
-  //   likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
-  // });
-
   try {
-    openAiService.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
-      res.write(data);
-    }, async (data: any) => {
-      // await planService.savePlan(profileId, JSON.parse(data))
-      res.end(data);
-    });
+    const newPlan = await planService.generatePlan(profileId);
+    planService.savePlan(profileId, newPlan);
+    res.status(200).json(newPlan);
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
   }

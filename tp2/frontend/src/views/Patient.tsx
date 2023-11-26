@@ -80,7 +80,7 @@ const Patient = () => {
             <PatientNextMeal plan={activePatient.plan} day={day} />
           </> : <>
             <img src={LoginImage} aria-hidden="true" className="w-1/2 mx-auto my-8" />
-            <h2 className="text-2xl text-gray-80 text-center font-bold">Este paciente todavía no tiene ningún plan asignado</h2>
+            <h2 className="text-2xl text-gray-80 text-center font-bold">Este paciente aún no tiene ningún plan asignado</h2>
           </> }
         </div>
         <FooterMenu>
@@ -90,7 +90,7 @@ const Patient = () => {
           </Button>
           <Button variant={activePatient.plan ? "secondary" : "primary"} onClick={assignPlanHandler} full>
             <FontAwesomeIcon icon={faCarrot} className="me-2" />
-            { activePatient.plan ? 'Cambiar Plan' : 'Asignar Plan'}
+            { activePatient.plan ? 'Modificar Plan' : 'Asignar Plan'}
           </Button>
         </FooterMenu>
       </div>

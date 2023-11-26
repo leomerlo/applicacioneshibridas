@@ -3,9 +3,9 @@ import authService from '../services/auth.service'
 import { useNavigate } from 'react-router'
 import Button, { ButtonType } from '../components/Button'
 import Input from '../components/Input'
-import Logo from '../assets/logoAlt.svg'
+import Logo from '../assets/logo.svg'
 import LoginImage from '../assets/loginImage.png'
-import backGradient from '../assets/backGradient.svg'
+import backGradient from '../assets/pattern_blanco_lg_60.png'
 import { Link } from 'react-router-dom'
 import { useNotifications } from '../contexts/NotificationsContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,19 +15,19 @@ import NotificationsBlock from '../components/NotificationsBlock'
 
 const Login = () => {
   const userTexts = {
-    title: "Bienvenid@ a SAZ!",
-    splashTitle: "Despierta al chef que llevas dentro.",
-    splashSubtitle: "Con SAZ!, tu asistente culinario personal.",
+    title: "¡Bienvenid@ a saz!",
+    splashTitle: "Despierte al chef que lleva dentro.",
+    splashSubtitle: "Con saz! su asistente culinario personal.",
     changeButtonText: "Soy Nutricionista",
     chanceButtonIcon: faCarrot,
     registerLink: '/register/user'
   }
 
   const nutriTexts = {
-    title: "Ingresa como nutricionista",
-    splashTitle: "Bienvenido a SAZ!",
-    splashSubtitle: "Tu plataforma personalizada de asistencia nutricional. ¡Prepárate para transformar la salud a través de la ciencia de la alimentación!",
-    changeButtonText: "Soy Usuario / Paciente",
+    title: "Ingrese como nutricionista",
+    splashTitle: "¡Bienvenid@ a saz!",
+    splashSubtitle: "Su plataforma personalizada de asistencia nutricional. Prepárese para transformar la salud a través de la ciencia de la alimentación!",
+    changeButtonText: "Soy Planner / Paciente",
     chanceButtonIcon: faUser,
     registerLink: '/register/nutri'
   }
@@ -38,14 +38,16 @@ const Login = () => {
   const [userType, setUserType] = useState("user");
   const [uiTexts, setUiTexts] = useState(userTexts);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { updateNotifications } = useNotifications();
+  const [error, setError] = useState([]);
+  const [userNameError, setUserNameError] = useState([]);
+  const [passwordError, setPasswordError] = useState([]);
+  const [generalError, setGeneralError] = useState([]);
 
   const login = () => {
     setLoading(true);
     authService.login({ userName, password }).then((data) => {
       setLoading(false);
-      setError("");
+      setError([]);
       if(data.status === 200) {
         const response = data.data.token
         localStorage.setItem('token', response.token);
@@ -55,10 +57,33 @@ const Login = () => {
           navigate('/', {replace: true});
         }
       } else {
-        setError("Usuario o contraseña incorrectos");
+        setError(["Usuario o contraseña incorrectos"]);
       }
     })
   }
+
+  useEffect(() => {
+    const pass = error.filter((e: string) => {
+      if(e.indexOf("password") > -1) {
+        return e
+      }
+    });
+    setPasswordError(pass);
+
+    const user = error.filter((e: string) => {
+      if(e.indexOf("userName") > -1) {
+        return e
+      }
+    })
+    setUserNameError(user);
+
+    const general = error.filter((e: string) => {
+      if(e.indexOf("userName") == -1 && e.indexOf("password") == -1 && e.indexOf("idDocument") == -1 && e.indexOf("idLicense") == -1) {
+        return e
+      }
+    })
+    setGeneralError(general);
+  }, [error]);
 
   useEffect(() => {
     setUiTexts(userType === "user" ? userTexts : nutriTexts);
@@ -86,23 +111,28 @@ const Login = () => {
               <form onSubmit={(e) => { e.preventDefault(); login(); }}>
                 <div className="text-center">
                   <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
-                  <p className="text-base text-gray-70 mt-3">Ingresa tus datos para comenzar a disfrutar de SAZ!.</p>
+                  <p className="text-base text-gray-70 mt-3">¡Ingrese sus datos para comenzar a disfrutar de saz!.</p>
                 </div>
                 <div className="mt-8">
-                  <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
+                  <Input name="userName" error={userNameError} type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escriba su email" />
                 </div>
                 <div className="mt-8">
-                  <Input name="password" error={error} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribi tu contraseña" type="password" />
+                  <Input name="password" error={passwordError} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escriba su contraseña" type="password" />
                 </div>
+                { generalError ? <div className="mt-8">
+                  { generalError.map((e: string) => (
+                    <p className="text-red-500 text-xs italic">{e}</p>
+                  ))}
+                </div> : <></> }
                 <div className="mt-8">
-                  <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
+                  <Button type={ButtonType.submit} full loading={loading}>Ingrese</Button>
                 </div>
               </form>
               <div className="mt-8 text-center">
                 <Link to="/forgotPassword" className="text-primary-main">Olvidé mi contraseña</Link>
               </div>
               <div className="mt-8 text-center">
-                <span className="text-gray-60">¿No tienes una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">Regístrate!</Link></span>
+                <span className="text-gray-60">¿No tiene una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">¡Regístrese!</Link></span>
               </div>
             </div>
           </div>
@@ -115,13 +145,13 @@ const Login = () => {
         <div
           // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-cover bg-center"
         >
           <div className="w-fit h-fit text-center">
-            <img src={Logo} alt="SAZ!" className="mx-auto" />
+            <img src={Logo} alt="saz!" className="mx-auto" />
             <img src={LoginImage} aria-hidden="true" className="mt-20 mx-auto" />
             <div>
-              <p className="text-3xl text-white mt-20">
+              <p className="text-3xl text-primary-main mt-20">
                 <strong className="block">{uiTexts.splashTitle}</strong>
                 {uiTexts.splashSubtitle}
               </p>

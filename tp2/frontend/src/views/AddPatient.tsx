@@ -15,7 +15,7 @@ const AddPatient = () => {
       refreshProfile();
       notifications.updateNotifications({
         variant: 'success',
-        message: 'Paciente creado con éxito'
+        message: 'Paciente creado correctamente'
       });
       navigate(-1);
     } else {

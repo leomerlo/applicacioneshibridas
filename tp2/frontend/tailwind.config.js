@@ -7,7 +7,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          main: '#5E47D2',
+          main: '#425EAB',
           secondary: '#F7F5FF',
           focus: '#E2DCFF',
           hover: '#6045E8',
@@ -41,7 +41,7 @@ export default {
       },
       height: {
         avatar: '60px',
-        navbar: '64px',
+        navbar: '56px',
       },
       padding: {
         'navbar': '96px',
@@ -62,6 +62,8 @@ export default {
         dividerLineBlocks: 'calc(100% + 12px) 100%',
         dividerLineBlocksTop: 'calc(100% + 12px) calc(100% + 1px)',
         dividerLineBlocksBottom: 'calc(100% + 12px) calc(100% + 1px)',
+        '50%': '50%',
+        '25%': '25%'
       }
     },
   },

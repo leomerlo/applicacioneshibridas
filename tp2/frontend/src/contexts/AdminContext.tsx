@@ -32,7 +32,7 @@ function AdminProvider({children}: PropsWithChildren){
     } else {
       updateNotifications({
         variant: "error",
-        message: "No se pudo cargar los usuarios."
+        message: "No se pudieron cargar los usuarios."
       })
     }
   }

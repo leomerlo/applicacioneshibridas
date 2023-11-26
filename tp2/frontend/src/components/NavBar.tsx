@@ -30,7 +30,7 @@ const NavBar = () => {
       <div className="flex container justify-between items-center">
         <div className="flex items-center flex-shrink-0 mr-6">
           <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block">
-            <img src={logo} aria-hidden="true" className="h-12" />
+            <img src={logo} aria-hidden="true" className="h-4" />
           </Link>
         </div>
         <div className="block">
@@ -41,15 +41,15 @@ const NavBar = () => {
       </div>
       <div className={`container flex flex-col justify-between bg-white flex-grow ${menuOpen ? "" : "h-0"} overflow-y-hidden`}>
         <div className="text-sm mt-4">
-          <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Home</Link>
+          <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Inicio</Link>
           { profile.accountType !== 'admin' ? <>
-          <Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Mi Plan</Link>
-          <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Mi Perfil</Link>
+          <Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Plan</Link>
+          <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Perfil</Link>
           { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
           </> : <></> }
         </div>
         <div>
-          <Button onClick={logout} full>Logout</Button>
+          <Button onClick={logout} full>Cerrar sesión</Button>
         </div>
       </div>
     </nav>

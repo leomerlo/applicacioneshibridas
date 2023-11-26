@@ -8,7 +8,7 @@ async function validateAccount(req: Request, res: Response, next: NextFunction) 
       next()
     })
     .catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
+      res.status(400).json({ error: { message: err.errors } })
     })
 }
 

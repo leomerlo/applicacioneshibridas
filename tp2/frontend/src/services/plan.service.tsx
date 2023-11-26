@@ -21,7 +21,7 @@ export function getPlans() {
 }
 
 export function getShoppingList() {
-  return API.call({ uri: 'plan/list' })
+  return API.call({ uri: 'plan/list', method: 'POST' })
 }
 
 export function deletePlan(id: string) {

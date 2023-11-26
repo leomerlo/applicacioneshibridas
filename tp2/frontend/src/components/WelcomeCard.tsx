@@ -24,7 +24,7 @@ const WelcomeCard = (props: Props) => {
       </div>
       <div className={`${ isVertical() ? "mt-6" : "" }`}>
         <h1 className="text-4xl text-gray-90">Hola, <span className="text-primary-main">{profile.name}</span></h1>
-        { isVertical() ? <></> : <p className="text-gray-60">Descubre un mundo de delicias culinarias.</p> }
+        { isVertical() ? <></> : <p className="text-gray-60">Descubra un mundo de delicias culinarias.</p> }
       </div>
     </div>
   )

@@ -64,7 +64,7 @@ const Profile = () => {
             updatePlan();
             navigate("/");
           } else {
-            updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
+            updateNotifications({ variant: 'error', message: 'Error al crear el plan, inténtelo de nuevo.' });
           }
         });
       }
@@ -73,7 +73,7 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto">
-      { loadingPlan ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
+      { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tenga paciencia, esto puede tardar unos minutos" /> :
       <>
         <div className="flex justify-between">
           <GoBack />
@@ -98,7 +98,6 @@ const Profile = () => {
               type="password"
             />
           </div>
-          { profile.docId }
           { profile.accountType === 'user' ? <>
             { !profile.docId ? <>
               <div className="mt-4">
@@ -143,6 +142,7 @@ const Profile = () => {
                 value={tempProfile.idDocument as string}
                 onInput={(e) => setTempProfile({...tempProfile, idDocument: e.target.value})}
                 placeholder="Dni, sin puntos ni espacios"
+                disabled
                 type="text"
               />
             </div>
@@ -153,6 +153,7 @@ const Profile = () => {
                 value={tempProfile.idLicense as string}
                 onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
                 placeholder="Licencia, sin puntos ni espacios"
+                disabled
                 type="text"
               />
             </div>
@@ -164,7 +165,7 @@ const Profile = () => {
           </div>
           { profile.accountType === 'user' && !profile.docId ? <>
             <div className="mt-4">
-              <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
+              <Button full onClick={newPlan} variant="secondary">Generar nuevo plan</Button>
             </div>
           </> : <></>}
         </form>

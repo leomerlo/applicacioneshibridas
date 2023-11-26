@@ -10,7 +10,7 @@ const Home = () => {
     <div className="container mx-auto flex flex-col h-full justify-start">
       { (profile.accountId != '' ) ? <>
         { profile.accountType === 'doc' ? <HomeNutri /> : <HomeUser /> }
-      </> : <Loading action="Estamos cargando tus datos..." /> }
+      </> : <Loading action="Se están cargando sus datos..." /> }
     </div>
   )
 }

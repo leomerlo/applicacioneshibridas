@@ -12,7 +12,7 @@ const GoBack = () => {
   return (
     <button className="text-primary-main" onClick={goBack}>
       <FontAwesomeIcon icon={faChevronLeft} className="mr-3" />
-      <span className="border-b-primary-main border-b">VOLVER</span>
+      <span className="border-b-primary-main border-b">Regresar</span>
     </button>
   )
 }

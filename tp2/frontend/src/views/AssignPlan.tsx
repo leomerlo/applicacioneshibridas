@@ -23,7 +23,7 @@ const AssignPlan = () => {
       } else {
         notifications.updateNotifications({
           variant: 'error',
-          message: 'Error al obtener el paciente'
+          message: 'Hubo un error al obtener el paciente'
         });
       }
     });
@@ -50,7 +50,7 @@ const AssignPlan = () => {
       } else {
         notifications.updateNotifications({
           variant: 'error',
-          message: 'Error al asignar el plan'
+          message: 'Hubo un error al asignar el plan'
         });
       }
     });

@@ -9,7 +9,7 @@ const router = Router();
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
 router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlanById);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
-router.get('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
+router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 router.post('/plan/replace/:day/:meal', [validateToken, addProfileIdToBody], controller.replaceRecipie);
 
 router.get('/plans', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlans);

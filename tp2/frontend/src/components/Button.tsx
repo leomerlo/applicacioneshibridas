@@ -12,11 +12,13 @@ type ButtonProps = {
   className?: string;
   variant?: 'primary' | 'secondary' | 'tertiary';
   loading?: boolean;
+  disabled: boolean;
 }
 
 const defaultProps: ButtonProps = {
   type: ButtonType.button,
-  loading: false
+  loading: false,
+  disabled: false
 }
 
 const Button = (props: PropsWithChildren<ButtonProps>) => {
@@ -34,7 +36,7 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
   }
 
   return (
-    <button type={props.type} disabled={props.loading} className={ `${props.className} py-4 px-4 text-base rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${props.full ? 'w-full' : '' } ${variantClasses()} flex items-center` } onClick={props.onClick}>
+    <button type={props.type} disabled={props.loading} className={ `${props.className} py-4 px-4 text-base rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${props.full ? 'w-full' : '' } ${props.disabled ? 'disabled' : variantClasses()} flex items-center` } onClick={props.onClick}>
       { props.loading ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> : '' }
       <div className="flex-1"> { props.children } </div>
     </button>

@@ -78,13 +78,13 @@ const AddUser = (props: Props) => {
           <h1 className="text-4xl text-gray-80 mt-5">Agregar { userTypeText(userType) }</h1>
           { !userType ? <div className="mt-8">
             <select>
-              <option value="user">Usuario</option>
+              <option value="user">Paciente</option>
               <option value="doc">Nutricionista</option>
-              <option value="user">Admin</option>
+              <option value="user">Administrador</option>
             </select>
           </div> : <></> }
           <div className="mt-8">
-            <Input name="userName" type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
+            <Input name="userName" type="email" label="Correo electrónico" value={userName} onInput={userNameHandler} placeholder="Ingrese un correo electrónico" />
           </div>
         </div>
         <div>

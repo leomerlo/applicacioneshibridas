@@ -20,7 +20,7 @@ const PatientCard = (props: PatientCardProps) => {
               Plan asignado
             </> : <>
               <FontAwesomeIcon icon={faCircleXmark} className="me-2" />
-              Sin plan asignado
+              Plan no asignado
             </>}
           </span>
         </div>

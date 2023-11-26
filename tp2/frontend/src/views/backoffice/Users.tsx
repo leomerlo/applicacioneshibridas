@@ -25,6 +25,10 @@ const Users = () => {
         if (filters.status && filters.status === e.status) {
           return true;
         }
+
+        if (filters.type && filters.type === "patient" && e.docId) {
+          return true;
+        }
         
         if (filters.type && filters.type === e.accountType) {
           return true;
@@ -112,7 +116,11 @@ const Users = () => {
         <Button onClick={() => { statusUpdate('pending')}} variant={ filters.status === 'pending' ? 'primary' : 'secondary'}>Pendientes</Button>
         <Button onClick={() => { statusUpdate('inactive')}} variant={ filters.status === 'inactive' ? 'primary' : 'secondary'}>Inactivos</Button>
         <Button onClick={() => { typeUpdate('doc')}} variant={ filters.type === 'doc' ? 'primary' : 'secondary'}>Nutricionistas</Button>
+        <Button onClick={() => { typeUpdate('patient')}} variant={ filters.type === 'patient' ? 'primary' : 'secondary'}>Pacientes</Button>
+        <Button onClick={() => { typeUpdate('admin')}} variant={ filters.type === 'admin' ? 'primary' : 'secondary'}>Administradores</Button>
         <Button onClick={clearFilters} className="ml-auto">Limpiar Filtros</Button>
+      </div>
+      <div className="flex gap-3 mb-4">
       </div>
       <div className="my-4">
         <Input onInput={nameUpdate} name="filter-name" value={filters.name as string} label="Buscar por nombre"></Input> 

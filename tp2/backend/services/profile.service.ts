@@ -10,9 +10,13 @@ const profilesColelction = db.collection('profiles')
 async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
   await client.connect()
 
-  const schema = type === ProfileType.user || ProfileType.admin ? profileSchema.profile : profileSchema.docProfile;
+  let schema = profileSchema.profile;
 
-  await schema.validate(profile, { abortEarly: false, stripUnknown: true })
+  if(type === ProfileType.doc) {
+    schema = profileSchema.docProfile;
+  }
+
+  await schema.validate(profile, { abortEarly: true, stripUnknown: true })
     .then(async (profile) => {
       // Since we only have one profile for each user we'll check if the accountId already exists
       const profileExist = await profilesColelction.findOne({ accountId: new ObjectId(profile.accountId) })

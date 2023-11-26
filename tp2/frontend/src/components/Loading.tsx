@@ -1,5 +1,4 @@
 import loadingGif from '../assets/loading.gif'
-import loadingImage from '../assets/girlPhone.png'
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -23,7 +22,7 @@ const Loading = (props: Props) => {
         <img src={loadingGif} alt="loading" className="mx-auto" />
       </div>
       <h1 className="text-4xl text-gray-90 text-center mt-3">{props.action}</h1>
-      <p className="text-xl text-gray-60 text-center mt-2">{props.subtext || "Esto puede tardar unos minutos."}</p>
+      <p className="text-xl text-gray-60 text-center mt-2">{props.subtext || "Esto puede tomar unos minutos."}</p>
       { props.items ? <div className="text-2xl my-3 mx-auto w-fit text-center">
         <ul>
           { props.items.map((item) => (

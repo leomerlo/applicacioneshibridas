@@ -121,11 +121,11 @@ function PlanProvider({children}: PropsWithChildren){
   const updatePlan = async () => {
     planService.getPlan().then((plan) => {
       if (plan.status === 200) {
-        updateNotifications({ variant: 'success', message: 'Plan actualizado' });
+        updateNotifications({ variant: 'success', message: 'Plan actualizado correctamente' });
         setPlan({...plan.data});
       }
     }).catch((error) => {
-      updateNotifications({ variant: 'error', message: 'Error al actualizar el plan' });
+      updateNotifications({ variant: 'error', message: 'Hubo un error al actualizar el plan' });
       throw new Error(error);
     });
   };

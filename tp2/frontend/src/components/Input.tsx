@@ -9,8 +9,9 @@ type Props = {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   type?: string;
-  error?: string;
+  error?: string[];
   selected?: boolean;
+  disabled?: boolean;
 }
 
 const Input = (props: Props) => {
@@ -21,10 +22,12 @@ const Input = (props: Props) => {
         { props.type === 'textarea' ? 
           // @ts-ignore 
           <textarea
+            disabled={props.disabled || false}
             className="shadow-sm py-3 px-4 border border-solid border-gray-300 background-grey-10 block w-full sm:text-sm rounded-md"
             { ...props } />
           :
           <input
+            disabled={props.disabled || false}
             className="shadow-sm py-3 px-4 border border-solid border-gray-300 background-grey-10 block w-full sm:text-sm rounded-md"
             { ...props }
           />
@@ -33,7 +36,9 @@ const Input = (props: Props) => {
       {
         props.error ? 
           <div className="mt-1">
-            <p className="text-red-500 text-xs italic">{props.error}</p>
+            { props.error.map((e: string) => (
+              <p className="text-red-500 text-xs italic">{e}</p>
+            ))}
           </div>
           :
           null
