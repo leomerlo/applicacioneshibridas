@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealIcon, { IconSizes } from "../MealIcon";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { Link, useAsyncError, useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useProfile } from "../../contexts/ProfileContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePlan } from "../../contexts/PlanContext";
 
 export enum MealTypes {
@@ -23,27 +23,28 @@ export type Props = {
 
 const NextMealItem = (props: Props) => {
   const { patient } = useProfile();
-  const { plan } = usePlan();
+  const { plan, setPlanSelectedMeal } = usePlan();
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [recipieLink, setRecipieLink] = useState('');
 
-  useEffect(() => {
+  const recipieLinkHandler = () => {
+    setPlanSelectedMeal(props.meal.type);
+
     if (location.pathname.includes('patient') && patient) {
       setRecipieLink(`/recipie/${patient._id}/${props.meal.name}`)
-    }
-  }, [patient]);
-
-  useEffect(() => {
-    if( !id ) {
+    } else if( !id ) {
       setRecipieLink(`/recipie/${plan?._id}/${props.meal.name}`);
     } else {
       setRecipieLink(`/recipie/${id}/${props.meal.name}`);
     }
-  }, [plan, props.meal]);
+
+    navigate(recipieLink);
+  }
 
   return (
-    <Link to={recipieLink}>
+    <button onClick={recipieLinkHandler} className="block w-full text-left cursor-pointer">
       <div className="flex gap-6">
         <div className="grow border rounded-lg border-gray-30">
           <div className="flex items-center gap-4 p-4">
@@ -58,7 +59,7 @@ const NextMealItem = (props: Props) => {
           </div>
         </div>
       </div>
-    </Link>
+    </button>
   )
 }
 

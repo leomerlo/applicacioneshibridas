@@ -29,13 +29,13 @@ const FeaturedMealCard = () => {
   }, [plan])
 
   return (
-    <Link to={`/recipie/${featuredMeal.name}`}>
+    <Link to={`/recipie/${plan?._id}/${featuredMeal.name}`}>
       <div
         // @ts-ignore 
         style={{'--image-url': `url(${cardGradient})`}}
         className="flex flex-col p-10 bg-[image:var(--image-url)] rounded-lg bg-cover mt-6"
       >
-        <h2 className="text-xl text-white mb-2">Próxima comida</h2>
+        <h2 className="text-xl text-white mb-2">A continuación</h2>
         <span className="text-gray-30 font-bold">{featuredMeal.name}</span>
         <span className="text-gray-40">{featuredMeal.meal}</span>
         {/* <ul className="text-sm text-gray-10 mt-4">

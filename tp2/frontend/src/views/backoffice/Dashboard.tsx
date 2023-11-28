@@ -46,7 +46,7 @@ const Dashboard = () => {
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">Últimos usuarios</h2>
           <ul>
-            { dashboard.users.splice(-5).map((user: any) => (
+            { dashboard.users.slice(-5).map((user: any) => (
               <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
                 <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
               </li>

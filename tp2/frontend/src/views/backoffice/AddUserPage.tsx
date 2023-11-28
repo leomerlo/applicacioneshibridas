@@ -28,7 +28,7 @@ const AddUserPage = () => {
   }
 
   return (
-    <AddUser addService={createAccountService}/>
+    <AddUser addService={createAccountService} label="usuario" />
   )
 }
 

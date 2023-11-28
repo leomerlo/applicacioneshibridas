@@ -41,7 +41,9 @@ const emptyPlan: {
   shoppingList?: ShoppingListIngredient[],
   loadedPlan: boolean,
   planSelectedDay: string,
-  setPlanSelectedDay: (day: string) => void
+  setPlanSelectedDay: (day: string) => void,
+  planSelectedMeal: string,
+  setPlanSelectedMeal: (meal: string) => void
 } = {
   plan: null,
   updatePlan: () => {},
@@ -52,6 +54,8 @@ const emptyPlan: {
   loadedPlan: false,
   planSelectedDay: '',
   setPlanSelectedDay: (day: string) => { return day; },
+  planSelectedMeal: '',
+  setPlanSelectedMeal: (meal: string) => { return meal; }
 }
 
 const PlanContext = createContext(emptyPlan)
@@ -68,10 +72,10 @@ function PlanProvider({children}: PropsWithChildren){
   const [nextMeal, setNextMeal] = useState<string>(emptyPlan.nextMeal);
   const [nextMealType, setNextMealType] = useState<MealTypes>(emptyPlan.nextMealType);
   const [planSelectedDay, setPlanSelectedDay] = useState(todayString);
+  const [planSelectedMeal, setPlanSelectedMeal] = useState(todayString);
   const { updateNotifications } = useNotifications();
 
   useEffect(() => {
-    console.log('setea today');
     setToday(new Date());
 
     planService.getPlan()
@@ -131,7 +135,19 @@ function PlanProvider({children}: PropsWithChildren){
   };
   
   return (
-    <PlanContext.Provider value={{ plan, updatePlan, today, nextMeal, todayString, nextMealType, loadedPlan, planSelectedDay, setPlanSelectedDay }}>
+    <PlanContext.Provider value={{
+      plan,
+      updatePlan,
+      today,
+      nextMeal,
+      todayString,
+      nextMealType,
+      loadedPlan,
+      planSelectedDay,
+      setPlanSelectedDay,
+      planSelectedMeal,
+      setPlanSelectedMeal,
+    }}>
       {children}
     </PlanContext.Provider>
   )

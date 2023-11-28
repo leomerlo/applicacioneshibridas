@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import GoBack from '../../components/GoBack';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
+import UserCard from '../../components/UserCard';
 
 const Users = () => {
   const { users } = useAdmin();
@@ -26,7 +27,21 @@ const Users = () => {
           return true;
         }
 
-        if (filters.type && filters.type === "patient" && e.docId) {
+        if (
+          filters.type &&
+          filters.type === "patient" &&
+          e.accountType === "user" &&
+          e.docId
+        ) {
+          return true;
+        }
+        
+        if (
+          filters.type &&
+          filters.type === "planner" &&
+          e.accountType === "user" &&
+          !e.docId
+        ) {
           return true;
         }
         
@@ -109,16 +124,30 @@ const Users = () => {
       }>
         Agregar Usuario
       </Button>
-      <div className="my-4">
-        <span>Filtros:</span>
-      </div>
-      <div className="flex gap-3 mb-4">
-        <Button onClick={() => { statusUpdate('pending')}} variant={ filters.status === 'pending' ? 'primary' : 'secondary'}>Pendientes</Button>
-        <Button onClick={() => { statusUpdate('inactive')}} variant={ filters.status === 'inactive' ? 'primary' : 'secondary'}>Inactivos</Button>
-        <Button onClick={() => { typeUpdate('doc')}} variant={ filters.type === 'doc' ? 'primary' : 'secondary'}>Nutricionistas</Button>
-        <Button onClick={() => { typeUpdate('patient')}} variant={ filters.type === 'patient' ? 'primary' : 'secondary'}>Pacientes</Button>
-        <Button onClick={() => { typeUpdate('admin')}} variant={ filters.type === 'admin' ? 'primary' : 'secondary'}>Administradores</Button>
-        <Button onClick={clearFilters} className="ml-auto">Limpiar Filtros</Button>
+      <div className="flex gap-8">
+        <div>
+          <div className="my-4">
+            <span>Status:</span>
+          </div>
+          <div className="flex gap-3 mb-4">
+            <Button onClick={() => { statusUpdate('pending')}} variant={ filters.status === 'pending' ? 'primary' : 'secondary'}>Pendientes</Button>
+            <Button onClick={() => { statusUpdate('inactive')}} variant={ filters.status === 'inactive' ? 'primary' : 'secondary'}>Inactivos</Button>
+          </div>
+        </div>
+        <div>
+          <div className="my-4">
+            <span>Rol:</span>
+          </div>
+          <div className="flex gap-3 mb-4">
+            <Button onClick={() => { typeUpdate('doc')}} variant={ filters.type === 'doc' ? 'primary' : 'secondary'}>Nutricionistas</Button>
+            <Button onClick={() => { typeUpdate('patient')}} variant={ filters.type === 'patient' ? 'primary' : 'secondary'}>Pacientes</Button>
+            <Button onClick={() => { typeUpdate('planner')}} variant={ filters.type === 'planner' ? 'primary' : 'secondary'}>Planner</Button>
+            <Button onClick={() => { typeUpdate('admin')}} variant={ filters.type === 'admin' ? 'primary' : 'secondary'}>Administradores</Button>
+          </div>
+        </div>
+        <div className="ml-auto">
+          <Button className="mt-14" onClick={clearFilters} variant="secondary">Limpiar filtros</Button>
+        </div>
       </div>
       <div className="flex gap-3 mb-4">
       </div>
@@ -128,8 +157,8 @@ const Users = () => {
       <div className="flex-1">
         <ul>
           { filteredList.map((user: any) => (
-            <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
-              <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
+            <li key={user.accountId}>
+              <UserCard user={user} />
             </li>
           ))}
         </ul>

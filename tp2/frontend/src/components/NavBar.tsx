@@ -43,9 +43,9 @@ const NavBar = () => {
         <div className="text-sm mt-4">
           <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Inicio</Link>
           { profile.accountType !== 'admin' ? <>
-          <Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Plan</Link>
-          <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Perfil</Link>
-          { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
+            { plan ? <><Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Plan</Link></> : <></> }
+            <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Perfil</Link>
+            { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
           </> : <></> }
         </div>
         <div>

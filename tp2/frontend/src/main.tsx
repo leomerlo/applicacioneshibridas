@@ -28,6 +28,7 @@ import RouteAdmin from './components/RouteAdmin.tsx';
 import Users from './views/backoffice/Users.tsx';
 import AddUserPage from './views/backoffice/AddUserPage.tsx';
 import UserView from './views/backoffice/UserView.tsx';
+import LandingPage from './views/LandingPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -127,6 +128,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />
+  },
+  {
+    path: '/landing',
+    element: <LandingPage />
   },
 ])
 

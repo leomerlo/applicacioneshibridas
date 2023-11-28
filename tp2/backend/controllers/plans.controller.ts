@@ -164,6 +164,8 @@ async function replaceRecipie(req: Request, res: Response) {
 
   let newRecipie = "";
 
+  console.log(day, meal);
+
   try {
     openAiService.generateRecipie(profile.restrictions as string, profile.preferences as string, "", day, meal, (data) => {
       newRecipie += data;

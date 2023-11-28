@@ -27,7 +27,7 @@ const AddPatient = () => {
   }
 
   return (
-    <AddUser type="user" addService={addPatientService} />
+    <AddUser type="user" addService={addPatientService} label="paciente" />
   )
 }
 

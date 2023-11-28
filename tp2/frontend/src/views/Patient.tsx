@@ -8,7 +8,7 @@ import LoginImage from '../assets/loginImage.png'
 import Button from "../components/Button"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare, faCircleCheck } from "@fortawesome/free-regular-svg-icons"
-import { faCarrot } from "@fortawesome/free-solid-svg-icons"
+import { faCarrot, faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import PatientNextMeal from "../components/NextMeals/PlanNextMeal"
 import { useProfile } from "../contexts/ProfileContext"
 import { usePlan } from "../contexts/PlanContext"
@@ -59,6 +59,10 @@ const Patient = () => {
     navigate(`/patient/${id}/assignPlan`);
   }
 
+  const unAssignPatient = () => {
+    return false; 
+  }
+
   const changeDayHandler = (day: string) => {
     setDay(day);
   }
@@ -86,11 +90,15 @@ const Patient = () => {
         <FooterMenu>
           <Button variant="secondary" full>
             <FontAwesomeIcon icon={faPenToSquare} className="me-2" />
-            Editar Perfil
+            Editar perfil
+          </Button>
+          <Button variant="secondary" full onClick={unAssignPatient}>
+            <FontAwesomeIcon icon={faUserSlash} className="me-2" />
+            Desasignar paciente
           </Button>
           <Button variant={activePatient.plan ? "secondary" : "primary"} onClick={assignPlanHandler} full>
             <FontAwesomeIcon icon={faCarrot} className="me-2" />
-            { activePatient.plan ? 'Modificar Plan' : 'Asignar Plan'}
+            { activePatient.plan ? 'Modificar plan' : 'Asignar plan'}
           </Button>
         </FooterMenu>
       </div>

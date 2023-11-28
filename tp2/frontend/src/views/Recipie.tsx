@@ -25,7 +25,7 @@ const Recipie = () => {
   const { name } = useParams();
   const { recipie, loading, recipieError } = useRecipie();
   const { profile, isUser } = useProfile();
-  const { plan, updatePlan } = usePlan();
+  const { plan, updatePlan, planSelectedDay, planSelectedMeal } = usePlan();
   const [image, setImage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,24 +65,25 @@ const Recipie = () => {
     })
   }
 
-  const replaceRecipieHandler = async () => {
-    let replaceDay = '';
-    let replaceMeal = ''; 
-    const days = plan.meals;
-    let fullChunk = "";
+  const translateMeal = (meal: string): string => {
+    switch(meal) {
+      case 'Desayuno':
+        return 'breakfast';
+      case 'Almuerzo':
+        return 'lunch';
+      case 'Cena':
+        return 'dinner';
+      default:
+        return '';
+    }
+  }
 
-    for (const key in days) {
-      if (days.hasOwnProperty(key)) {
-        const meals  = days[key];
-        for (const mealKey in meals) {
-          const mealRecipie = meals[mealKey];
-          if(recipie.name === mealRecipie.name) {
-            replaceDay = key;
-            replaceMeal = mealKey;
-            break;
-          }
-        }
-      }
+  const replaceRecipieHandler = async () => {
+    let fullChunk = "";
+    const translatedMeal = translateMeal(planSelectedMeal);
+
+    if (translatedMeal === "") {
+      throw new Error('No existe la comida.')
     }
 
     await setLoadingIngredients(true);
@@ -90,7 +91,7 @@ const Recipie = () => {
     await setLoadingNutrition(true);
     await setIsLoading(true);
 
-    planService.replaceRecipie(replaceDay, replaceMeal, (data: any) => {
+    planService.replaceRecipie(planSelectedDay, translatedMeal, (data: any) => {
       fullChunk += new TextDecoder().decode(data);
       includesIngredients(fullChunk);
       includesInstructions(fullChunk);

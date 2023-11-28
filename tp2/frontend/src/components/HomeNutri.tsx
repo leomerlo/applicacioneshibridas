@@ -36,9 +36,6 @@ const HomeNutri = () => {
           </div>
         </> : <>
           { patients ? <>
-            <div>
-              <h1 className="text-4xl mt-6 mb-2 text-left">Hola, <span className="text-primary-main font-bold">{ profile.name }</span></h1>
-            </div>
             <PatientList />
           </> : <>
             <div>

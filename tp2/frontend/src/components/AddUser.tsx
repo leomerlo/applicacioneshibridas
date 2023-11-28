@@ -13,6 +13,7 @@ export type UserType = "doc" | "user" | "admin";
 
 export type Props = {
   type?: UserType,
+  label?: string,
   addService: (user: {
     userName: string,
     type: UserType,
@@ -39,15 +40,16 @@ const AddUser = (props: Props) => {
     let userText = '';
     switch (type) {
       case "admin":
-        userText = "Administrador"
+        userText = "administrador"
         break;
 
       case "doc":
-        userText = "Nutricionista"
+        userText = "nutricionista"
         break;
 
       case "user":
-        userText = "Usuario"
+      default:
+        userText = props.label || "planner"
         break;
     }
 
