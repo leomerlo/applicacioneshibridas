@@ -90,7 +90,7 @@ const UserView = () => {
           <GoBack />
         </div>
         <div className="flex-grow">
-          <h1 className="text-4xl mt-6">Usuario: {tempProfile.name}</h1>
+          <h1 className="text-4xl mt-6">{tempProfile.email} <span className="text-gray-60 text-lg">id: { tempProfile.accountId }</span></h1>
           <form onSubmit={saveHandler}>
             <div className="mt-4">
               <Input

@@ -112,13 +112,13 @@ const Profile = () => {
                 />
               </div>
               <div className="mt-4">
-                <label className="text-gray-80 block mb-1" htmlFor="preferences">Preferencias</label>
+                <label className="text-gray-80 block mb-1" htmlFor="preferences">Metas</label>
                 <textarea
                   className="input rounded border border-gray-50 p-2 text-sm w-full"
                   name="preferences"
                   id="preferences"
                   value={tempProfile.preferences}
-                  placeholder="Alta en proteinas, fideos los jueves, pizza los sabados, etc."
+                  placeholder="2300 calorías diarias, alta en proteinas, fideos los jueves, pizza los sabados, etc."
                   onChange={(e) => setTempProfile({...tempProfile, preferences: e.target.value})}
                 />
               </div>

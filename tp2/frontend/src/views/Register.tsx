@@ -163,7 +163,7 @@ const Register = () => {
         <div
           // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
+          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="h-fit text-center">
             <img src={Logo} alt="saz!" className="mx-auto" />

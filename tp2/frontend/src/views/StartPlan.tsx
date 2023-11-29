@@ -131,7 +131,7 @@ const StartPlan = () => {
             En caso de no tener ninguna, podés dejar el campo vacio.
           </p>
           <p className="text-gray-80 mt-4">
-            FoodGenie es un sistema inteligente, asi que podés escribirle tus restricciones con texto y el sistema las va a entender.
+            <b>saz!</b> es un sistema inteligente, asi que podés escribirle tus restricciones y el sistema las va a entender.
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
@@ -153,13 +153,13 @@ const StartPlan = () => {
       <>
         <div className="text-left mt-8">
           <div className="text-center">
-            <h1 className="text-3xl text-gray-90">¿Tenés alguna preferencia para tu plan?</h1>
+            <h1 className="text-3xl text-gray-90">¿Tenés alguna meta para tu plan?</h1>
             </div>
             <p className="text-gray-80 mt-8">
-              Estas preferencias nos ayudar a guiar al sistema sobre tus gustos y preferencias.
+              Éstas nos ayudaran a guiar al sistema sobre tus metas, gustos y preferencias.
             </p>
             <p className="text-gray-80 mt-4">
-              FoodGenie es un sistema inteligente, asi que podés escribirle tus preferencias con texto y el sistema las va a entender.
+              <b>saz!</b> es un sistema inteligente, asi que podés escribirle tus metas y el sistema las va a entender.
             </p>
           <hr className="mt-8" />
           <div className="mt-8">
@@ -185,7 +185,7 @@ const StartPlan = () => {
             Saber para cuantas personas es el plan, nos ayudará a presentartes ingredientes en cantidades adecuadas.
           </p>
           <p className="text-gray-80 mt-4">
-            FoodGenie es un sistema inteligente, asi que podés escribirle tus preferencias con texto y el sistema las va a entender.
+            <b>saz!</b> es un sistema inteligente, asi que podés escribirle tus preferencias con texto y el sistema las va a entender.
           </p>
           <hr className="mt-8" />
           <div className="mt-8">
@@ -205,7 +205,7 @@ const StartPlan = () => {
     <>
     {
       loading ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> : 
-      <div className="w-fit lg:w-6/12 mx-auto flex flex-col h-full">
+      <div className="w-full lg:w-6/12 mx-auto flex flex-col h-full">
         <div className="mx-auto w-3/4 mt-8 -translate-x-8">
           <img src={EmptyPlanImage} className="mx-auto" />
         </div>

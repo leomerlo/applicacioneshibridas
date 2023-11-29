@@ -60,18 +60,15 @@ const Dashboard = () => {
         </div>
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">En espera de aprobación</h2>
+          { dashboard.awaiting.length > 0 ? <>
           <ul>
             { dashboard.awaiting.reverse().map((user: any) => (
               <li className="border-gray-80 bg-gray-20 my-3 rounded p-4" key={user.accountId}>
                 <Link className="block" to={`/admin/user/${user._id}`}>{user.name}</Link>
               </li>
-            ))}
+            )) }
           </ul>
-          <Button className="ml-auto" onClick={
-            () => {
-              navigate("/admin/users");
-            }
-          }>Ver todos</Button>
+          </> : <p className="text-gray-80 my-4">No hay nutricionistas esperando aprobación.</p> }
         </div>
       </div>
     </div>

@@ -18,7 +18,8 @@ export type Profile = {
   idDocument?: string,
   idLicense?: string,
   password?: string
-  docId?: string
+  docId?: string,
+  email?: string
 }
 
 export type Account = {
@@ -36,7 +37,7 @@ export const emptyProfile: {
   plans: Plan[],
   setCurrentPatient: (id: string) => void,
   patient: Patient,
-  isUser: boolean
+  isUser: boolean,
 } = {
   profile: {
     accountId: '',
@@ -44,7 +45,8 @@ export const emptyProfile: {
     name: '',
     _id: '',
     accountType: 'user',
-    status: 'inactive'
+    status: 'inactive',
+    email: ''
   },
   refreshProfile: () => {},
   refreshPlans: () => {},

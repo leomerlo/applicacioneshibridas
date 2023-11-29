@@ -36,11 +36,13 @@ async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
 async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | null> {
   await client.connect()
   const profile = await profilesColelction.findOne<Profile | DocProfile>({ _id: new ObjectId(profileId), 'status': { $exists: true } })
+  const account = await db.collection('accounts').findOne({ _id: new ObjectId(profile?.accountId) });
 
   if(!profile) {
     throw new Error('El perfil que intentas obtener no existe.')
   }
 
+  profile.email = account?.userName || '';
   profile.accountType = profile.accountType || ProfileType.user;
 
   return profile;
