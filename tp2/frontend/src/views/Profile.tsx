@@ -73,12 +73,12 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto">
-      { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tenga paciencia, esto puede tardar unos minutos" /> :
+      { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
       <>
         <div className="flex justify-between">
           <GoBack />
         </div>
-        <h1 className="text-4xl mt-6">Mi Perfil</h1>
+        <h1 className="text-4xl mt-6">Mi perfil</h1>
         <form onSubmit={saveHandler}>
           <div className="mt-4">
             <Input

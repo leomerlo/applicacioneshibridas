@@ -15,7 +15,7 @@ import NotificationsBlock from '../components/NotificationsBlock'
 const Login = () => {
   const userTexts = {
     title: "¡Bienvenid@ a saz!",
-    splashTitle: "Despierte al chef que lleva dentro.",
+    splashTitle: "Despertá al chef que lleva dentro.",
     splashSubtitle: "Con saz! su asistente culinario personal.",
     changeButtonText: "Soy Nutricionista",
     chanceButtonIcon: faCarrot,
@@ -23,9 +23,9 @@ const Login = () => {
   }
 
   const nutriTexts = {
-    title: "Ingrese como nutricionista",
+    title: "Ingresá como nutricionista",
     splashTitle: "¡Bienvenid@ a saz!",
-    splashSubtitle: "Su plataforma personalizada de asistencia nutricional. Prepárese para transformar la salud a través de la ciencia de la alimentación!",
+    splashSubtitle: "Tu plataforma personalizada de asistencia nutricional. Preparate para transformar la salud a través de la ciencia de la alimentación!",
     changeButtonText: "Soy Planner / Paciente",
     chanceButtonIcon: faUser,
     registerLink: '/register/nutri'
@@ -110,13 +110,13 @@ const Login = () => {
               <form onSubmit={(e) => { e.preventDefault(); login(); }}>
                 <div className="text-center">
                   <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
-                  <p className="text-base text-gray-70 mt-3">¡Ingrese sus datos para comenzar a disfrutar de saz!.</p>
+                  <p className="text-base text-gray-70 mt-3">¡Ingresa tus datos para comenzar a disfrutar de saz!.</p>
                 </div>
                 <div className="mt-8">
-                  <Input name="userName" error={userNameError} type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escriba su email" />
+                  <Input name="userName" error={userNameError} type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribí su email" />
                 </div>
                 <div className="mt-8">
-                  <Input name="password" error={passwordError} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escriba su contraseña" type="password" />
+                  <Input name="password" error={passwordError} label="Contraseña" value={password} onInput={passwordHandler} placeholder="Escribí su contraseña" type="password" />
                 </div>
                 { generalError ? <div className="mt-8">
                   { generalError.map((e: string) => (
@@ -124,14 +124,14 @@ const Login = () => {
                   ))}
                 </div> : <></> }
                 <div className="mt-8">
-                  <Button type={ButtonType.submit} full loading={loading}>Ingrese</Button>
+                  <Button type={ButtonType.submit} full loading={loading}>Ingresá</Button>
                 </div>
               </form>
               <div className="mt-8 text-center">
                 <Link to="/forgotPassword" className="text-primary-main">Olvidé mi contraseña</Link>
               </div>
               <div className="mt-8 text-center">
-                <span className="text-gray-60">¿No tiene una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">¡Regístrese!</Link></span>
+                <span className="text-gray-60">¿No tenés una cuenta? <Link to={uiTexts.registerLink} className="text-primary-main">¡Registrate!</Link></span>
               </div>
             </div>
           </div>

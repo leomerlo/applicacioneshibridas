@@ -155,8 +155,8 @@ const Recipie = () => {
                   <div className="text-4xl mx-auto w-fit">
                     <img src={image} aria-hidden />
                   </div>
-                  <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">Hubo un error en su receta.</h1>
-                  <p className="text-xl text-gray-60 text-center mt-2">Por favor, inténtelo nuevamente.</p>
+                  <h1 className="text-4xl text-gray-90 text-center mt-3 capitalize">Hubo un error en tu receta.</h1>
+                  <p className="text-xl text-gray-60 text-center mt-2">Por favor, intentálo nuevamente.</p>
                   <button className="block mx-auto w-fit mt-4" onClick={() => { location.reload() }}>Recargar</button>
                 </div>
               </>

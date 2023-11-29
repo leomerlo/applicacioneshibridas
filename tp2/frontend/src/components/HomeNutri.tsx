@@ -29,8 +29,8 @@ const HomeNutri = () => {
             <h1 className="text-4xl mt-6 text-center">Hola, <span className="text-primary-main font-bold">{ profile.name }</span></h1>
           </div>
           <img src={LoginImage} aria-hidden className="my-8 w-1/3 mx-auto" />
-          <p className="text-center">Su cuenta está pendiente de aprobación.</p>
-          <p className="text-center">Mientras se aprueba, puede modificar su nombre desde el perfil.</p>
+          <p className="text-center">Tu cuenta está pendiente de aprobación.</p>
+          <p className="text-center">Mientras se aprueba, podés modificar tu nombre desde el perfil.</p>
           <div className="mx-auto mt-4">
             <Button onClick={gotoProfile}>Ir a mi perfil</Button>
           </div>
@@ -43,7 +43,7 @@ const HomeNutri = () => {
             </div>
             <div className="flex-grow">
               <img src={LoginImage} aria-hidden className="my-8" />
-              <h2 className="text-2xl text-center">Aún no tiene pacientes cargados en su perfil.</h2>
+              <h2 className="text-2xl text-center">Aún no tenés pacientes cargados en tu perfil.</h2>
             </div>
           </> }
         </>}

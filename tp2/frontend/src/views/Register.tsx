@@ -130,7 +130,7 @@ const Register = () => {
           <div className="block h-fit max-w-authForm">
             <div className="text-center">
               <h1 className="text-4xl text-gray-80">¡Bienvenid@ a saz!</h1>
-              <p className="text-base text-gray-70 mt-3">Ingresa tus datos a continuación y comienza a explorar un mundo de deliciosas recetas personalizadas.</p>
+              <p className="text-base text-gray-70 mt-3">Ingresá tus datos a continuación y comenzá a explorar un mundo de deliciosas recetas personalizadas.</p>
             </div>
             <div className="mt-8">
               <Input name="userName" error={userNameError} type="email" label="Email" value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
@@ -156,7 +156,7 @@ const Register = () => {
               <Button full loading={loading} onClick={register}>Registrate</Button>
             </div>
             <div className="mt-8 text-center">
-              <span className="text-gray-60">¿Ya tienes una cuenta? <Link to={'/login'} className="text-primary-main">Ingresá!</Link></span>
+              <span className="text-gray-60">¿Ya tenés una cuenta? <Link to={'/login'} className="text-primary-main">Ingresá!</Link></span>
             </div>
           </div>
         </div>
@@ -171,7 +171,7 @@ const Register = () => {
             <div>
               <p className="text-3xl text-primary-main mt-20">
                 <strong className="block">Tu guía mágica hacia un universo de sabores.</strong>
-                Descubre recetas inspiradoras, crea platos sorprendentes y comparte tu pasión por la cocina.
+                Descubrí recetas inspiradoras, creá platos sorprendentes y compartí tu pasión por la cocina.
               </p>
             </div>
           </div>

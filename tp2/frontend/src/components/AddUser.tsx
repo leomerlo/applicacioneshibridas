@@ -86,7 +86,7 @@ const AddUser = (props: Props) => {
             </select>
           </div> : <></> }
           <div className="mt-8">
-            <Input name="userName" type="email" label="Correo electrónico" value={userName} onInput={userNameHandler} placeholder="Ingrese un correo electrónico" />
+            <Input name="userName" type="email" label="Correo electrónico" value={userName} onInput={userNameHandler} placeholder="Ingresá un correo electrónico" />
           </div>
         </div>
         <div>

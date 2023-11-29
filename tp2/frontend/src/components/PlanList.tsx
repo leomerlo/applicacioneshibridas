@@ -13,7 +13,7 @@ const PlanList = (props: PlanListProps) => {
   return (
     <div className="patient-list h-full flex flex-col overflow-y-auto">
       { props.patientName ? <p className="mb-8">
-        Seleccione un plan para asignarlo al paciente { props.patientName }.
+        Seleccioná un plan para asignarlo al paciente { props.patientName }.
       </p> : <p className="mb-8"></p>}
       
       <ul className="flex-grow">

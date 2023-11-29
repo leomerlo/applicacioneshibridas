@@ -31,12 +31,12 @@ const ShoppingListPage = () => {
   const keyToTitle = (key: string) => {
     switch (key) {
       case 'meats':
-        return 'Carniceria';
+        return 'Carnicería';
       case 'produce':
-        return 'Verduleria';
+        return 'Verdulería';
       case 'others':
       default:
-        return 'Almacen';
+        return 'Almacén';
     }
   }
 

@@ -76,18 +76,18 @@ const nutriTexts = {
             <div className="block h-fit max-w-authForm">
               <form onSubmit={(e) => { e.preventDefault(); resetPassword(); }}>
                 <div className="text-center">
-                  <h1 className="text-4xl text-gray-80">Recupere su contraseña</h1>
-                  <p className="text-base text-gray-70 mt-3">Ingrese su email para generar una nueva contraseña.</p>
+                  <h1 className="text-4xl text-gray-80">Recuperá tu contraseña</h1>
+                  <p className="text-base text-gray-70 mt-3">Ingresá tu email para generar una nueva contraseña.</p>
                 </div>
                 <div className="mt-8">
-                  <Input name="userName" type="email" label="Email" error={error} value={userName} onInput={userNameHandler} placeholder="Escriba su email" />
+                  <Input name="userName" type="email" label="Email" error={error} value={userName} onInput={userNameHandler} placeholder="Escribí tu email" />
                 </div>
                 <div className="mt-8">
                   <Button type={ButtonType.submit} full loading={loading}>Generar nueva contraseña</Button>
                 </div>
               </form>
               <div className="mt-8 text-center">
-                <span className="text-gray-60">¿Ya tiene una cuenta? <Link to="/login" className="text-primary-main">¡Ingrese!</Link></span>
+                <span className="text-gray-60">¿Ya tenés una cuenta? <Link to="/login" className="text-primary-main">¡Ingresá!</Link></span>
               </div>
             </div>
           </div>

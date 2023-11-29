@@ -33,12 +33,12 @@ const HomeUser = () => {
                 <img src={EmptyPlanImage} className="mx-auto" />
               </div>
               <div className="text-left mt-8">
-                <h1 className="text-3xl text-gray-90">¡Hola! Parece que aún no tiene un plan generado.</h1>
+                <h1 className="text-3xl text-gray-90">¡Hola! Parece que aún no tenés un plan generado.</h1>
                 <p className="text-gray-80 mt-8">
-                  Comuníquese con su nutricionista para que le genere un plan.
+                  Comunicate con tu nutricionista para que te genere un plan.
                 </p>
                 <p className="text-gray-80 mt-4">
-                  Mientras tanto, puede empezar agregando su nombre en el perfil.
+                  Mientras tanto, podés empezar agregando tu nombre en el perfil.
                 </p>
               </div>
               <div className="mt-8 flex grow items-end">
@@ -49,7 +49,7 @@ const HomeUser = () => {
             </div>
           </> : <StartPlan />
         }
-      </> : <Loading action="Estamos cargando sus datos..." />}
+      </> : <Loading action="Estamos cargando tus datos..." />}
     </div>
   )
 }
