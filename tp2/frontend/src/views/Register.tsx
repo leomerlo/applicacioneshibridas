@@ -143,7 +143,7 @@ const Register = () => {
                 <Input name="idDocument" error={idDocumentError} label="Documento" value={idDocument} onInput={idDocumentHandler} placeholder="Dni, sin puntos ni espacios" type="text" />
               </div>
               <div className="mt-8">
-                <Input name="idLicense" error={idLicenseError} label="Licencia" value={idLicense} onInput={idLicenseHandler} placeholder="Licencia, sin puntos ni espacios" type="text" />
+                <Input name="idLicense" error={idLicenseError} label="Matricula" value={idLicense} onInput={idLicenseHandler} placeholder="Matricula, sin puntos ni espacios" type="text" />
               </div>
             </> : null }
             { generalError ? <div className="mt-8">
