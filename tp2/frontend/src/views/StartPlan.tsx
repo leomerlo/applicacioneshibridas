@@ -51,7 +51,7 @@ const StartPlan = () => {
         refreshProfile();
         planService.newPlan().then((response) => {
           setLoading(false);
-          if(response.status === 201) {
+          if(response.status === 200) {
             updatePlan();
           } else {
             updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
@@ -89,13 +89,13 @@ const StartPlan = () => {
   const step1 = () => {
     return (
       <>
-        <div className="text-left mt-8">
+        <div className="text-left mt-8 p-6">
           <h1 className="text-3xl text-gray-90">¡Hola! Parece que no tenés un plan generado.</h1>
           <p className="text-gray-80 mt-8">
             A continuación te pediremos algunos datos para generar tu plan a medida.
           </p>
           <p className="text-gray-80 mt-4">
-            Todos esto vas a poder modificarlo mas adelante desde tu perfil.
+            Todo esto vas a poder modificarlo mas adelante desde tu perfil.
           </p>
         </div>
       </>
