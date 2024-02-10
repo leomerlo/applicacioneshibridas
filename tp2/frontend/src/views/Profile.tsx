@@ -149,10 +149,10 @@ const Profile = () => {
             <div className="mt-4">
               <Input
                 name="idLicense"
-                label="Licencia"
+                label="Matricula"
                 value={tempProfile.idLicense as string}
                 onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
-                placeholder="Licencia, sin puntos ni espacios"
+                placeholder="Matricula, sin puntos ni espacios"
                 disabled
                 type="text"
               />

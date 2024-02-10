@@ -177,10 +177,10 @@ const UserView = () => {
                 <div className="mt-4">
                   <Input
                     name="idLicense"
-                    label="Licencia"
+                    label="Matricula"
                     value={tempProfile.idLicense as string}
                     onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
-                    placeholder="Licencia, sin puntos ni espacios"
+                    placeholder="Matricula, sin puntos ni espacios"
                     type="text"
                   />
                 </div>
