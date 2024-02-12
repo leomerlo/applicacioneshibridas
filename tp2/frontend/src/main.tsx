@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { initMercadoPago } from '@mercadopago/sdk-react';
 import App from './App.tsx'
 import HomePage from './views/Home.tsx';
 import LoginPage from './views/Login.tsx';
@@ -29,6 +30,7 @@ import Users from './views/backoffice/Users.tsx';
 import AddUserPage from './views/backoffice/AddUserPage.tsx';
 import UserView from './views/backoffice/UserView.tsx';
 import LandingPage from './views/LandingPage.tsx';
+import Subscription from './views/Subscription.tsx';
 
 const router = createBrowserRouter([
   {
@@ -114,6 +116,10 @@ const router = createBrowserRouter([
     ]
   },
   {
+    path: '/subscription',
+    element: <Subscription />
+  },
+  {
     path: '/login',
     element: <LoginPage />
   },
@@ -133,8 +139,9 @@ const router = createBrowserRouter([
     path: '/landing',
     element: <LandingPage />
   },
-])
+]);
 
+initMercadoPago('TEST-4371e7a3-cda5-4bef-a6ec-7065b6dc8220');
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <NotificationsProvider><RouterProvider router={router} /></NotificationsProvider>
