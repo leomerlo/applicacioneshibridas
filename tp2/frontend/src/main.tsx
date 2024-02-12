@@ -141,7 +141,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-initMercadoPago('TEST-4371e7a3-cda5-4bef-a6ec-7065b6dc8220');
+initMercadoPago('TEST-46c82482-296a-4e30-8409-01d07c7f5de4');
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <NotificationsProvider><RouterProvider router={router} /></NotificationsProvider>

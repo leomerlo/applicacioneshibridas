@@ -1,26 +1,25 @@
-import { useEffect } from 'react';
 import { CardPayment } from '@mercadopago/sdk-react'
-import { getPreferences } from '../services/subscription.service';
+import { subscribe } from '../services/subscription.service';
+import { useNavigate } from 'react-router-dom';
 
 const Subscription = () => {
-  useEffect(() => {
-    getPreferences().then((response) => {
-      if(response.status === 200) {
-        console.log(response);
-      } else {
-        throw new Error('Error fetching preferences');
-      }
-    });
-  }, []);
-  
+  const navigate = useNavigate();
+
+  const submitHandler = async (param: any) => {
+    const response = await subscribe(param);
+    if (response.status === 201) {
+      navigate('/profile');
+    } else {
+      navigate('/subscribe');
+    }
+  }
 
   return (
     <>
       <CardPayment
         initialization={{ amount: 10000 }}
-        onSubmit={async (param) => {
-          console.log(param);
-        }}
+        customization={{ paymentMethods: { maxInstallments: 1 }}}
+        onSubmit={submitHandler}
       />
     </>
   );

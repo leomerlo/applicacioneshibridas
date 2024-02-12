@@ -1,5 +1,5 @@
 import API from './api.service';
 
-export function getPreferences() {
-  return API.call({ uri: 'preference' });
+export function subscribe($body: any) {
+  return API.call({ uri: 'subscribe', method: 'post', body: $body});
 }
