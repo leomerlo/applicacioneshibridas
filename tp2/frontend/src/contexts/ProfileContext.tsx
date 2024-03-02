@@ -19,7 +19,8 @@ export type Profile = {
   idLicense?: string,
   password?: string
   docId?: string,
-  email?: string
+  email?: string,
+  subscription_start?: Date
 }
 
 export type Account = {

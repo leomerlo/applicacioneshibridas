@@ -22,17 +22,28 @@ const subscribe = async (profileId: ObjectId, paymentData: any) => {
   paymentData.transaction_amount = 10000;
   try {
     const res = await processPayment(paymentData);
-    console.log('payment processed', res);
     const date = new Date();
     await profileCollection.updateOne({ _id: new ObjectId(profileId) }, { $set: { subscription_start: date, status: 'active' } });
-    console.log('user updated');
   } catch (error: any) {
-    console.error('Error creating payment', error);
     await profileCollection.updateOne({ _id: new ObjectId(profileId) }, { $set: { status: 'pending' } });
     throw new Error(error);
   }
 }
 
+const checkSubscriptions = async () => {
+  const date = new Date();
+  // create a date object a year from now
+  date.setFullYear(date.getFullYear() - 1);
+  const profiles = await profileCollection.find({ status: 'active', subscription_start: { $lt: date } }).toArray();
+  return profiles;
+}
+
+const deactivate = async (profileId: ObjectId) => {
+  await profileCollection.updateOne({ _id: profileId }, { $set: { status: 'pending' }, $unset: { subscription_start: '' } });
+}
+
 export {
-  subscribe
+  subscribe,
+  checkSubscriptions,
+  deactivate
 }

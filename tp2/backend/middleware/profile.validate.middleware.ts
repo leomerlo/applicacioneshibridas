@@ -76,6 +76,8 @@ async function validateAdmin(req: Request, res: Response, next: NextFunction) {
       return;
     }
 
+    console.log(req.body.accountId);
+
     throw new Error('No tenés los permisos correctos para realizar esta acción');
   })
   .catch((err) => {

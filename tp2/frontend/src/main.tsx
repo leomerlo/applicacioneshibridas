@@ -31,6 +31,8 @@ import AddUserPage from './views/backoffice/AddUserPage.tsx';
 import UserView from './views/backoffice/UserView.tsx';
 import LandingPage from './views/LandingPage.tsx';
 import Subscription from './views/Subscription.tsx';
+import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
+import SubscriptionError from './views/subcription/SubscriptionError.tsx';
 
 const router = createBrowserRouter([
   {
@@ -90,6 +92,18 @@ const router = createBrowserRouter([
         path: '/recipie/:profileId/:name',
         element: <RecipieProvider><RecipiePage /></RecipieProvider>
       },
+      {
+        path: '/subscription',
+        element: <Subscription />,
+      },
+      {
+        path: '/subscription/success',
+        element: <SubscriptionSuccess />
+      },
+      {
+        path: '/subscription/error',
+        element: <SubscriptionError />
+      },
     ]
   },
   {
@@ -116,10 +130,6 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: '/subscription',
-    element: <Subscription />
-  },
-  {
     path: '/login',
     element: <LoginPage />
   },
@@ -141,7 +151,9 @@ const router = createBrowserRouter([
   },
 ]);
 
-initMercadoPago('TEST-46c82482-296a-4e30-8409-01d07c7f5de4');
+initMercadoPago('TEST-46c82482-296a-4e30-8409-01d07c7f5de4', {
+  locale: 'es-AR'
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <NotificationsProvider><RouterProvider router={router} /></NotificationsProvider>
