@@ -72,7 +72,7 @@ const AddPlan = () => {
                 label="Restricciones"
                 value={restrictions}
                 onInput={restrictionHandler}
-                placeholder="Gluten-free, vegetariano, alergia al tofu, etc." />
+                placeholder="Sin gluten, vegetariano, alergia al tofu, etc." />
             </div>
             <div className="mt-8">
               <Input
@@ -81,7 +81,7 @@ const AddPlan = () => {
                 label="Preferencias"
                 value={preferences}
                 onInput={preferencesHandler}
-                placeholder="Alta en proteinas, fideos los jueves, pizza los sabados, etc." />
+                placeholder="Rico en proteínas, fideos los jueves, pizza los sabados, etc." />
             </div>
           </div>
           <div>

@@ -33,7 +33,7 @@ const PlanView = () => {
         } else {
           notifications.updateNotifications({
             variant: 'error',
-            message: 'Error al obtener el plan'
+            message: 'Hubo un error al obtener el plan'
           });
         }
       });
@@ -74,7 +74,7 @@ const PlanView = () => {
         <GoBack />
         { planData ? <>
           <h1 className="text-4xl mt-6 mb-2">{
-            id ? planData.title : "Mi Plan alimenticio"}</h1>
+            id ? planData.title : "Mi plan"}</h1>
           <DaysCarousel day={planSelectedDay} onDayChange={changeDayHandler} />
           <PatientNextMeal day={planSelectedDay} plan={planData as Plan} />
         </>: null }

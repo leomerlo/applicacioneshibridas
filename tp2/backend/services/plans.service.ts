@@ -9,7 +9,7 @@ import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
 
-async function generatePlan(profileId: ObjectId): Promise<void> {
+async function generatePlan(profileId: ObjectId): Promise<Meals> {
   await client.connect()
 
   const profile = await profileService.getProfile(profileId) as Profile;
@@ -22,32 +22,11 @@ async function generatePlan(profileId: ObjectId): Promise<void> {
     likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
   });
 
-  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies, (data) => {
-
-  }, (data) => {
-
-  });
+  const rawOutput = await openApi.generatePlan(profile.restrictions || '', profile.preferences || '', likedRecipies);
 
   const meals = JSON.parse(rawOutput as string);
 
-  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
-    .then(async (meals) => {
-      const plan = {
-        meals,
-        profileId: new ObjectId(profileId)
-      }
-    
-      const planExists = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
-    
-      if (planExists) {
-        await db.collection("plans").findOneAndReplace({ profileId: new ObjectId(profileId) }, plan);
-      } else {
-        await db.collection("plans").insertOne(plan);
-      }
-    })
-    .catch((err) => {
-      console.log('Validation error', err);
-    })
+  return meals;
 }
 
 async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
@@ -73,8 +52,11 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   })
 }
 
-async function generateDocPlan(docId: ObjectId, meals: Meals, title: string): Promise<void> {
+async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
   await client.connect()
+
+  const rawOutput = await openApi.generatePlan(restrictions, preferences, "");
+  const meals = JSON.parse(rawOutput as string);
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
     .then(async (meals) => {

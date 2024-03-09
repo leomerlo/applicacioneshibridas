@@ -1,4 +1,4 @@
-import cardGradient from '../assets/cardGradient.svg'
+import cardGradient from '../assets/pattern_rosa_lg.png'
 import { PropsWithChildren } from 'react';
 
 export type Props = {

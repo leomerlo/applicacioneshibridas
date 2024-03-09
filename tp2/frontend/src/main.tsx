@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { initMercadoPago } from '@mercadopago/sdk-react';
 import App from './App.tsx'
 import HomePage from './views/Home.tsx';
 import LoginPage from './views/Login.tsx';
@@ -12,6 +13,7 @@ import RoutePrivate from './components/RoutePrivate.tsx';
 import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
 import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
+import { AdminProvider } from './contexts/AdminContext.tsx';
 import AddPatient from './views/AddPatient.tsx';
 import AddPlan from './views/AddPlan.tsx';
 import RoutePrivateDoctor from './components/RoutePrivateDoctor.tsx';
@@ -24,6 +26,13 @@ import ForgotPassword from './views/ForgotPassword.tsx';
 import BackOffice from './views/backoffice/BackOffice.tsx';
 import Dashboard from './views/backoffice/Dashboard.tsx';
 import RouteAdmin from './components/RouteAdmin.tsx';
+import Users from './views/backoffice/Users.tsx';
+import AddUserPage from './views/backoffice/AddUserPage.tsx';
+import UserView from './views/backoffice/UserView.tsx';
+import LandingPage from './views/LandingPage.tsx';
+import Subscription from './views/Subscription.tsx';
+import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
+import SubscriptionError from './views/subcription/SubscriptionError.tsx';
 
 const router = createBrowserRouter([
   {
@@ -83,16 +92,40 @@ const router = createBrowserRouter([
         path: '/recipie/:profileId/:name',
         element: <RecipieProvider><RecipiePage /></RecipieProvider>
       },
+      {
+        path: '/subscription',
+        element: <Subscription />,
+      },
+      {
+        path: '/subscription/success',
+        element: <SubscriptionSuccess />
+      },
+      {
+        path: '/subscription/error',
+        element: <SubscriptionError />
+      },
     ]
   },
   {
     path: '/admin',
-    element: <RoutePrivate><BackOffice /></RoutePrivate>,
+    element: <RoutePrivate><AdminProvider><BackOffice /></AdminProvider></RoutePrivate>,
     // errorElement: <Error404Page />,
     children: [
       {
         path: '',
         element: <RouteAdmin><Dashboard /></RouteAdmin>,
+      },
+      {
+        path: '/admin/users',
+        element: <RouteAdmin><Users /></RouteAdmin>,
+      },
+      {
+        path: '/admin/addUser',
+        element: <RouteAdmin><AddUserPage /></RouteAdmin>,
+      },
+      {
+        path: '/admin/user/:id',
+        element: <RouteAdmin><UserView /></RouteAdmin>,
       }
     ]
   },
@@ -112,8 +145,15 @@ const router = createBrowserRouter([
     path: '/register',
     element: <RegisterPage />
   },
-])
+  {
+    path: '/landing',
+    element: <LandingPage />
+  },
+]);
 
+initMercadoPago('TEST-46c82482-296a-4e30-8409-01d07c7f5de4', {
+  locale: 'es-AR'
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <NotificationsProvider><RouterProvider router={router} /></NotificationsProvider>

@@ -21,7 +21,7 @@ const profile = yup.object({
   preferences: yup.string().trim(),
   diners: yup.number().integer().positive(),
   docId: yup.mixed<ObjectId>(),
-  accountType: yup.mixed<any>().oneOf([ProfileType.user, ProfileType.admin]).required(),
+  accountType: yup.mixed<any>().oneOf([ProfileType.user, ProfileType.admin, ProfileType.doc]).required(),
 });
 
 const docProfile = yup.object({

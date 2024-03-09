@@ -33,7 +33,7 @@ const HomeUser = () => {
                 <img src={EmptyPlanImage} className="mx-auto" />
               </div>
               <div className="text-left mt-8">
-                <h1 className="text-3xl text-gray-90">¡Hola! Parece que no tenés un plan generado.</h1>
+                <h1 className="text-3xl text-gray-90">¡Hola! Parece que aún no tenés un plan generado.</h1>
                 <p className="text-gray-80 mt-8">
                   Comunicate con tu nutricionista para que te genere un plan.
                 </p>

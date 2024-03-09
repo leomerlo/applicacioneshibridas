@@ -14,7 +14,12 @@ const PatientNextMeal = (props: PatientNextMealProps) => {
   const { plan } = usePlan();
 
   useEffect(() => {
-    const dayMeals = plan.meals[props.day];
+    let dayMeals: nextMeal[] = [];
+    if (!props.plan) {
+      dayMeals = plan.meals[props.day];
+    } else {
+      dayMeals = props.plan.meals[props.day]
+    }
     setMeals(dayMeals);
   }, [props.day]);
 

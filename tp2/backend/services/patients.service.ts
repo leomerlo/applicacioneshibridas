@@ -19,12 +19,12 @@ export async function addPatient(docId: string, patient: Session) {
     await transporter.sendMail({
       from: '"Leandro Merlo" <merloleandro@gmail.com>',
       to: patient.userName,
-      subject: "Bienvenid@ a FoodGenie",
-      text: "Bienvenid@ a FoodGenie, tu cuenta fue creada exitosamente.",
+      subject: "Bienvenid@ a saz!",
+      text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
       html: `
-        ${doc?.name} te ha invitado a FoodGenie.ai.
+        ${doc?.name} te ha invitado a saz!.
 
-        Ingresá aqui: <a href="http://127.0.0.1:5173">FoodGenie.ai</a>
+        Ingresá aqui: <a href="http://127.0.0.1:5173">saz!</a>
 
         Usando tu email y la contraseña ${rawPass}.
 

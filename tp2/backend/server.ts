@@ -5,6 +5,7 @@ import plansRouter from './routes/plans.routes.js';
 import recipiesRouter from './routes/recipies.routes.js';
 import patientsRouter from './routes/patients.routes.js';
 import backofficeRouter from './routes/backoffice.routes.js';
+import subscribeRouter from './routes/subscription.routes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Router } from 'express';
@@ -22,6 +23,7 @@ app.use('/api', profileRouter);
 app.use('/api', plansRouter);
 app.use('/api', recipiesRouter);
 app.use('/api', patientsRouter);
+app.use('/api', subscribeRouter);
 app.use('/api/admin', backofficeRouter);
 
 app.listen(2023, function () {

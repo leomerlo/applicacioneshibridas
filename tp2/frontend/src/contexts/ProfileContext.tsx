@@ -18,7 +18,9 @@ export type Profile = {
   idDocument?: string,
   idLicense?: string,
   password?: string
-  docId?: string
+  docId?: string,
+  email?: string,
+  subscription_start?: Date
 }
 
 export type Account = {
@@ -36,7 +38,7 @@ export const emptyProfile: {
   plans: Plan[],
   setCurrentPatient: (id: string) => void,
   patient: Patient,
-  isUser: boolean
+  isUser: boolean,
 } = {
   profile: {
     accountId: '',
@@ -44,7 +46,8 @@ export const emptyProfile: {
     name: '',
     _id: '',
     accountType: 'user',
-    status: 'inactive'
+    status: 'inactive',
+    email: ''
   },
   refreshProfile: () => {},
   refreshPlans: () => {},
@@ -95,7 +98,7 @@ function ProfileProvider({children}: PropsWithChildren){
         }
       } else {
         navigate('/login');
-        updateNotifications({ variant: 'error', message: 'Error al recuperar el perfil.' });
+        updateNotifications({ variant: 'error', message: 'Hubo un error al recuperar el perfil.' });
       }
     })
     .catch((error) => {

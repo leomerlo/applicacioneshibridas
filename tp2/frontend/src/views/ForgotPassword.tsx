@@ -14,18 +14,18 @@ import NotificationsBlock from '../components/NotificationsBlock'
 
 const ForgotPassword = () => {
   const userTexts = {
-    title: "Bienvenid@ a SAZ!",
-    splashTitle: "Despierta al chef que llevas dentro.",
-    splashSubtitle: "Con SAZ!, tu asistente culinario personal.",
+    title: "Bienvenido/a a saz!",
+    splashTitle: "Despierte al chef que lleva dentro.",
+    splashSubtitle: "Con saz!, su asistente culinario personal.",
     changeButtonText: "Soy Nutricionista",
     chanceButtonIcon: faCarrot,
     registerLink: '/register/user'
-  }
+}
 
-  const nutriTexts = {
-    title: "Ingresa como nutricionista",
-    splashTitle: "Bienvenido a SAZ!",
-    splashSubtitle: "Tu plataforma personalizada de asistencia nutricional. ¡Prepárate para transformar la salud a través de la ciencia de la alimentación!",
+const nutriTexts = {
+    title: "Ingrese como nutricionista",
+    splashTitle: "Bienvenido a saz!",
+    splashSubtitle: "Su plataforma personalizada de asistencia nutricional. ¡Prepárese para transformar la salud a través de la ciencia de la alimentación!",
     changeButtonText: "Soy Usuario / Paciente",
     chanceButtonIcon: faUser,
     registerLink: '/register/nutri'
@@ -41,13 +41,10 @@ const ForgotPassword = () => {
 
   const resetPassword = () => {
     setLoading(true);
-    console.log('reset')
     accountService.forgotPassword(userName).then((resp) => {
-      console.log('reset2')
       setLoading(false);
       setError("");
       if(resp.status === 201) {
-        console.log('reset3')
         navigate('/login');
         notification.updateNotifications({
           variant: "success",
@@ -80,17 +77,17 @@ const ForgotPassword = () => {
               <form onSubmit={(e) => { e.preventDefault(); resetPassword(); }}>
                 <div className="text-center">
                   <h1 className="text-4xl text-gray-80">Recuperá tu contraseña</h1>
-                  <p className="text-base text-gray-70 mt-3">Ingresa tu email para generar una nueva contraseña.</p>
+                  <p className="text-base text-gray-70 mt-3">Ingresá tu email para generar una nueva contraseña.</p>
                 </div>
                 <div className="mt-8">
-                  <Input name="userName" type="email" label="Email" error={error} value={userName} onInput={userNameHandler} placeholder="Escribi tu email" />
+                  <Input name="userName" type="email" label="Email" error={error} value={userName} onInput={userNameHandler} placeholder="Escribí tu email" />
                 </div>
                 <div className="mt-8">
                   <Button type={ButtonType.submit} full loading={loading}>Generar nueva contraseña</Button>
                 </div>
               </form>
               <div className="mt-8 text-center">
-                <span className="text-gray-60">¿Ya tenés una cuenta? <Link to="/login" className="text-primary-main">Ingresá!</Link></span>
+                <span className="text-gray-60">¿Ya tenés una cuenta? <Link to="/login" className="text-primary-main">¡Ingresá!</Link></span>
               </div>
             </div>
           </div>
@@ -101,7 +98,7 @@ const ForgotPassword = () => {
           className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="w-fit h-fit text-center">
-            <img src={Logo} alt="SAZ!" className="mx-auto" />
+            <img src={Logo} alt="saz!" className="mx-auto" />
             <img src={LoginImage} aria-hidden="true" className="mt-20 mx-auto" />
             <div>
               <p className="text-3xl text-white mt-20">

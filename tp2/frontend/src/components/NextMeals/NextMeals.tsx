@@ -60,7 +60,7 @@ const NextMeals = () => {
 
   return (
     <div className="mt-6">
-        <h2 className="text-3xl font-bold">Siguientes comidas</h2>
+        <h2 className="text-3xl font-bold">Próximas comidas</h2>
         <ul
           // @ts-ignore
           className="mt-6"

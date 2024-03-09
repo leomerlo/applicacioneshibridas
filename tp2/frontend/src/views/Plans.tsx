@@ -19,7 +19,7 @@ const Plans = () => {
     <div className="container mx-auto">
       <div className="pb-20">
         <GoBack />
-        <h1 className="text-4xl mt-6 mb-2">Mis Planes</h1>
+        <h1 className="text-4xl mt-6 mb-2">Mis planes</h1>
         <PlanList onPlanClick={planClickHandler} />
       </div>
       <FooterMenu>

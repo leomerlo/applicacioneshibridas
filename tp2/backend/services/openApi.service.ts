@@ -24,9 +24,9 @@ async function promptHelper(systemPrompt: string, userPrompt: string): Promise<s
     })
     const timeEnd = new Date();
     const timeDiff = Math.abs((timeStart.getTime() - timeEnd.getTime()) / 1000);
-    let result = completion.data.choices[0].message?.content;
-    console.log("Result: ", completion.data.choices[0].message?.content);
-    console.log("openAi usage: ", completion.data.usage);
+    let result = completion.choices[0].message?.content;
+    console.log("Result: ", completion.choices[0].message?.content);
+    console.log("openAi usage: ", completion.usage);
     console.log('End OpenAI fetch', timeEnd.getHours(), timeEnd.getMinutes(), timeEnd.getSeconds());
     console.log('Query time: ', timeDiff + 'segs');
     return result as string;
@@ -78,7 +78,7 @@ async function promptHelperStream(systemPrompt: string, userPrompt: string, data
   }
 }
 
-async function generatePlan(restrictions: string, preferences: string, recipies: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
+async function generatePlan(restrictions: string, preferences: string, recipies: string): Promise<string> {
   const systemPrompt = `
   Cuando te pida ayuda, vas a actuar como un jefe de cocina, y armar un plan de comida semanal para un cliente, siguiendo las "restricciones" y "preferencias" que elijan.
   Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.

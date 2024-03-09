@@ -10,9 +10,13 @@ const profilesColelction = db.collection('profiles')
 async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
   await client.connect()
 
-  const schema = type === ProfileType.user || ProfileType.admin ? profileSchema.profile : profileSchema.docProfile;
+  let schema = profileSchema.profile;
 
-  await schema.validate(profile, { abortEarly: false, stripUnknown: true })
+  if(type === ProfileType.doc) {
+    schema = profileSchema.docProfile;
+  }
+
+  await schema.validate(profile, { abortEarly: true, stripUnknown: true })
     .then(async (profile) => {
       // Since we only have one profile for each user we'll check if the accountId already exists
       const profileExist = await profilesColelction.findOne({ accountId: new ObjectId(profile.accountId) })
@@ -32,11 +36,13 @@ async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
 async function getProfile(profileId: ObjectId): Promise<Profile | DocProfile | null> {
   await client.connect()
   const profile = await profilesColelction.findOne<Profile | DocProfile>({ _id: new ObjectId(profileId), 'status': { $exists: true } })
+  const account = await db.collection('accounts').findOne({ _id: new ObjectId(profile?.accountId) });
 
   if(!profile) {
     throw new Error('El perfil que intentas obtener no existe.')
   }
 
+  profile.email = account?.userName || '';
   profile.accountType = profile.accountType || ProfileType.user;
 
   return profile;
@@ -47,21 +53,39 @@ async function getProfileByAccount(accountId: ObjectId) {
   return profilesColelction.findOne<Profile | DocProfile>({ accountId: new ObjectId(accountId), 'status': { $exists: true } })
 }
 
-async function updateProfile(token: string, profile: Profile | DocProfile) {
+async function updateProfile(token: string, profile: Profile | DocProfile, profileId: ObjectId | null = null) {
   await client.connect()
-
   const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
+  const updateId = profileId ? profileId : payload._id;
 
-  const update = {
-    ...profile,
-    accountId: new ObjectId(payload.accountId)
+  if(profileId && payload.accountType !== ProfileType.admin) {
+    throw new Error('No tienes permisos para modificar este perfil.')
   }
 
-  if( payload.docId ) {
+  const update = {
+    ...profile
+  }
+
+  if(!profileId) {
+    update.accountId = new ObjectId(payload.accountId)
+  } else {
+    update.accountId = new ObjectId(profile.accountId)
+  }
+
+  if(payload.docId) {
     update.docId = new ObjectId(payload.docId)
   }
 
-  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(payload._id) }, update);
+  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
+
+  if (updated.matchedCount == 0) {
+    throw new Error('El perfil que intentas modificar no existe.')
+  }
+}
+
+async function deactivateProfile(profileId: ObjectId) {
+  await client.connect()
+  const updated = await profilesColelction.updateOne({ _id: new ObjectId(profileId) }, { $set: { status: "inactive" } })
 
   if (updated.matchedCount == 0) {
     throw new Error('El perfil que intentas modificar no existe.')
@@ -72,5 +96,6 @@ export {
   createProfile,
   getProfile,
   updateProfile,
-  getProfileByAccount
+  getProfileByAccount,
+  deactivateProfile
 }

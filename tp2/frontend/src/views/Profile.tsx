@@ -64,7 +64,7 @@ const Profile = () => {
             updatePlan();
             navigate("/");
           } else {
-            updateNotifications({ variant: 'error', message: 'Error al crear el plan, intentalo de nuevo.' });
+            updateNotifications({ variant: 'error', message: 'Error al crear el plan, inténtelo de nuevo.' });
           }
         });
       }
@@ -73,12 +73,12 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto">
-      { loadingPlan ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
+      { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
       <>
         <div className="flex justify-between">
           <GoBack />
         </div>
-        <h1 className="text-4xl mt-6">Mi Perfil</h1>
+        <h1 className="text-4xl mt-6">Mi perfil</h1>
         <form onSubmit={saveHandler}>
           <div className="mt-4">
             <Input
@@ -98,7 +98,6 @@ const Profile = () => {
               type="password"
             />
           </div>
-          { profile.docId }
           { profile.accountType === 'user' ? <>
             { !profile.docId ? <>
               <div className="mt-4">
@@ -113,13 +112,13 @@ const Profile = () => {
                 />
               </div>
               <div className="mt-4">
-                <label className="text-gray-80 block mb-1" htmlFor="preferences">Preferencias</label>
+                <label className="text-gray-80 block mb-1" htmlFor="preferences">Metas</label>
                 <textarea
                   className="input rounded border border-gray-50 p-2 text-sm w-full"
                   name="preferences"
                   id="preferences"
                   value={tempProfile.preferences}
-                  placeholder="Alta en proteinas, fideos los jueves, pizza los sabados, etc."
+                  placeholder="2300 calorías diarias, alta en proteinas, fideos los jueves, pizza los sabados, etc."
                   onChange={(e) => setTempProfile({...tempProfile, preferences: e.target.value})}
                 />
               </div>
@@ -143,16 +142,18 @@ const Profile = () => {
                 value={tempProfile.idDocument as string}
                 onInput={(e) => setTempProfile({...tempProfile, idDocument: e.target.value})}
                 placeholder="Dni, sin puntos ni espacios"
+                disabled
                 type="text"
               />
             </div>
             <div className="mt-4">
               <Input
                 name="idLicense"
-                label="Licencia"
+                label="Matricula"
                 value={tempProfile.idLicense as string}
                 onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
-                placeholder="Licencia, sin puntos ni espacios"
+                placeholder="Matricula, sin puntos ni espacios"
+                disabled
                 type="text"
               />
             </div>
@@ -164,7 +165,7 @@ const Profile = () => {
           </div>
           { profile.accountType === 'user' && !profile.docId ? <>
             <div className="mt-4">
-              <Button full onClick={newPlan} variant="secondary">Generar plan nuevo</Button>
+              <Button full onClick={newPlan} variant="secondary">Generar nuevo plan</Button>
             </div>
           </> : <></>}
         </form>
