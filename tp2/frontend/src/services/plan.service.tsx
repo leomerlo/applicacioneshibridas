@@ -37,6 +37,18 @@ export function replaceRecipie(day: string, meal: string, dataCB: (data: any) =>
   });
 }
 
+export function newPlanAssistant({ preferences, restrictions }: { preferences: string, restrictions: string }) {
+  return API.call({ uri: 'plan/assistant/thread', method: 'POST', body: { preferences, restrictions } })
+}
+
+export function getPlanAssistantThread(threadId: string) {
+  return API.call({ uri: `plan/assistant/thread/${threadId}` })
+}
+
+export function assistantSendMessage(threadId: string, message: string) {
+  return API.call({ uri: 'plan/assistant/message', method: 'POST', body: { thread: threadId, message } })
+}
+
 export default {
   newPlan,
   getPlan,
@@ -45,5 +57,8 @@ export default {
   newDocPlan,
   getShoppingList,
   deletePlan,
-  replaceRecipie
+  replaceRecipie,
+  newPlanAssistant,
+  getPlanAssistantThread,
+  assistantSendMessage
 }

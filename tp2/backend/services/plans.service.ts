@@ -52,10 +52,10 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   })
 }
 
-async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
+async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string, listado: string): Promise<void> {
   await client.connect()
 
-  const rawOutput = await openApi.generatePlan(restrictions, preferences, "");
+  const rawOutput = await openApi.generateRecipies(restrictions, preferences, listado);
   const meals = JSON.parse(rawOutput as string);
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })

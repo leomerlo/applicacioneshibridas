@@ -28,13 +28,14 @@ async function generateDocPlan(req: Request, res: Response) {
   const title = req.body.title;
   const preferences = req.body.preferences;
   const restrictions = req.body.restrictions;
+  const listado = req.body.listado;
 
   if (!preferences || !restrictions || !title) {
     res.status(400).json({ error: { message: "Faltan detalles para generar el plan." } });
     return;
   }
 
-  planService.generateDocPlan(docId, preferences, restrictions, title)
+  planService.generateDocPlan(docId, preferences, restrictions, title, listado)
     .then(() => {
       res.status(201).json({ message: "Nuevo plan creado" })
     })
@@ -209,6 +210,13 @@ async function assistantStartThread(req: Request, res: Response) {
   res.status(200).json(thread);
 }
 
+async function assistantGetThreadMessages(req: Request, res: Response) {
+  // TODO: Esto deberia ir en un plan service para tener la data de la DB
+  const id = req.params.id;
+  const thread = await openAiService.getThreadMessages(id);
+  res.status(200).json(thread.data);
+}
+
 async function assistantAddMessage(req: Request, res: Response) {
   const threadId = req.body.thread;
   const message = req.body.message;
@@ -246,5 +254,6 @@ export {
   generateRecipies,
   assistantStartThread,
   assistantAddMessage,
-  assistantGeneratePlan
+  assistantGeneratePlan,
+  assistantGetThreadMessages
 }

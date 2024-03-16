@@ -341,8 +341,13 @@ async function startRun(threadId: string) {
   }
 }
 
-async function getLastMessage(threadId: string) {
+async function getThreadMessages(threadId: string) {
   const result = await openai.beta.threads.messages.list(threadId);
+  return result;
+}
+
+async function getLastMessage(threadId: string) {
+  const result = await getThreadMessages(threadId);
   const lastMessage = result.data[0].content;
 
   return lastMessage;
@@ -362,5 +367,6 @@ export {
   addMessages,
   startRun,
   getLastMessage,
-  getThread
+  getThread,
+  getThreadMessages
 }
