@@ -179,6 +179,19 @@ async function replaceRecipie(req: Request, res: Response) {
   }
 }
 
+async function generateRecipies(req: Request, res: Response) {
+  const profileId = req.body.profileId;
+  const listado = req.body.listado;
+
+  planService.generateRecipies(profileId, listado)
+    .then((recipies) => {
+      res.status(200).json(recipies)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -188,5 +201,6 @@ export {
   getList,
   assignPlan,
   deletePlan,
-  replaceRecipie
+  replaceRecipie,
+  generateRecipies
 }

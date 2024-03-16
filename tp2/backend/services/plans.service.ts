@@ -218,6 +218,26 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
   return Promise.resolve(recipie);
 }
 
+async function generateRecipies(profileId: ObjectId, listado: any) {
+  await client.connect()
+
+  const profile = await profileService.getProfile(profileId) as Profile;
+  if(!profile) {
+    throw new Error('El perfil no existe');
+  }
+
+  let likedRecipies: string = '';
+  await recipiesService.getLikedRecipies(profileId).then((recipies) => {
+    likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
+  });
+
+  const rawOutput = await openApi.generateRecipies(profile.restrictions || '', profile.preferences || '', listado);
+
+  const meals = JSON.parse(rawOutput as string);
+
+  return meals;
+}
+
 export {
   generatePlan,
   savePlan,
@@ -230,5 +250,6 @@ export {
   assignPlan,
   deletePlan,
   editPlan,
-  replaceRecipie
+  replaceRecipie,
+  generateRecipies
 }
