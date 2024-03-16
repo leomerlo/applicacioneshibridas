@@ -218,20 +218,10 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
   return Promise.resolve(recipie);
 }
 
-async function generateRecipies(profileId: ObjectId, listado: any) {
+async function generateRecipies(restrictions: string, preferences: string, listado: any) {
   await client.connect()
 
-  const profile = await profileService.getProfile(profileId) as Profile;
-  if(!profile) {
-    throw new Error('El perfil no existe');
-  }
-
-  let likedRecipies: string = '';
-  await recipiesService.getLikedRecipies(profileId).then((recipies) => {
-    likedRecipies = recipies.map((recipie) => recipie.name).join(', ');
-  });
-
-  const rawOutput = await openApi.generateRecipies(profile.restrictions || '', profile.preferences || '', listado);
+  const rawOutput = await openApi.generateRecipies(restrictions, preferences, listado);
 
   const meals = JSON.parse(rawOutput as string);
 

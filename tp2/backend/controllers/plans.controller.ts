@@ -192,6 +192,47 @@ async function generateRecipies(req: Request, res: Response) {
     })
 }
 
+/*
+  Proceso:
+    - Crear un thread
+    - Guardar el ID del thread para DOC <-> Paciente
+    - Crear un mensaje
+    - Run el thread
+    - Retornar los mensajes
+*/
+
+async function assistantStartThread(req: Request, res: Response) {
+  const preferences = req.body.preferences;
+  const restrictions = req.body.restrictions;
+  const thread = await openAiService.startThread(restrictions, preferences);
+  // Guardar el thread id en la base de datos (thread.id)
+  res.status(200).json(thread);
+}
+
+async function assistantAddMessage(req: Request, res: Response) {
+  const threadId = req.body.thread;
+  const message = req.body.message;
+
+  await openAiService.addMessages(threadId, message);
+  const response = await openAiService.startRun(threadId);
+  res.status(200).json(response);
+}
+
+async function assistantGeneratePlan(req: Request, res: Response) {
+  const threadId = req.body.thread;
+
+  const thread = await openAiService.getThread(threadId);
+  const lastMessage = await openAiService.getLastMessage(threadId);
+  const messageValue = lastMessage[0].text.value;
+
+  const restrictions = thread.metadata.restrictions;
+  const preferences = thread.metadata.preferences;
+
+  //res.status(200).json(messageValue);
+  const plan = await planService.generateRecipies(restrictions, preferences, lastMessage);
+  res.status(200).json(plan);
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -202,5 +243,8 @@ export {
   assignPlan,
   deletePlan,
   replaceRecipie,
-  generateRecipies
+  generateRecipies,
+  assistantStartThread,
+  assistantAddMessage,
+  assistantGeneratePlan
 }

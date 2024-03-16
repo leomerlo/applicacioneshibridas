@@ -12,6 +12,9 @@ router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor],
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 router.post('/plan/replace/:day/:meal', [validateToken, addProfileIdToBody], controller.replaceRecipie);
+router.post('/plan/assistant/thread', [validateToken, addProfileIdToBody], controller.assistantStartThread);
+router.post('/plan/assistant/message', [validateToken, addProfileIdToBody], controller.assistantAddMessage);
+router.post('/plan/assistant/plan', [validateToken, addProfileIdToBody], controller.assistantGeneratePlan);
 
 router.get('/plans', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlans);
 router.post('/plan/doc', [validateToken, addProfileIdToBody, validateDoctor], controller.generateDocPlan);

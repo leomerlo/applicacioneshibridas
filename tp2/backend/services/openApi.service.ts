@@ -280,9 +280,87 @@ async function generateRecipies(restrictions: string, preferences: string, lista
   return await promptHelper(systemPrompt, userPrompt);
 }
 
+async function startThread(restrictions: string, preferences: string) {
+  const thread = await openai.beta.threads.createAndRun({
+    assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+    thread: {
+      messages: [
+        {
+          role: "user",
+          content: `Restricciones: ${restrictions}. Preferencias: ${preferences}.`
+        },
+        {
+          role: "user",
+          content: "Armame un plan de comidas semanal"
+        }
+      ]
+    },
+    metadata: {
+      restrictions: restrictions,
+      preferences: preferences
+    }
+  });
+
+  return thread;
+}
+
+async function addMessages(threadId: string, message: string) {
+  await openai.beta.threads.messages.create(
+    threadId,
+    {
+      role: "user",
+      content: message
+    }
+  );
+
+  return void 0;
+}
+
+async function startRun(threadId: string) {
+  let run = await openai.beta.threads.runs.create(
+    threadId,
+    { 
+      assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+    }
+  );
+
+  while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+    run = await openai.beta.threads.runs.retrieve(
+      run.thread_id,
+      run.id
+    );
+  }
+
+  if (run.status === 'completed') {
+    const messages = await openai.beta.threads.messages.list(
+      run.thread_id
+    );
+
+    return messages;
+  }
+}
+
+async function getLastMessage(threadId: string) {
+  const result = await openai.beta.threads.messages.list(threadId);
+  const lastMessage = result.data[0].content;
+
+  return lastMessage;
+}
+
+async function getThread(threadId: string) {
+  const result = await openai.beta.threads.retrieve(threadId);
+  return result;
+}
+
 export {
   generatePlan,
   generateShoppingList,
   generateRecipie,
-  generateRecipies
+  generateRecipies,
+  startThread,
+  addMessages,
+  startRun,
+  getLastMessage,
+  getThread
 }
