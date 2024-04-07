@@ -33,6 +33,7 @@ import LandingPage from './views/LandingPage.tsx';
 import Subscription from './views/Subscription.tsx';
 import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
 import SubscriptionError from './views/subcription/SubscriptionError.tsx';
+import PlanAssistant from './views/PlanAssistant.tsx';
 
 const router = createBrowserRouter([
   {
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: '/addPlan',
         element: <RoutePrivateDoctor><AddPlan /></RoutePrivateDoctor>
+      },
+      {
+        path: '/plan/:id/assistant',
+        element: <RoutePrivateDoctor><PlanAssistant /></RoutePrivateDoctor>
       },
       {
         path: '/patient/:id',

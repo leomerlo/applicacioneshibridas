@@ -26,15 +26,17 @@ async function generatePlan(req: Request, res: Response) {
 async function generateDocPlan(req: Request, res: Response) {
   const docId = req.body.profileId;
   const title = req.body.title;
+  const thread = req.body.thread;
   const preferences = req.body.preferences;
   const restrictions = req.body.restrictions;
+  const listado = req.body.listado;
 
   if (!preferences || !restrictions || !title) {
     res.status(400).json({ error: { message: "Faltan detalles para generar el plan." } });
     return;
   }
 
-  planService.generateDocPlan(docId, preferences, restrictions, title)
+  planService.generateDocPlan(docId, preferences, restrictions, title, listado, thread)
     .then(() => {
       res.status(201).json({ message: "Nuevo plan creado" })
     })
@@ -179,6 +181,78 @@ async function replaceRecipie(req: Request, res: Response) {
   }
 }
 
+async function generateRecipies(req: Request, res: Response) {
+  const profileId = req.body.profileId;
+  const listado = req.body.listado;
+
+  planService.generateRecipies(profileId, listado)
+    .then((recipies) => {
+      res.status(200).json(recipies)
+    })
+    .catch((err) => {
+      res.status(400).json({ error: { message: err.message } })
+    })
+}
+
+/*
+  Proceso:
+    - Crear un thread
+    - Guardar el ID del thread para DOC <-> Paciente
+    - Crear un mensaje
+    - Run el thread
+    - Retornar los mensajes
+*/
+
+async function assistantStartThread(req: Request, res: Response) {
+  const title = req.body.title;
+  const preferences = req.body.preferences;
+  const restrictions = req.body.restrictions;
+  const thread = await openAiService.startThread(title, restrictions, preferences);
+  // Guardar el thread id en la base de datos (thread.id)
+  res.status(200).json(thread);
+}
+
+async function assistantGetThreadMessages(req: Request, res: Response) {
+  // TODO: Esto deberia ir en un plan service para tener la data de la DB
+  const id = req.params.id;
+  const thread = await openAiService.getThreadMessages(id);
+  res.status(200).json(thread.data);
+}
+
+async function assistantGetThread(req: Request, res: Response) {
+  const id = req.params.id;
+  const thread = await openAiService.getThread(id);
+  const messages = await openAiService.getThreadMessages(id);
+  res.status(200).json({
+    thread,
+    messages: messages.data
+  });
+}
+
+async function assistantAddMessage(req: Request, res: Response) {
+  const threadId = req.body.thread;
+  const message = req.body.message;
+
+  await openAiService.addMessages(threadId, message);
+  const response = await openAiService.startRun(threadId);
+  res.status(200).json(response);
+}
+
+async function assistantGeneratePlan(req: Request, res: Response) {
+  const threadId = req.body.thread;
+
+  const thread = await openAiService.getThread(threadId);
+  const lastMessage = await openAiService.getLastMessage(threadId);
+  const messageValue = lastMessage[0].text.value;
+
+  const restrictions = thread.metadata.restrictions;
+  const preferences = thread.metadata.preferences;
+
+  //res.status(200).json(messageValue);
+  const plan = await planService.generateRecipies(restrictions, preferences, lastMessage);
+  res.status(200).json(plan);
+}
+
 export {
   generatePlan,
   generateDocPlan,
@@ -188,5 +262,11 @@ export {
   getList,
   assignPlan,
   deletePlan,
-  replaceRecipie
+  replaceRecipie,
+  generateRecipies,
+  assistantStartThread,
+  assistantAddMessage,
+  assistantGeneratePlan,
+  assistantGetThreadMessages,
+  assistantGetThread
 }
