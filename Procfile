@@ -1,1 +1,1 @@
-web: cd tp2/backend && npm start
+api: cd tp2/backend && npm install && npm start
