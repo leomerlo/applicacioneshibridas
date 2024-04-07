@@ -26,6 +26,6 @@ app.use('/api', patientsRouter);
 app.use('/api', subscribeRouter);
 app.use('/api/admin', backofficeRouter);
 
-app.listen(2023, function () {
-  console.log('FoodGenie API -> http://localhost:2023')
+app.listen(3000, function () {
+  console.log('FoodGenie API running on port 3000!')
 });
