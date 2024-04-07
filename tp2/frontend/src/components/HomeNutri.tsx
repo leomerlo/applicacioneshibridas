@@ -1,7 +1,7 @@
 import { useProfile } from "../contexts/ProfileContext";
 import LoginImage from '../assets/loginImage.png'
 import Button from "./Button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PatientList from "./PatientList";
 import FooterMenu from "./FooterMenu";
 

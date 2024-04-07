@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import girlBowl from '../assets/girlBowl.png';
 import GoBack from '../components/GoBack';
 
+// @ts-ignore
 const Block = ({ title, description }) => (
   <div className="bg-white p-4 shadow-md rounded-lg">
     <h3 className="text-primary-main text-lg mb-2">{title}</h3>

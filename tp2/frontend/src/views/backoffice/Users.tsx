@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAdmin } from '../../contexts/AdminContext'
 import Button from '../../components/Button';
 import GoBack from '../../components/GoBack';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
 import UserCard from '../../components/UserCard';
 

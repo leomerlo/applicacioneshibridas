@@ -11,7 +11,6 @@ import Button from "../components/Button";
 
 const AssignPlan = () => {
   const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState(false);
   const [patient, setPatient] = useState<Patient>();
   const notifications = useNotifications();
   const navigate = useNavigate();
@@ -38,9 +37,7 @@ const AssignPlan = () => {
       patientId: id as string,
       planId
     };
-    setLoading(true);
     patientsService.assignPlan(planAssignment).then((resp) => {
-      setLoading(false);
       if(resp.status === 201) {
         notifications.updateNotifications({
           variant: 'success',

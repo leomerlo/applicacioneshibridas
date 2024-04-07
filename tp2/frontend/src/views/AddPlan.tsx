@@ -2,9 +2,7 @@ import { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import GoBack from "../components/GoBack";
-import { useNotifications } from "../contexts/NotificationsContext";
-import { useNavigate } from "react-router-dom";
-import { useProfile } from "../contexts/ProfileContext";
+import { useNavigate } from "react-router-dom"; 
 import planService from "../services/plan.service";
 import Loading from "../components/Loading";
 
@@ -13,9 +11,7 @@ const AddPlan = () => {
   const [restrictions, setRestrictions] = useState("");
   const [preferences, setPreferences] = useState("");
   const [loading, setLoading] = useState(false);
-  const notifications = useNotifications();
   const navigate = useNavigate();
-  const { refreshProfile } = useProfile();
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);

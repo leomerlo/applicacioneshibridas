@@ -21,8 +21,10 @@ const Dashboard = () => {
       const awaiting = users.filter((e) => { return e.status === "pending" });
       const docs = users.filter((e) => { return e.accountType === "doc" });
       setDashboard({
+        // @ts-ignore
         users,
         docs: docs.length,
+        // @ts-ignore
         awaiting
       });
     }

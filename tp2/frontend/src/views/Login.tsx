@@ -56,6 +56,7 @@ const Login = () => {
           navigate('/', {replace: true});
         }
       } else {
+        // @ts-ignore
         setError(["Usuario o contraseña incorrectos"]);
       }
     })

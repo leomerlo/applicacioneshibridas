@@ -5,6 +5,7 @@ import GoBack from "../components/GoBack";
 import { useNotifications } from "../contexts/NotificationsContext";
 import { useParams } from "react-router-dom";
 import planService from "../services/plan.service";
+// @ts-ignore
 import ReactMarkdown from "react-markdown";
 
 export interface PlanAssistantMessage {
@@ -103,6 +104,7 @@ const PlanAssistant = () => {
   }, []);
 
   const scrollToBottom = () => {
+    // @ts-ignore
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -127,6 +129,7 @@ const PlanAssistant = () => {
               <div ref={endOfMessagesRef} />
             </div>
             <div className="my-8">
+              { /* @ts-ignore */ }
               <Input disabled={loadingResponse} name="message" type="textarea" label="Mensaje" value={message} onInput={messageHandler} placeholder="Mensaje para la AI..." onKeyDown={keyDownHandler} />
             </div>
           </div>

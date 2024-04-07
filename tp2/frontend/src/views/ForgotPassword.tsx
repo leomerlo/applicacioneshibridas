@@ -33,17 +33,17 @@ const nutriTexts = {
 
   const navigate = useNavigate()
   const [userName, setUserName] = useState("");
-  const [userType, setUserType] = useState("user");
+  const [userType] = useState("user");
   const [uiTexts, setUiTexts] = useState(userTexts);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState([]);
   const notification = useNotifications();
 
   const resetPassword = () => {
     setLoading(true);
     accountService.forgotPassword(userName).then((resp) => {
       setLoading(false);
-      setError("");
+      setError([]);
       if(resp.status === 201) {
         navigate('/login');
         notification.updateNotifications({

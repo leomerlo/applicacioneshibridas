@@ -19,7 +19,7 @@ export async function call({ uri, method = 'GET', body = undefined }: { uri: str
   });
 }
 
-export async function callStream({ uri, method = 'GET', body = undefined, dataCB, dataEnd }: { uri: string, method?: string, body?: any, dataCB: (data: any) => void, dataEnd: (response) => void }) {
+export async function callStream({ uri, method = 'GET', body = undefined, dataCB, dataEnd }: { uri: string, method?: string, body?: any, dataCB: (data: any) => void, dataEnd: (response: any) => void }) {
   return fetch(`${import.meta.env.VITE_FG_API}/${uri}`, {
     // @ts-ignore-next-line
     // Maybe we need to add a new type for headers that accomodates for auth-token

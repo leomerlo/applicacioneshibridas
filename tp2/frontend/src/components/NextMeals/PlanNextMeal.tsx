@@ -16,8 +16,10 @@ const PatientNextMeal = (props: PatientNextMealProps) => {
   useEffect(() => {
     let dayMeals: nextMeal[] = [];
     if (!props.plan) {
+      // @ts-ignore
       dayMeals = plan.meals[props.day];
     } else {
+      // @ts-ignore
       dayMeals = props.plan.meals[props.day]
     }
     setMeals(dayMeals);
@@ -33,6 +35,7 @@ const PatientNextMeal = (props: PatientNextMealProps) => {
         {
           Object.keys(meals).map((key: string, index) => (
             <li className="mt-3" key={index}>
+              { /* @ts-ignore */ }
               <NextMealItem meal={ { name: meals[key as any].name, type: MealTypes[key] } } />
             </li>
           ))

@@ -13,8 +13,8 @@ export type Profile = {
   preferences?: string,
   restrictions?: string
   _id?: string,
-  status: 'pending' | 'active' | 'inactive',
-  accountType: 'doc' | 'user' | 'admin',
+  status: string,
+  accountType: string,
   idDocument?: string,
   idLicense?: string,
   password?: string
@@ -62,6 +62,7 @@ export const emptyProfile: {
     accountType: 'user',
     diners: 1
   },
+  // @ts-ignore
   setCurrentPatient: (id: string) => {},
   isUser: false
 }

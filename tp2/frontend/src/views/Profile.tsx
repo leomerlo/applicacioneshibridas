@@ -28,7 +28,7 @@ const Profile = () => {
     e.preventDefault();
     setLoadingButton(true);
     if(tempProfile.password) {
-      accountService.updateAccount({ _id: tempProfile.accountId as string, userName: profile.email, password: tempProfile.password }).then((result) => {
+      accountService.updateAccount({ _id: tempProfile.accountId as string, userName: profile.email as string, password: tempProfile.password }).then((result) => {
         if(result.status !== 201) {
           updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
           return false;
@@ -49,26 +49,24 @@ const Profile = () => {
     });
   }
 
-  const newPlan = () => {
+  const newPlan = async () => {
     setLoadingPlan(true);
-    accountService.updateProfile(tempProfile).then((result) => {
-      if(result.status !== 201) {
-        updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
+    const result = accountService.updateProfile(tempProfile);
+    // @ts-ignore
+    if(result.status !== 201) {
+      updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
+    } else {
+      refreshProfile();
+      const response = await planService.newPlan();
+      planService.newPlan();
+      setLoadingPlan(false);
+      if(response.status === 201) {
+        updatePlan();
+        navigate("/");
       } else {
-        refreshProfile();
-        planService.newPlan((data) => {
-          console.log(data);
-        }, (response) => {
-          setLoadingPlan(false);
-          if(response.status === 201) {
-            updatePlan();
-            navigate("/");
-          } else {
-            updateNotifications({ variant: 'error', message: 'Error al crear el plan, inténtelo de nuevo.' });
-          }
-        });
+        updateNotifications({ variant: 'error', message: 'Error al crear el plan, inténtelo de nuevo.' });
       }
-    });
+    };
   }
 
   return (

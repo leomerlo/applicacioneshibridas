@@ -34,6 +34,7 @@ const NextMeals = () => {
         }
         if(internalTodayString !== undefined) {
           nextMeals.push({
+            // @ts-ignore
             day: internalTodayString?.substring(0, 3),
             date: (today.getDate() + date).toString(),
             // @ts-ignore
@@ -67,7 +68,7 @@ const NextMeals = () => {
         >
           { nextMeals.map((meal, index) => {
             return <li className="mt-3" key={index}>
-              <NextMealItem day="" meal={ { name: meal.name, type: meal.meal } } />
+              <NextMealItem meal={ { name: meal.name, type: meal.meal } } />
             </li>
           })} 
         </ul>

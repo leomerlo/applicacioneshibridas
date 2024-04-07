@@ -25,7 +25,7 @@ const Recipie = () => {
   const { name } = useParams();
   const { recipie, loading, recipieError } = useRecipie();
   const { profile, isUser } = useProfile();
-  const { plan, updatePlan, planSelectedDay, planSelectedMeal } = usePlan();
+  const { updatePlan, planSelectedDay, planSelectedMeal } = usePlan();
   const [image, setImage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

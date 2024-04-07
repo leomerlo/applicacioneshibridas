@@ -9,7 +9,7 @@ export type UserForm = {
   password: string
 }
 
-export type UserType = "doc" | "user" | "admin";
+export type UserType = "doc" | "user" | "admin" | undefined;
 
 export type Props = {
   type?: UserType,
