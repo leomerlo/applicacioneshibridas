@@ -1,1 +1,2 @@
-web: cd tp2/backend && npm install && npm run build && npm run prod
+web: cd tp2/backend && npm run prod
+build: cd tp2/backend && npm run build
