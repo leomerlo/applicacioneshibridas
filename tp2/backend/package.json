@@ -6,7 +6,7 @@
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
     "prod": "node dist/server.js",
     "start": "ts-node server",
-    "build": "npm install && npx tsc"
+    "build": "npm install && npm tsc"
   },
   "type": "module",
   "repository": {
