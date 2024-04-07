@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import * as controller from '../controllers/backoffice.controller.js';
-import * as profileController from '../controllers/profile.controller.js';
 import { validateToken } from '../middleware/token.middleware.js';
 import { validateAdmin, validateProfileData } from '../middleware/profile.validate.middleware.js';
 import { addAccountIdToBody } from '../middleware/token.middleware.js';

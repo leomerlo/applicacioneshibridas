@@ -4,8 +4,8 @@ export function newPlan() {
   return API.call({ uri: 'plan', method: 'POST' })
 }
 
-export function newDocPlan({ title, preferences, restrictions }: { title: string, preferences: string, restrictions: string}) {
-  return API.call({ uri: 'plan/doc', method: 'POST', body: { title, preferences, restrictions } })
+export function newDocPlan({ title, preferences, restrictions, thread, listado }: { title: string, preferences: string, restrictions: string, thread: string, listado: string}) {
+  return API.call({ uri: 'plan/doc', method: 'POST', body: { title, preferences, restrictions, thread, listado } })
 }
 
 export function getPlan() {
@@ -37,6 +37,18 @@ export function replaceRecipie(day: string, meal: string, dataCB: (data: any) =>
   });
 }
 
+export function newPlanAssistant({ title, preferences, restrictions }: { title: string, preferences: string, restrictions: string }) {
+  return API.call({ uri: 'plan/assistant/thread', method: 'POST', body: { preferences, restrictions, title } })
+}
+
+export function getPlanAssistantThread(threadId: string) {
+  return API.call({ uri: `plan/assistant/thread/${threadId}` })
+}
+
+export function assistantSendMessage(threadId: string, message: string) {
+  return API.call({ uri: 'plan/assistant/message', method: 'POST', body: { thread: threadId, message } })
+}
+
 export default {
   newPlan,
   getPlan,
@@ -45,5 +57,8 @@ export default {
   newDocPlan,
   getShoppingList,
   deletePlan,
-  replaceRecipie
+  replaceRecipie,
+  newPlanAssistant,
+  getPlanAssistantThread,
+  assistantSendMessage
 }

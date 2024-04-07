@@ -31,24 +31,17 @@ const AddPlan = () => {
 
   const createPlan = () => {
     setLoading(true);
-    planService.newDocPlan({
+    planService.newPlanAssistant({
       title,
       preferences,
       restrictions,
     }).then((resp) => {
-      setLoading(true);
-      if(resp.status === 201){
-        notifications.updateNotifications({
-          variant: 'success',
-          message: 'Plan creado con éxito'
-        });
-        refreshProfile();
-        navigate(-1);
+      setLoading(false);
+      if(resp.status === 200){
+        const threadId = resp.data.thread_id;
+        navigate(`/plan/${threadId}/assistant`);
       } else {
-        notifications.updateNotifications({
-          variant: 'error',
-          message: 'Hubo un problema al crear el plan'
-        });
+        
       }
     });
   };
@@ -61,7 +54,7 @@ const AddPlan = () => {
             <GoBack />
           </div>
           <div className="flex-grow">
-            <h1 className="text-4xl text-gray-80 mt-5">Agregar Plan</h1>
+            <h1 className="text-4xl text-gray-80 mt-5">Nuevo Plan</h1>
             <div className="mt-8">
               <Input name="title" type="text" label="Titulo" value={title} onInput={titleHandler} placeholder="Un titulo para el plan" />
             </div>
@@ -85,7 +78,7 @@ const AddPlan = () => {
             </div>
           </div>
           <div>
-            <Button full loading={loading} onClick={createPlan}>Crear Plan</Button>
+            <Button full loading={loading} onClick={createPlan}>Nuevo Plan</Button>
           </div>
         </>}
       </div>

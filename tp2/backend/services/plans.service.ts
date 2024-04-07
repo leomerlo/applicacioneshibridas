@@ -52,10 +52,10 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   })
 }
 
-async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string): Promise<void> {
+async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string, listado: string, thread: string): Promise<void> {
   await client.connect()
 
-  const rawOutput = await openApi.generatePlan(restrictions, preferences, "");
+  const rawOutput = await openApi.generateRecipies(restrictions, preferences, listado);
   const meals = JSON.parse(rawOutput as string);
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
@@ -63,7 +63,8 @@ async function generateDocPlan(docId: ObjectId, preferences: string, restriction
       const plan = {
         meals,
         title: title,
-        docId: new ObjectId(docId)
+        docId: new ObjectId(docId),
+        threadId: thread
       }
     
       await db.collection("plans").insertOne(plan);
@@ -218,6 +219,16 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
   return Promise.resolve(recipie);
 }
 
+async function generateRecipies(restrictions: string, preferences: string, listado: any) {
+  await client.connect()
+
+  const rawOutput = await openApi.generateRecipies(restrictions, preferences, listado);
+
+  const meals = JSON.parse(rawOutput as string);
+
+  return meals;
+}
+
 export {
   generatePlan,
   savePlan,
@@ -230,5 +241,6 @@ export {
   assignPlan,
   deletePlan,
   editPlan,
-  replaceRecipie
+  replaceRecipie,
+  generateRecipies
 }

@@ -64,6 +64,9 @@ export default {
         dividerLineBlocksBottom: 'calc(100% + 12px) calc(100% + 1px)',
         '50%': '50%',
         '25%': '25%'
+      },
+      maxWidth: {
+        '1/2': '50%',
       }
     },
   },
