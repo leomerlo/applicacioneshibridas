@@ -26,6 +26,7 @@ async function generatePlan(req: Request, res: Response) {
 async function generateDocPlan(req: Request, res: Response) {
   const docId = req.body.profileId;
   const title = req.body.title;
+  const thread = req.body.thread;
   const preferences = req.body.preferences;
   const restrictions = req.body.restrictions;
   const listado = req.body.listado;
@@ -35,7 +36,7 @@ async function generateDocPlan(req: Request, res: Response) {
     return;
   }
 
-  planService.generateDocPlan(docId, preferences, restrictions, title, listado)
+  planService.generateDocPlan(docId, preferences, restrictions, title, listado, thread)
     .then(() => {
       res.status(201).json({ message: "Nuevo plan creado" })
     })
@@ -203,9 +204,10 @@ async function generateRecipies(req: Request, res: Response) {
 */
 
 async function assistantStartThread(req: Request, res: Response) {
+  const title = req.body.title;
   const preferences = req.body.preferences;
   const restrictions = req.body.restrictions;
-  const thread = await openAiService.startThread(restrictions, preferences);
+  const thread = await openAiService.startThread(title, restrictions, preferences);
   // Guardar el thread id en la base de datos (thread.id)
   res.status(200).json(thread);
 }
@@ -215,6 +217,16 @@ async function assistantGetThreadMessages(req: Request, res: Response) {
   const id = req.params.id;
   const thread = await openAiService.getThreadMessages(id);
   res.status(200).json(thread.data);
+}
+
+async function assistantGetThread(req: Request, res: Response) {
+  const id = req.params.id;
+  const thread = await openAiService.getThread(id);
+  const messages = await openAiService.getThreadMessages(id);
+  res.status(200).json({
+    thread,
+    messages: messages.data
+  });
 }
 
 async function assistantAddMessage(req: Request, res: Response) {
@@ -255,5 +267,6 @@ export {
   assistantStartThread,
   assistantAddMessage,
   assistantGeneratePlan,
-  assistantGetThreadMessages
+  assistantGetThreadMessages,
+  assistantGetThread
 }

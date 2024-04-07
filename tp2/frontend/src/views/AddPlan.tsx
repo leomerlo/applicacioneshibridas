@@ -32,6 +32,7 @@ const AddPlan = () => {
   const createPlan = () => {
     setLoading(true);
     planService.newPlanAssistant({
+      title,
       preferences,
       restrictions,
     }).then((resp) => {

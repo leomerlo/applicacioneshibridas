@@ -16,6 +16,7 @@ const PlanAssistant = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<PlanAssistantMessage[]>([]);
+  const [threadMeta, setThreadMeta] = useState<any>({});
   const [loadingResponse, setLoadingResponse] = useState(false);
   const notifications = useNotifications();
   const endOfMessagesRef = useRef(null);
@@ -35,7 +36,8 @@ const PlanAssistant = () => {
     const resp = await planService.getPlanAssistantThread(id as string);
     setLoadingResponse(false);
     if(resp.status === 200){
-      setMessages(resp.data.reverse());
+      setThreadMeta(resp.data.thread.metadata);
+      setMessages(resp.data.messages.reverse());
     } else {
       notifications.updateNotifications({
         variant: 'error',
@@ -68,6 +70,34 @@ const PlanAssistant = () => {
     }
   }
 
+  const savePlan = async () => {
+    setLoadingResponse(true);
+    const {
+      title,
+      preferences,
+      restrictions
+    } = threadMeta;
+    const resp = await planService.newDocPlan({
+      title,
+      preferences,
+      restrictions,
+      thread: id as string,
+      listado: messages[messages.length - 1].content[0].text.value
+    });
+    setLoadingResponse(false);
+    if(resp.status === 200){
+      notifications.updateNotifications({
+        variant: 'success',
+        message: 'Plan guardado'
+      });
+    } else {
+      notifications.updateNotifications({
+        variant: 'error',
+        message: 'Hubo un problema al guardar el plan'
+      });
+    }
+  }
+
   useEffect(() => {
     getThread();
   }, []);
@@ -84,7 +114,7 @@ const PlanAssistant = () => {
             <GoBack />
           </div>
           <div className="flex-grow flex flex-col h-screen">
-            <h1 className="text-4xl text-gray-80 mt-5">Nuevo Plan</h1>
+            <h1 className="text-4xl text-gray-80 mt-5">{threadMeta.title}</h1>
             <div className="mt-8 overflow-y-scroll p-2 flex-grow-0">
               <ul className="assistant-content flex flex-col gap-2">
                 { messages.map((message: any) => (
@@ -97,12 +127,12 @@ const PlanAssistant = () => {
               <div ref={endOfMessagesRef} />
             </div>
             <div className="my-8">
-              <Input name="message" type="textarea" label="Mensaje" value={message} onInput={messageHandler} placeholder="Mensaje para la AI..." onKeyDown={keyDownHandler} />
+              <Input disabled={loadingResponse} name="message" type="textarea" label="Mensaje" value={message} onInput={messageHandler} placeholder="Mensaje para la AI..." onKeyDown={keyDownHandler} />
             </div>
           </div>
           <div className="flex gap-2">
             <Button disabled={loadingResponse} full onClick={sendMessage}>Enviar mensaje</Button>
-            <Button className="flex-1" full>Guardar Plan</Button>
+            <Button disabled={loadingResponse} className="flex-1" full onClick={savePlan}>Guardar Plan</Button>
           </div>
         </>
       </div>

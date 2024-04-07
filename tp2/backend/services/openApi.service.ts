@@ -280,24 +280,23 @@ async function generateRecipies(restrictions: string, preferences: string, lista
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function startThread(restrictions: string, preferences: string) {
+async function startThread(title: string, restrictions: string, preferences: string) {
   const thread = await openai.beta.threads.createAndRun({
     assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
     thread: {
       messages: [
         {
           role: "user",
-          content: `Restricciones: ${restrictions}. Preferencias: ${preferences}.`
-        },
-        {
-          role: "user",
-          content: "Armame un plan de comidas semanal"
+          content: `
+          Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
+          Restricciones: ${restrictions}. Preferencias: ${preferences}.`
         }
       ]
     },
     metadata: {
-      restrictions: restrictions,
-      preferences: preferences
+      title,
+      restrictions,
+      preferences
     }
   });
 
@@ -354,8 +353,9 @@ async function getLastMessage(threadId: string) {
 }
 
 async function getThread(threadId: string) {
-  const result = await openai.beta.threads.retrieve(threadId);
-  return result;
+  const result = await openai.beta.threads.runs.list(threadId);
+  const lastRun = result.data[0];
+  return lastRun;
 }
 
 export {

@@ -52,7 +52,7 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   })
 }
 
-async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string, listado: string): Promise<void> {
+async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string, listado: string, thread: string): Promise<void> {
   await client.connect()
 
   const rawOutput = await openApi.generateRecipies(restrictions, preferences, listado);
@@ -63,7 +63,8 @@ async function generateDocPlan(docId: ObjectId, preferences: string, restriction
       const plan = {
         meals,
         title: title,
-        docId: new ObjectId(docId)
+        docId: new ObjectId(docId),
+        threadId: thread
       }
     
       await db.collection("plans").insertOne(plan);
