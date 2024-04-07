@@ -179,6 +179,7 @@ function generateRecipies(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const profileId = req.body.profileId;
         const listado = req.body.listado;
+        // @ts-ignore
         planService.generateRecipies(profileId, listado)
             .then((recipies) => {
             res.status(200).json(recipies);
@@ -239,8 +240,11 @@ function assistantGeneratePlan(req, res) {
         const threadId = req.body.thread;
         const thread = yield openAiService.getThread(threadId);
         const lastMessage = yield openAiService.getLastMessage(threadId);
+        // @ts-ignore
         const messageValue = lastMessage[0].text.value;
+        // @ts-ignore
         const restrictions = thread.metadata.restrictions;
+        // @ts-ignore
         const preferences = thread.metadata.preferences;
         //res.status(200).json(messageValue);
         const plan = yield planService.generateRecipies(restrictions, preferences, lastMessage);

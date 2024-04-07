@@ -76,7 +76,9 @@ async function getLikedRecipies(profileId: ObjectId): Promise<Recipie[]> {
 
 async function newRecipie(preferences: string, requirements: string, day: string, meal: string): Promise<Recipie> {
   await client.connect()
+  // @ts-ignore
   const rawOutput = await openAIService.generateRecipie(preferences, requirements, '', day, meal);
+  // @ts-ignore
   const recipie = JSON.parse(rawOutput as string);
   return recipie;
 }

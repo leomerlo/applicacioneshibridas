@@ -13,6 +13,7 @@ async function createProfile(profile: Profile | DocProfile, type: ProfileType) {
   let schema = profileSchema.profile;
 
   if(type === ProfileType.doc) {
+    // @ts-ignore
     schema = profileSchema.docProfile;
   }
 

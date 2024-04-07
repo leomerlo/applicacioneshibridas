@@ -272,8 +272,8 @@ async function generateRecipies(restrictions: string, preferences: string, lista
   }
   `;
   const userPrompt = `
-    Restricciones: Comida vegetariana
-    Preferencias: Alto en proteinas
+    Restricciones: ${restrictions}
+    Preferencias: ${preferences}
     Listado: ${JSON.stringify(listado)}
   `;
 

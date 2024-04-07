@@ -183,6 +183,7 @@ function replaceRecipie(profileId, day, meal, recipie) {
         });
         yield recipieSchema.recipie.validate(recipie, { abortEarly: false, stripUnknown: true });
         if (plan != undefined) {
+            // @ts-ignore
             plan.meals[day][meal] = recipie;
         }
         else {

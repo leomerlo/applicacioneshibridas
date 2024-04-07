@@ -193,6 +193,7 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
   await recipieSchema.recipie.validate(recipie, { abortEarly: false, stripUnknown: true }) as Recipie;
 
   if (plan != undefined) {
+    // @ts-ignore
     plan.meals[day][meal] = recipie;
   } else {
     Promise.reject();

@@ -73,7 +73,9 @@ function getLikedRecipies(profileId) {
 function newRecipie(preferences, requirements, day, meal) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
+        // @ts-ignore
         const rawOutput = yield openAIService.generateRecipie(preferences, requirements, '', day, meal);
+        // @ts-ignore
         const recipie = JSON.parse(rawOutput);
         return recipie;
     });

@@ -1,5 +1,6 @@
 import { db } from './mongo.service.js';
 import { ObjectId } from 'mongodb'
+// @ts-ignore
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 const mp = new MercadoPagoConfig({

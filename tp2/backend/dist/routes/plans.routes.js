@@ -4,7 +4,7 @@ import { validateToken, addProfileIdToBody } from '../middleware/token.middlewar
 import { validateDoctor, validatePatient } from '../middleware/profile.validate.middleware.js';
 const router = Router();
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
-router.post('/plan/new', [validateToken, addProfileIdToBody], controller.generateRecipies);
+router.post('/plan/new', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlanById);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);

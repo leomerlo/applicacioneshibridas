@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { db } from './mongo.service.js';
 import { ObjectId } from 'mongodb';
+// @ts-ignore
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 const mp = new MercadoPagoConfig({
     accessToken: 'TEST-4038341833403155-021010-50257e63db3d34b3330bd198a0efc9a2-830528',

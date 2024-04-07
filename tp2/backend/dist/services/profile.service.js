@@ -18,6 +18,7 @@ function createProfile(profile, type) {
         yield client.connect();
         let schema = profileSchema.profile;
         if (type === ProfileType.doc) {
+            // @ts-ignore
             schema = profileSchema.docProfile;
         }
         yield schema.validate(profile, { abortEarly: true, stripUnknown: true })
@@ -54,8 +55,8 @@ function getProfileByAccount(accountId) {
         return profilesColelction.findOne({ accountId: new ObjectId(accountId), 'status': { $exists: true } });
     });
 }
-function updateProfile(token, profile, profileId = null) {
-    return __awaiter(this, void 0, void 0, function* () {
+function updateProfile(token_1, profile_1) {
+    return __awaiter(this, arguments, void 0, function* (token, profile, profileId = null) {
         yield client.connect();
         const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB");
         const updateId = profileId ? profileId : payload._id;

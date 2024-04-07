@@ -24,8 +24,8 @@ const model3 = "gpt-3.5-turbo-16k";
 const model4 = "gpt-4-0125-preview";
 const temperature = 0;
 function promptHelper(systemPrompt, userPrompt) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         try {
             const timeStart = new Date();
             console.log('Start OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
@@ -56,8 +56,8 @@ function promptHelper(systemPrompt, userPrompt) {
     });
 }
 function promptHelperJSON(systemPrompt, userPrompt) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         try {
             const completion = yield openai.chat.completions.create({
                 model: model4,
@@ -83,8 +83,8 @@ function promptHelperJSON(systemPrompt, userPrompt) {
     });
 }
 function promptHelperStream(systemPrompt, userPrompt, dataCB, dataEnd) {
-    var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_1, _b, _c;
         try {
             const completion = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo-1106",
@@ -302,8 +302,8 @@ function generateRecipies(restrictions, preferences, listado) {
   }
   `;
         const userPrompt = `
-    Restricciones: Comida vegetariana
-    Preferencias: Alto en proteinas
+    Restricciones: ${restrictions}
+    Preferencias: ${preferences}
     Listado: ${JSON.stringify(listado)}
   `;
         return yield promptHelper(systemPrompt, userPrompt);

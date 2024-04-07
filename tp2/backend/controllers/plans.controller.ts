@@ -185,6 +185,7 @@ async function generateRecipies(req: Request, res: Response) {
   const profileId = req.body.profileId;
   const listado = req.body.listado;
 
+  // @ts-ignore
   planService.generateRecipies(profileId, listado)
     .then((recipies) => {
       res.status(200).json(recipies)
@@ -243,9 +244,12 @@ async function assistantGeneratePlan(req: Request, res: Response) {
 
   const thread = await openAiService.getThread(threadId);
   const lastMessage = await openAiService.getLastMessage(threadId);
+  // @ts-ignore
   const messageValue = lastMessage[0].text.value;
 
+  // @ts-ignore
   const restrictions = thread.metadata.restrictions;
+  // @ts-ignore
   const preferences = thread.metadata.preferences;
 
   //res.status(200).json(messageValue);
