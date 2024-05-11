@@ -7,7 +7,7 @@ function RoutePrivateDoctor({children}: {children: React.ReactNode}){
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(profile.accountType !== 'doc'){
+    if(profile._id && profile.accountType !== 'doc'){
       navigate('/notAllowed');
     }
   }, [profile]);

@@ -14,6 +14,7 @@ import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
 import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
 import { AdminProvider } from './contexts/AdminContext.tsx';
+import { ProfileProvider } from './contexts/ProfileContext.tsx';
 import AddPatient from './views/AddPatient.tsx';
 import AddPlan from './views/AddPlan.tsx';
 import RoutePrivateDoctor from './components/RoutePrivateDoctor.tsx';
@@ -38,7 +39,7 @@ import PlanAssistant from './views/PlanAssistant.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RoutePrivate><App /></RoutePrivate>,
+    element: <RoutePrivate><ProfileProvider><App /></ProfileProvider></RoutePrivate>,
     // errorElement: <Error404Page />,
     children: [
       {

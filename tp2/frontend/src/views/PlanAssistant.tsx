@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import planService from "../services/plan.service";
 // @ts-ignore
 import ReactMarkdown from "react-markdown";
+import { get } from "http";
 
 export interface PlanAssistantMessage {
   role: string;
@@ -19,6 +20,7 @@ const PlanAssistant = () => {
   const [messages, setMessages] = useState<PlanAssistantMessage[]>([]);
   const [threadMeta, setThreadMeta] = useState<any>({});
   const [loadingResponse, setLoadingResponse] = useState(false);
+  const [hasResponse, setHasResponse] = useState(false);
   const notifications = useNotifications();
   const endOfMessagesRef = useRef(null);
 
@@ -78,6 +80,13 @@ const PlanAssistant = () => {
       preferences,
       restrictions
     } = threadMeta;
+    if (!title) {
+      notifications.updateNotifications({
+        variant: 'error',
+        message: 'No se puede guardar el plan sin título'
+      });
+      return;
+    }
     const resp = await planService.newDocPlan({
       title,
       preferences,
@@ -101,12 +110,25 @@ const PlanAssistant = () => {
 
   useEffect(() => {
     getThread();
+    setTimeout(() => {
+      getThread();
+    }, 3000);
   }, []);
 
   const scrollToBottom = () => {
     // @ts-ignore
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const renderMessage = (message: PlanAssistantMessage) => {
+    if(!message.content[0]) {
+      return false;
+    } else {
+      return (<li key={message.id} className={`max-w-1/2 p-4 rounded-lg text-md ${message.role === 'user' ? "self-end text-right bg-violet-200" : "self-start bg-primary-main text-white"}`}>
+      { message.role === 'user' ? <>{ message.content[0].text?.value }</> : <ReactMarkdown>{message.content[0].text?.value}</ReactMarkdown> }
+    </li>)
+    }
+  }
 
   return (
     <div className="container mx-auto h-full">
@@ -119,11 +141,7 @@ const PlanAssistant = () => {
             <h1 className="text-4xl text-gray-80 mt-5">{threadMeta.title}</h1>
             <div className="mt-8 overflow-y-scroll p-2 flex-grow-0">
               <ul className="assistant-content flex flex-col gap-2">
-                { messages.map((message: any) => (
-                  <li key={message.id} className={`max-w-1/2 p-4 rounded-lg text-md ${message.role === 'user' ? "self-end text-right bg-violet-200" : "self-start bg-primary-main text-white"}`}>
-                    <ReactMarkdown>{message.content[0].text?.value}</ReactMarkdown>
-                  </li>
-                )) }
+                { messages.map((message: any) => renderMessage(message)) }
                 { loadingResponse && <li>Cargando...</li> }
               </ul>
               <div ref={endOfMessagesRef} />

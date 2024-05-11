@@ -35,7 +35,7 @@ function generateDocPlan(req, res) {
         const preferences = req.body.preferences;
         const restrictions = req.body.restrictions;
         const listado = req.body.listado;
-        if (!preferences || !restrictions || !title) {
+        if ((!preferences && !restrictions) || !title) {
             res.status(400).json({ error: { message: "Faltan detalles para generar el plan." } });
             return;
         }

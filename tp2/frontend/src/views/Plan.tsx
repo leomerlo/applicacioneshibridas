@@ -67,7 +67,7 @@ const PlanView = () => {
       }
     });
   }
-
+  
   return (
     <div className="container mx-auto">
       <div className="pb-20">

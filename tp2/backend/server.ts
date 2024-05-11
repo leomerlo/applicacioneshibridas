@@ -26,7 +26,7 @@ app.use('/api', patientsRouter);
 app.use('/api', subscribeRouter);
 app.use('/api/admin', backofficeRouter);
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 2023;
 
 app.listen(port, function () {
   console.log(`FoodGenie API running on port ${port}!`)
