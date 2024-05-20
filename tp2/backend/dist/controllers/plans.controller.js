@@ -229,9 +229,18 @@ function assistantAddMessage(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const threadId = req.body.thread;
         const message = req.body.message;
+        res.setHeader('Content-Type', 'application/json');
         yield openAiService.addMessages(threadId, message);
-        const response = yield openAiService.startRun(threadId);
-        res.status(200).json(response);
+        try {
+            openAiService.startRun(threadId, (data) => {
+                res.write(data);
+            }, (data) => __awaiter(this, void 0, void 0, function* () {
+                res.end(data);
+            }));
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
     });
 }
 function assistantGeneratePlan(req, res) {

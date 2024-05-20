@@ -15,6 +15,7 @@ export interface PlanAssistantMessage {
 const PlanAssistant = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
+  const [newMessage, setNewMessage] = useState<PlanAssistantMessage>({ role: 'user', content: [{ text: { value: '' } }] });
   const [messages, setMessages] = useState<PlanAssistantMessage[]>([]);
   const [threadMeta, setThreadMeta] = useState<any>({});
   const [loadingResponse, setLoadingResponse] = useState(false);
@@ -47,7 +48,7 @@ const PlanAssistant = () => {
   };
 
   const sendMessage = async () => {
-    setMessage('');
+    let response = '';
     setLoadingResponse(true);
     await setMessages([
       ...messages,
@@ -56,18 +57,43 @@ const PlanAssistant = () => {
         content: [{ text: { value: message } }]
       }
     ]);
+    setMessage('');
     scrollToBottom();
-    const resp = await planService.assistantSendMessage(id as string, message);
-    setLoadingResponse(false);
-    if(resp.status === 200){
-      await setMessages(resp.data.data.reverse());
+    const scrollLoop = setInterval(() => {
       scrollToBottom();
-    } else {
-      notifications.updateNotifications({
-        variant: 'error',
-        message: 'Hubo un problema al enviar el mensaje'
+    }, 500);
+
+    // TODO: IF SCROLL CLEAR INTERVAL
+
+    // const resp = await planService.assistantSendMessage(id as string, message, (data) => {
+    planService.assistantSendMessage(id as string, message, (data) => {
+      response += new TextDecoder().decode(data);
+      setNewMessage({
+        role: 'ai',
+        content: [{ text: { value: response } }]
       });
-    }
+    }, (data) => {
+      setMessages([
+        ...messages,
+        {
+          role: 'ai',
+          content: [{ text: { value: data } }]
+        }
+      ]);
+      setNewMessage({ role: 'user', content: [{ text: { value: '' } }] });
+      clearInterval(scrollLoop);
+     });
+    setLoadingResponse(false);
+    
+    // if(resp.status === 200){
+    //   await setMessages(resp.data.data.reverse());
+    //   scrollToBottom();
+    // } else {
+    //   notifications.updateNotifications({
+    //     variant: 'error',
+    //     message: 'Hubo un problema al enviar el mensaje'
+    //   });
+    // }
   }
 
   const savePlan = async () => {
@@ -122,6 +148,9 @@ const PlanAssistant = () => {
                     <ReactMarkdown>{message.content[0].text?.value}</ReactMarkdown>
                   </li>
                 )) }
+                { newMessage.content && newMessage.content[0].text.value ? <li className="max-w-1/2 p-4 rounded-lg text-md self-start bg-primary-main text-white">
+                    <ReactMarkdown>{newMessage.content[0].text?.value}</ReactMarkdown>
+                  </li> : <></> }
                 { loadingResponse && <li>Cargando...</li> }
               </ul>
               <div ref={endOfMessagesRef} />
