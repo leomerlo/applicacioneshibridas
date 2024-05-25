@@ -7,10 +7,11 @@ import { Meals } from "../types/plan";
 dotenv.config()
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY
 });
 const model3 = "gpt-3.5-turbo-16k";
 const model4 = "gpt-4-0125-preview";
+const model4o = "gpt-4o";
 const temperature = 0;
 
 async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
@@ -67,7 +68,7 @@ async function promptHelperJSON(systemPrompt: string, userPrompt: string): Promi
 async function promptHelperStream(systemPrompt: string, userPrompt: string, dataCB: (data: string) => void, dataEnd: (data: string) => void): Promise<void> {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
+      model: model4o,
       messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
       temperature: 0,
       stream: true,
@@ -98,6 +99,30 @@ async function promptHelperStream(systemPrompt: string, userPrompt: string, data
       console.log(error.message);
     }
     throw new Error(error);
+  }
+}
+
+async function assistantHelperStream(threadId: string, dataCB: (data:any) => void, dataEnd: (data:string) => void){
+  const stream = await openai.beta.threads.runs.create(
+    threadId,
+    {  assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy", stream: true }
+  );
+
+  console.log("Start streaming response");
+
+  let fullChat = "";
+
+  for await (const event of stream) {
+    if(event.event === "thread.message.delta" && event.data.delta.content != undefined) {
+      fullChat += event.data.delta.content[0].text.value;
+      dataCB(event.data.delta.content[0].text.value);
+    } else if (event.event === "thread.run.completed") {
+      dataEnd(fullChat);
+    } else if (event.event === "thread.message.completed") {
+      console.log(event);
+    } else {
+      console.log(event.event)
+    }
   }
 }
 
@@ -315,29 +340,8 @@ async function addMessages(threadId: string, message: string) {
   return void 0;
 }
 
-async function startRun(threadId: string) {
-  let run = await openai.beta.threads.runs.create(
-    threadId,
-    { 
-      assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-    }
-  );
-
-  while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-    run = await openai.beta.threads.runs.retrieve(
-      run.thread_id,
-      run.id
-    );
-  }
-
-  if (run.status === 'completed') {
-    const messages = await openai.beta.threads.messages.list(
-      run.thread_id
-    );
-
-    return messages;
-  }
+async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  assistantHelperStream(threadId, dataCB, dataEnd);
 }
 
 async function getThreadMessages(threadId: string) {

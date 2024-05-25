@@ -233,9 +233,19 @@ async function assistantAddMessage(req: Request, res: Response) {
   const threadId = req.body.thread;
   const message = req.body.message;
 
+  res.setHeader('Content-Type', 'application/json');
+
   await openAiService.addMessages(threadId, message);
-  const response = await openAiService.startRun(threadId);
-  res.status(200).json(response);
+
+  try {
+    openAiService.startRun(threadId, (data) => {
+      res.write(data);
+    }, async (data) => {
+      res.end(data);
+    });
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 async function assistantGeneratePlan(req: Request, res: Response) {

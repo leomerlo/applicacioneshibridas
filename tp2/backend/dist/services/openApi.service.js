@@ -18,14 +18,15 @@ import { OpenAI } from "openai";
 import dotenv from 'dotenv';
 dotenv.config();
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY
 });
 const model3 = "gpt-3.5-turbo-16k";
 const model4 = "gpt-4-0125-preview";
+const model4o = "gpt-4o";
 const temperature = 0;
 function promptHelper(systemPrompt, userPrompt) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         try {
             const timeStart = new Date();
             console.log('Start OpenAI fetch', timeStart.getHours(), timeStart.getMinutes(), timeStart.getSeconds());
@@ -56,8 +57,8 @@ function promptHelper(systemPrompt, userPrompt) {
     });
 }
 function promptHelperJSON(systemPrompt, userPrompt) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         try {
             const completion = yield openai.chat.completions.create({
                 model: model4,
@@ -83,11 +84,11 @@ function promptHelperJSON(systemPrompt, userPrompt) {
     });
 }
 function promptHelperStream(systemPrompt, userPrompt, dataCB, dataEnd) {
-    var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_1, _b, _c;
         try {
             const completion = yield openai.chat.completions.create({
-                model: "gpt-3.5-turbo-1106",
+                model: model4o,
                 messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
                 temperature: 0,
                 stream: true,
@@ -129,6 +130,41 @@ function promptHelperStream(systemPrompt, userPrompt, dataCB, dataEnd) {
                 console.log(error.message);
             }
             throw new Error(error);
+        }
+    });
+}
+function assistantHelperStream(threadId, dataCB, dataEnd) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_2, _b, _c;
+        const stream = yield openai.beta.threads.runs.create(threadId, { assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy", stream: true });
+        console.log("Start streaming response");
+        let fullChat = "";
+        try {
+            for (var _d = true, stream_1 = __asyncValues(stream), stream_1_1; stream_1_1 = yield stream_1.next(), _a = stream_1_1.done, !_a; _d = true) {
+                _c = stream_1_1.value;
+                _d = false;
+                const event = _c;
+                if (event.event === "thread.message.delta" && event.data.delta.content != undefined) {
+                    fullChat += event.data.delta.content[0].text.value;
+                    dataCB(event.data.delta.content[0].text.value);
+                }
+                else if (event.event === "thread.run.completed") {
+                    dataEnd(fullChat);
+                }
+                else if (event.event === "thread.message.completed") {
+                    console.log(event);
+                }
+                else {
+                    console.log(event.event);
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = stream_1.return)) yield _b.call(stream_1);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
     });
 }
@@ -341,19 +377,9 @@ function addMessages(threadId, message) {
         return void 0;
     });
 }
-function startRun(threadId) {
+function startRun(threadId, dataCB, dataEnd) {
     return __awaiter(this, void 0, void 0, function* () {
-        let run = yield openai.beta.threads.runs.create(threadId, {
-            assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-        });
-        while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-            yield new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            run = yield openai.beta.threads.runs.retrieve(run.thread_id, run.id);
-        }
-        if (run.status === 'completed') {
-            const messages = yield openai.beta.threads.messages.list(run.thread_id);
-            return messages;
-        }
+        assistantHelperStream(threadId, dataCB, dataEnd);
     });
 }
 function getThreadMessages(threadId) {
