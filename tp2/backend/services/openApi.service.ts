@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
 import { Meals } from "../types/plan";
+import { Run } from "openai/resources/beta/threads/runs/runs";
 
 dotenv.config()
 
@@ -280,7 +281,7 @@ async function generateRecipies(restrictions: string, preferences: string, lista
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function startThread(title: string, restrictions: string, preferences: string) {
+async function startThread(title: string, restrictions: string, preferences: string): Promise<Run> {
   const thread = await openai.beta.threads.createAndRun({
     assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
     thread: {

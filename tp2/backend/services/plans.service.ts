@@ -1,13 +1,184 @@
 import { ObjectId } from 'mongodb';
 import * as planSchema from '../schemas/plan.schema.js';
 import * as recipieSchema from '../schemas/recipies.schema.js';
-import { Meals, Plan } from '../types/plan.js';
+import { Meals, Plan, PlanMeta } from '../types/plan.js';
 import * as openApi from './openApi.service.js';
 import { Ingredients, Recipie } from '../types/recipies.js';
 import * as profileService from './profile.service.js';
 import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
+
+function blankPlan(): Plan {
+  return {
+    meta: {
+      status: 'draft',
+      title: '',
+      restrictions: '',
+      preferences: ''
+    },
+    meals: {
+      monday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      tuesday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      wednesday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      thursday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      friday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      saturday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        }
+      },
+      sunday: {
+        breakfast: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        lunch: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+        dinner: {
+          name: '',
+          ingredients: [],
+          instructions: [],
+        },
+      },
+    },
+  }
+}
+
+async function draftPlan(profileId: ObjectId, plan: PlanMeta): Promise<ObjectId> {
+  await client.connect()
+
+  const profile = await profileService.getProfile(profileId) as Profile;
+  if(!profile) {
+    throw new Error('El perfil no existe');
+  }
+
+  const blank = blankPlan();
+
+  const newPlan = {
+    ...blank,
+    meta: {
+      ...blank.meta,
+      ...plan
+    },
+    profileId: new ObjectId(profileId)
+  }
+
+  // Saves the plan to the database and returns the id
+  const response = await db.collection("plans").insertOne(newPlan);
+  return response.insertedId;
+}
+
+async function updatePlanMeta(planId: ObjectId, planMeta: Partial<PlanMeta>): Promise<void> {
+  await client.connect()
+
+  const planExists = await db.collection("plans").findOne({ _id: new ObjectId(planId) });
+
+  if (planExists) {
+    await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(planId) }, { $set: { meta: {
+      ...planExists.meta,
+      ...planMeta
+    } } });
+  } else {
+    throw new Error('El plan no existe');
+  }
+}
 
 async function generatePlan(profileId: ObjectId): Promise<Meals> {
   await client.connect()
@@ -29,21 +200,37 @@ async function generatePlan(profileId: ObjectId): Promise<Meals> {
   return meals;
 }
 
+async function generatePlanFromDraft(draftId: ObjectId): Promise<Meals> {
+  await client.connect()
+
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(draftId) });
+
+  if (!plan) {
+    throw new Error('No se encontro el plan');
+  }
+
+  const rawOutput = await openApi.generatePlan(plan.meta.restrictions || '', plan.meta.preferences || '', '');
+
+  const meals = JSON.parse(rawOutput as string);
+
+  return meals;
+}
+
 async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   await client.connect()
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
   .then(async (meals) => {
-    const plan = {
-      meals,
-      profileId: new ObjectId(profileId)
-    }
-  
     const planExists = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
   
     if (planExists) {
-      await db.collection("plans").findOneAndReplace({ profileId: new ObjectId(profileId) }, plan);
+      await db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
     } else {
+      const plan = {
+        ...blankPlan(),
+        meals,
+        profileId: new ObjectId(profileId)
+      }
       await db.collection("plans").insertOne(plan);
     }
   })
@@ -230,7 +417,10 @@ async function generateRecipies(restrictions: string, preferences: string, lista
 }
 
 export {
+  draftPlan,
+  updatePlanMeta,
   generatePlan,
+  generatePlanFromDraft,
   savePlan,
   generateDocPlan,
   getPlan,

@@ -7,6 +7,14 @@ export type Meals = {
   dinner: Recipie;
 }
 
+export type PlanMeta = {
+  status: 'draft' | 'saved' | 'dirty';
+  threadId?: string;
+  title: string;
+  restrictions: string;
+  preferences: string;
+}
+
 export interface Plan {
   _id?: ObjectId;
   meals: {
@@ -18,6 +26,7 @@ export interface Plan {
     saturday: Meals,
     sunday: Meals,
   },
+  meta: PlanMeta,
   profileId?: ObjectId,
   shoppingList?: {
     [key: string]: string | number

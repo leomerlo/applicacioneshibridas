@@ -7,9 +7,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { ObjectId } from 'mongodb';
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
+function draftPlan(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const profileId = req.body.profileId;
+        const plan = req.body.plan;
+        if (!plan || !plan.title || (!plan.preferences && !plan.restrictions)) {
+            res.status(400).json({ error: { message: 'Faltan datos para crear el plan' } });
+            return;
+        }
+        // Si no es doctor, no puede tener planes ya creados
+        const profile = yield profileService.getProfile(profileId);
+        const profilePlan = yield planService.getPlan(profileId);
+        if (profile.accountType !== 'doc' && profilePlan) {
+            res.status(400).json({ error: { message: 'El perfil ya tiene un plan asignado' } });
+            return;
+        }
+        // Creamos el plan
+        let planId;
+        try {
+            planId = yield planService.draftPlan(profileId, plan);
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+        try {
+            // Creamos el thread
+            const thread = yield openAiService.startThread(plan.title, plan.restrictions, plan.preferences);
+            // Guardamos el thread id en la base de datos
+            yield planService.updatePlanMeta(planId, { threadId: thread.thread_id });
+            res.status(201).json({ planId });
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+    });
+}
+;
 function generatePlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const profileId = req.body.profileId;
@@ -20,6 +57,34 @@ function generatePlan(req, res) {
         try {
             const newPlan = yield planService.generatePlan(profileId);
             planService.savePlan(profileId, newPlan);
+            res.status(200).json(newPlan);
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+    });
+}
+function generatePlanFromDraft(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const planId = req.params.id;
+        const profileId = req.body.profileId;
+        let draftId;
+        if (!planId) {
+            console.log("No hay plan ID, tomando el plan del perfil");
+            const draft = yield planService.getPlan(profileId);
+            draftId = draft === null || draft === void 0 ? void 0 : draft._id;
+        }
+        else {
+            draftId = new ObjectId(planId);
+        }
+        if (!draftId) {
+            res.status(400).json({ error: { message: 'No se encontro el draft' } });
+            return;
+        }
+        try {
+            const newPlan = yield planService.generatePlanFromDraft(draftId);
+            planService.savePlan(profileId, newPlan);
+            yield planService.updatePlanMeta(draftId, { status: 'saved' });
             res.status(200).json(newPlan);
         }
         catch (err) {
@@ -247,4 +312,4 @@ function assistantGeneratePlan(req, res) {
         res.status(200).json(plan);
     });
 }
-export { generatePlan, generateDocPlan, getPlans, getPlan, getPlanById, getList, assignPlan, deletePlan, replaceRecipie, generateRecipies, assistantStartThread, assistantAddMessage, assistantGeneratePlan, assistantGetThreadMessages, assistantGetThread };
+export { draftPlan, generatePlanFromDraft, generatePlan, generateDocPlan, getPlans, getPlan, getPlanById, getList, assignPlan, deletePlan, replaceRecipie, generateRecipies, assistantStartThread, assistantAddMessage, assistantGeneratePlan, assistantGetThreadMessages, assistantGetThread };
