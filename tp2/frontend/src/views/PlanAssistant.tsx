@@ -18,6 +18,7 @@ const PlanAssistant = () => {
   const [messages, setMessages] = useState<PlanAssistantMessage[]>([]);
   const [threadMeta, setThreadMeta] = useState<any>({});
   const [loadingResponse, setLoadingResponse] = useState(false);
+  const [streamingMessage, setStreamingMessage] = useState("");
   const notifications = useNotifications();
   const endOfMessagesRef = useRef(null);
 
@@ -48,6 +49,7 @@ const PlanAssistant = () => {
 
   const sendMessage = async () => {
     setMessage('');
+    setStreamingMessage('');
     setLoadingResponse(true);
     await setMessages([
       ...messages,
@@ -57,17 +59,20 @@ const PlanAssistant = () => {
       }
     ]);
     scrollToBottom();
-    const resp = await planService.assistantSendMessage(id as string, message);
-    setLoadingResponse(false);
-    if(resp.status === 200){
-      await setMessages(resp.data.data.reverse());
+    await planService.assistantSendMessage(id as string, message, (data) => {
+      setStreamingMessage(prevMessage => `${prevMessage}${new TextDecoder().decode(data)}`);
       scrollToBottom();
-    } else {
-      notifications.updateNotifications({
-        variant: 'error',
-        message: 'Hubo un problema al enviar el mensaje'
-      });
-    }
+    }, () => {
+      const newMessage = `${streamingMessage}`;
+      setMessages(prevMessage => [
+        ...prevMessage,
+        {
+          role: 'assistant',
+          content: [{ text: { value: newMessage } }]
+        }
+      ]);
+    });
+    setLoadingResponse(false);
   }
 
   const savePlan = async () => {
@@ -122,7 +127,9 @@ const PlanAssistant = () => {
                     <ReactMarkdown>{message.content[0].text?.value}</ReactMarkdown>
                   </li>
                 )) }
-                { loadingResponse && <li>Cargando...</li> }
+                { loadingResponse && <li className="max-w-1/2 p-4 rounded-lg text-md self-start bg-primary-main text-white">
+                <ReactMarkdown>{ streamingMessage }</ReactMarkdown>
+                </li> }
               </ul>
               <div ref={endOfMessagesRef} />
             </div>

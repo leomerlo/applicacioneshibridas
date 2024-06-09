@@ -4,6 +4,7 @@ import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
 import { Meals } from "../types/plan";
 import { Run } from "openai/resources/beta/threads/runs/runs";
+import { MessagesPage } from "openai/resources/beta/threads/messages";
 
 dotenv.config()
 
@@ -251,7 +252,7 @@ async function generateRecipies(restrictions: string, preferences: string, lista
 
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
-  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  Usa esto como ejemplo manteniendo los nombres en inglés para el formato pero no para las comidas o valores nutricionales:
   {
     "monday": {
       "breakfast": {
@@ -316,28 +317,22 @@ async function addMessages(threadId: string, message: string) {
   return void 0;
 }
 
-async function startRun(threadId: string) {
-  let run = await openai.beta.threads.runs.create(
+async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  const run = await openai.beta.threads.runs.create(
     threadId,
     { 
       assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+      stream: true
     }
   );
 
-  while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-    run = await openai.beta.threads.runs.retrieve(
-      run.thread_id,
-      run.id
-    );
-  }
-
-  if (run.status === 'completed') {
-    const messages = await openai.beta.threads.messages.list(
-      run.thread_id
-    );
-
-    return messages;
+  for await (const event of run) {
+    if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+      const response = event.data.delta.content[0].text.value;
+      dataCB(response);
+    } else if (event.event === "thread.message.completed") {
+      dataEnd(event.data.content[0].text.value);
+    }
   }
 }
 

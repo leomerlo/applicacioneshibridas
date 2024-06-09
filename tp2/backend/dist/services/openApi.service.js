@@ -280,7 +280,7 @@ function generateRecipies(restrictions, preferences, listado) {
 
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
-  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  Usa esto como ejemplo manteniendo los nombres en inglés para el formato pero no para las comidas o valores nutricionales:
   {
     "monday": {
       "breakfast": {
@@ -341,18 +341,33 @@ function addMessages(threadId, message) {
         return void 0;
     });
 }
-function startRun(threadId) {
+function startRun(threadId, dataCB, dataEnd) {
     return __awaiter(this, void 0, void 0, function* () {
-        let run = yield openai.beta.threads.runs.create(threadId, {
+        var _a, e_2, _b, _c;
+        const run = yield openai.beta.threads.runs.create(threadId, {
             assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+            stream: true
         });
-        while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-            yield new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            run = yield openai.beta.threads.runs.retrieve(run.thread_id, run.id);
+        try {
+            for (var _d = true, run_1 = __asyncValues(run), run_1_1; run_1_1 = yield run_1.next(), _a = run_1_1.done, !_a; _d = true) {
+                _c = run_1_1.value;
+                _d = false;
+                const event = _c;
+                if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+                    const response = event.data.delta.content[0].text.value;
+                    dataCB(response);
+                }
+                else if (event.event === "thread.message.completed") {
+                    dataEnd(event.data.content[0].text.value);
+                }
+            }
         }
-        if (run.status === 'completed') {
-            const messages = yield openai.beta.threads.messages.list(run.thread_id);
-            return messages;
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = run_1.return)) yield _b.call(run_1);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
     });
 }

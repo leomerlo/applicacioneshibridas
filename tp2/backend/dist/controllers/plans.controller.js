@@ -295,8 +295,11 @@ function assistantAddMessage(req, res) {
         const threadId = req.body.thread;
         const message = req.body.message;
         yield openAiService.addMessages(threadId, message);
-        const response = yield openAiService.startRun(threadId);
-        res.status(200).json(response);
+        yield openAiService.startRun(threadId, (data) => {
+            res.write(data);
+        }, (data) => {
+            res.end(data);
+        });
     });
 }
 function assistantGeneratePlan(req, res) {

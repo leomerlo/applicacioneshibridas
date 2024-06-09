@@ -45,8 +45,14 @@ export function getPlanAssistantThread(threadId: string) {
   return API.call({ uri: `plan/assistant/thread/${threadId}` })
 }
 
-export function assistantSendMessage(threadId: string, message: string) {
-  return API.call({ uri: 'plan/assistant/message', method: 'POST', body: { thread: threadId, message } })
+export function assistantSendMessage(threadId: string, message: string, dataCB: (data: any) => void, dataEnd: (response: any) => void) {
+  return API.callStream({
+    uri: 'plan/assistant/message',
+    method: 'POST',
+    body: { thread: threadId, message },
+    dataCB,
+    dataEnd
+  });
 }
 
 export default {

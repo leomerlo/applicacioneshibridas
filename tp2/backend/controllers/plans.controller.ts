@@ -303,8 +303,11 @@ async function assistantAddMessage(req: Request, res: Response) {
   const message = req.body.message;
 
   await openAiService.addMessages(threadId, message);
-  const response = await openAiService.startRun(threadId);
-  res.status(200).json(response);
+  await openAiService.startRun(threadId, (data) => {
+    res.write(data);
+  }, (data) => {
+    res.end(data);
+  });
 }
 
 async function assistantGeneratePlan(req: Request, res: Response) {
