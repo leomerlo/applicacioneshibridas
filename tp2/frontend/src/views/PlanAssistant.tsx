@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import GoBack from "../components/GoBack";
 import { useNotifications } from "../contexts/NotificationsContext";
 import { useParams } from "react-router-dom";
+import { usePlan } from "../contexts/PlanContext";
 import planService from "../services/plan.service";
 import ReactMarkdown from "react-markdown";
 
@@ -14,6 +15,7 @@ export interface PlanAssistantMessage {
 
 const PlanAssistant = () => {
   const { id } = useParams();
+  const { plan } = usePlan();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<PlanAssistantMessage[]>([]);
   const [threadMeta, setThreadMeta] = useState<any>({});
@@ -33,33 +35,41 @@ const PlanAssistant = () => {
   }
 
   const getThread = async () => {
-    setLoadingResponse(true);
-    const resp = await planService.getPlanAssistantThread(id as string);
-    setLoadingResponse(false);
-    if(resp.status === 200){
-      setThreadMeta(resp.data.thread.metadata);
-      setMessages(resp.data.messages.reverse());
-    } else {
-      notifications.updateNotifications({
-        variant: 'error',
-        message: 'Hubo un problema al obtener el chat'
-      });
+    if (plan?.meta.threadId) {
+      setLoadingResponse(true);
+      const resp = await planService.getPlanAssistantThread(plan?.meta.threadId as string);
+      setLoadingResponse(false);
+      if(resp.status === 200){
+        setThreadMeta(plan?.meta);
+        setMessages(resp.data.messages.reverse());
+        const userMsgs = resp.data.messages.filter((message: any) => message.role === 'user');
+        if (userMsgs.length === 0) {
+          sendMessage(`Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
+          Restricciones: ${plan?.meta.restrictions}. Preferencias: ${plan?.meta.preferences}.`);
+        }
+      } else {
+        notifications.updateNotifications({
+          variant: 'error',
+          message: 'Hubo un problema al obtener el chat'
+        });
+      }
     }
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (forceMessage: string) => {
     setMessage('');
     setStreamingMessage('');
     setLoadingResponse(true);
+    const payload = forceMessage ? forceMessage : message;
     await setMessages([
       ...messages,
       {
         role: 'user',
-        content: [{ text: { value: message } }]
+        content: [{ text: { value: payload } }]
       }
     ]);
     scrollToBottom();
-    await planService.assistantSendMessage(id as string, message, (data) => {
+    await planService.assistantSendMessage(plan?.meta.threadId as string, payload, (data) => {
       setStreamingMessage(prevMessage => `${prevMessage}${new TextDecoder().decode(data)}`);
       scrollToBottom();
     }, () => {
@@ -77,18 +87,7 @@ const PlanAssistant = () => {
 
   const savePlan = async () => {
     setLoadingResponse(true);
-    const {
-      title,
-      preferences,
-      restrictions
-    } = threadMeta;
-    const resp = await planService.newDocPlan({
-      title,
-      preferences,
-      restrictions,
-      thread: id as string,
-      listado: messages[messages.length - 1].content[0].text.value
-    });
+    const resp = await planService.savePlanFromDraft(id as string);
     setLoadingResponse(false);
     if(resp.status === 200){
       notifications.updateNotifications({
@@ -105,7 +104,7 @@ const PlanAssistant = () => {
 
   useEffect(() => {
     getThread();
-  }, []);
+  }, [plan]);
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });

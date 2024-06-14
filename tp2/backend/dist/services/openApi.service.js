@@ -313,16 +313,6 @@ function startThread(title, restrictions, preferences) {
     return __awaiter(this, void 0, void 0, function* () {
         const thread = yield openai.beta.threads.createAndRun({
             assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-            thread: {
-                messages: [
-                    {
-                        role: "user",
-                        content: `
-          Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
-          Restricciones: ${restrictions}. Preferencias: ${preferences}.`
-                    }
-                ]
-            },
             metadata: {
                 title,
                 restrictions,

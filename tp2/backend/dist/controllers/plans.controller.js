@@ -28,18 +28,23 @@ function draftPlan(req, res) {
         }
         // Creamos el plan
         let planId;
+        console.log("Creando el plan");
         try {
             planId = yield planService.draftPlan(profileId, plan);
         }
         catch (err) {
             res.status(400).json({ err, message: err.message });
         }
+        console.log("Plan creado", planId);
         try {
+            console.log("Creando thread");
             // Creamos el thread
             const thread = yield openAiService.startThread(plan.title, plan.restrictions, plan.preferences);
+            console.log("Thread creado", thread.thread_id);
             // Guardamos el thread id en la base de datos
             yield planService.updatePlanMeta(planId, { threadId: thread.thread_id });
-            res.status(201).json({ planId });
+            console.log("Plan", planId, "actualizado con thread", thread.thread_id);
+            res.status(200).json({ planId });
         }
         catch (err) {
             res.status(400).json({ err, message: err.message });
@@ -83,7 +88,6 @@ function generatePlanFromDraft(req, res) {
         }
         try {
             const newPlan = yield planService.generatePlanFromDraft(draftId);
-            planService.savePlan(profileId, newPlan);
             yield planService.updatePlanMeta(draftId, { status: 'saved' });
             res.status(200).json(newPlan);
         }

@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, PropsWithChildren, useContext } fro
 import planService from "../services/plan.service"
 import { MealTypes } from "../components/NextMeals/NextMealItem";
 import { useNotifications } from "./NotificationsContext";
+import { useParams } from "react-router-dom";
 
 export type Meals = {
   breakfast: string;
@@ -18,6 +19,13 @@ export interface ShoppingListIngredient {
 export interface Plan {
   _id?: string;
   title?: string;
+  meta: {
+    title: string,
+    threadId: string,
+    preferences: string,
+    restrictions: string,
+    status: string,
+  },
   meals: {
     monday: Meals,
     tuesday: Meals,
@@ -65,6 +73,7 @@ function usePlan(){
 }
 
 function PlanProvider({children}: PropsWithChildren){
+  const { id } = useParams();
   const [plan, setPlan] = useState<Plan | null>(emptyPlan.plan);
   const [loadedPlan, setLoadedPlan] = useState(emptyPlan.loadedPlan);
   const [today, setToday] = useState<Date>(emptyPlan.today);
@@ -75,17 +84,18 @@ function PlanProvider({children}: PropsWithChildren){
   const [planSelectedMeal, setPlanSelectedMeal] = useState(todayString);
   const { updateNotifications } = useNotifications();
 
+  const fetchPlan = async () => {
+    if (id) {
+      return await planService.getPlanById(id) 
+    } else {
+      return await planService.getPlan()
+    }
+  }
+
   useEffect(() => {
     setToday(new Date());
-
-    planService.getPlan()
-    .then((plan) => {
-      setLoadedPlan(true);
-      if(plan.data) {
-        setPlan(plan.data)
-      }
-    })
-  }, []);
+    loadPlan();  
+  }, [id]);
 
   useEffect(() => {
     setNextMeal(() => {
@@ -122,8 +132,19 @@ function PlanProvider({children}: PropsWithChildren){
     })
   }, [nextMeal])
 
+  const loadPlan = async () => {
+    fetchPlan().then((plan) => {
+      if (plan.status === 200) {
+        setPlan({...plan.data});
+      }
+    }).catch((error) => {
+      updateNotifications({ variant: 'error', message: 'Hubo un error al cargar el plan' });
+      throw new Error(error);
+    });
+  }
+
   const updatePlan = async () => {
-    planService.getPlan().then((plan) => {
+    fetchPlan().then((plan) => {
       if (plan.status === 200) {
         updateNotifications({ variant: 'success', message: 'Plan actualizado correctamente' });
         setPlan({...plan.data});

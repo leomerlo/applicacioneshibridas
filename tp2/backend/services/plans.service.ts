@@ -157,7 +157,7 @@ async function draftPlan(profileId: ObjectId, plan: PlanMeta): Promise<ObjectId>
       ...blank.meta,
       ...plan
     },
-    profileId: new ObjectId(profileId)
+    docId: new ObjectId(profileId)
   }
 
   // Saves the plan to the database and returns the id
@@ -209,9 +209,17 @@ async function generatePlanFromDraft(draftId: ObjectId): Promise<Meals> {
     throw new Error('No se encontro el plan');
   }
 
-  const rawOutput = await openApi.generatePlan(plan.meta.restrictions || '', plan.meta.preferences || '', '');
+  const rawOutput = await openApi.generatePlan(plan.meta.restrictions, plan.meta.preferences, '');
 
   const meals = JSON.parse(rawOutput as string);
+
+  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+  .then(async (meals) => {
+    await db.collection("plans").findOneAndReplace({ _id: new ObjectId(draftId) }, { ...plan, meals });
+  })
+  .catch((err) => {
+    console.log('Validation error', err);
+  })
 
   return meals;
 }

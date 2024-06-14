@@ -153,7 +153,7 @@ function draftPlan(profileId, plan) {
             throw new Error('El perfil no existe');
         }
         const blank = blankPlan();
-        const newPlan = Object.assign(Object.assign({}, blank), { meta: Object.assign(Object.assign({}, blank.meta), plan), profileId: new ObjectId(profileId) });
+        const newPlan = Object.assign(Object.assign({}, blank), { meta: Object.assign(Object.assign({}, blank.meta), plan), docId: new ObjectId(profileId) });
         // Saves the plan to the database and returns the id
         const response = yield db.collection("plans").insertOne(newPlan);
         return response.insertedId;
@@ -194,8 +194,15 @@ function generatePlanFromDraft(draftId) {
         if (!plan) {
             throw new Error('No se encontro el plan');
         }
-        const rawOutput = yield openApi.generatePlan(plan.meta.restrictions || '', plan.meta.preferences || '', '');
+        const rawOutput = yield openApi.generatePlan(plan.meta.restrictions, plan.meta.preferences, '');
         const meals = JSON.parse(rawOutput);
+        planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+            .then((meals) => __awaiter(this, void 0, void 0, function* () {
+            yield db.collection("plans").findOneAndReplace({ _id: new ObjectId(draftId) }, Object.assign(Object.assign({}, plan), { meals }));
+        }))
+            .catch((err) => {
+            console.log('Validation error', err);
+        });
         return meals;
     });
 }

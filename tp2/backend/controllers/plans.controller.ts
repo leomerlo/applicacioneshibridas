@@ -27,21 +27,29 @@ async function draftPlan(req: Request, res: Response) {
   // Creamos el plan
   let planId;
 
+  console.log("Creando el plan");
+
   try {
     planId = await planService.draftPlan(profileId, plan);
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
   }
 
+  console.log("Plan creado", planId);
 
   try {
+    console.log("Creando thread");
     // Creamos el thread
     const thread = await openAiService.startThread(plan.title, plan.restrictions, plan.preferences);
+
+    console.log("Thread creado", thread.thread_id);
 
     // Guardamos el thread id en la base de datos
     await planService.updatePlanMeta(planId as ObjectId, { threadId: thread.thread_id });
 
-    res.status(201).json({ planId });
+    console.log("Plan", planId, "actualizado con thread", thread.thread_id);
+
+    res.status(200).json({ planId });
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
   }
@@ -84,7 +92,6 @@ async function generatePlanFromDraft(req: Request, res: Response) {
 
   try {
     const newPlan = await planService.generatePlanFromDraft(draftId);
-    planService.savePlan(profileId, newPlan);
     await planService.updatePlanMeta(draftId, { status: 'saved' });
     res.status(200).json(newPlan);
   } catch (err: any) {

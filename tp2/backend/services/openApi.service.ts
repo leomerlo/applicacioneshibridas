@@ -285,16 +285,6 @@ async function generateRecipies(restrictions: string, preferences: string, lista
 async function startThread(title: string, restrictions: string, preferences: string): Promise<Run> {
   const thread = await openai.beta.threads.createAndRun({
     assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-    thread: {
-      messages: [
-        {
-          role: "user",
-          content: `
-          Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
-          Restricciones: ${restrictions}. Preferencias: ${preferences}.`
-        }
-      ]
-    },
     metadata: {
       title,
       restrictions,

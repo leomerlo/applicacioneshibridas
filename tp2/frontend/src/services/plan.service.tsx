@@ -8,6 +8,10 @@ export function newDocPlan({ title, preferences, restrictions, thread, listado }
   return API.call({ uri: 'plan/doc', method: 'POST', body: { title, preferences, restrictions, thread, listado } })
 }
 
+export function savePlanFromDraft(id: string) {
+  return API.call({ uri: `plan/saveDraft/${id}`, method: 'POST' })
+}
+
 export function getPlan() {
   return API.call({ uri: 'plan' })
 }
@@ -38,7 +42,7 @@ export function replaceRecipie(day: string, meal: string, dataCB: (data: any) =>
 }
 
 export function newPlanAssistant({ title, preferences, restrictions }: { title: string, preferences: string, restrictions: string }) {
-  return API.call({ uri: 'plan/assistant/thread', method: 'POST', body: { preferences, restrictions, title } })
+  return API.call({ uri: 'plan/draft', method: 'POST', body: { plan: { preferences, restrictions, title } } })
 }
 
 export function getPlanAssistantThread(threadId: string) {
@@ -66,5 +70,6 @@ export default {
   replaceRecipie,
   newPlanAssistant,
   getPlanAssistantThread,
-  assistantSendMessage
+  assistantSendMessage,
+  savePlanFromDraft
 }
