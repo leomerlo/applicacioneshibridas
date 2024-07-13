@@ -243,7 +243,7 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
   })
 }
 
-async function savePlanMeals(plan: Plan, meals: string | object): Promise<void> {
+async function savePlanMeals(plan: string, meals: string | object): Promise<void> {
   await client.connect()
 
   if(typeof meals === 'string') {
@@ -252,10 +252,10 @@ async function savePlanMeals(plan: Plan, meals: string | object): Promise<void> 
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
   .then(async (meals) => {
-    const planExists = await db.collection("plans").findOne({ _id: new ObjectId(plan._id) });
+    const planExists = await db.collection("plans").findOne({ _id: new ObjectId(plan) });
   
     if (planExists) {
-      await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan._id) }, { $set: { meals, "meta.status": "saved" } });
+      await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
     } else {
       throw new Error('El plan no existe');
     }

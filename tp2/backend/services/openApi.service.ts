@@ -387,7 +387,6 @@ async function startRun(threadId: string, dataCB: (data: string) => void, dataEn
               };
             }
           });
-          // console.log(tool_outputs);
           await submitToolOutputs(tool_outputs, event.data.id, threadId);
           dataEnd("");
         } catch (error) {
@@ -411,6 +410,19 @@ async function getThreadMessages(threadId: string) {
   return result;
 }
 
+async function removeLastMessages(threadId: string, limit: number = 2) {
+  const result = await openai.beta.threads.messages.list(threadId, { limit });
+  // console.log("-- Message cleanup");
+  try {
+    await result.data.map(async (message) => {
+      await openai.beta.threads.messages.del(threadId, message.id)
+    });
+    return void 0;
+  } catch (error) {
+    console.error("Error removing messages:", error);
+  }
+}
+
 async function getLastMessage(threadId: string) {
   const result = await getThreadMessages(threadId);
   const lastMessage = result.data[0].content;
@@ -426,6 +438,7 @@ async function getThread(threadId: string) {
 
 async function submitToolOutputs(tool: any, runId: string, threadId: string) {
   try {
+    console.log(tool);
     // Use the submitToolOutputsStream helper
     const stream = openai.beta.threads.runs.submitToolOutputsStream(
       threadId,
@@ -452,5 +465,6 @@ export {
   startRun,
   getLastMessage,
   getThread,
-  getThreadMessages
+  getThreadMessages,
+  removeLastMessages
 }

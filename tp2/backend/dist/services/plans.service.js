@@ -231,9 +231,9 @@ function savePlanMeals(plan, meals) {
         }
         planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
             .then((meals) => __awaiter(this, void 0, void 0, function* () {
-            const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(plan._id) });
+            const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(plan) });
             if (planExists) {
-                yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan._id) }, { $set: { meals, "meta.status": "saved" } });
+                yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
             }
             else {
                 throw new Error('El plan no existe');

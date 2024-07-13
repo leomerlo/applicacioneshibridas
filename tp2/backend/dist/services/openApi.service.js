@@ -413,7 +413,6 @@ function startRun(threadId, dataCB, dataEnd) {
                                     };
                                 }
                             });
-                            // console.log(tool_outputs);
                             yield submitToolOutputs(tool_outputs, event.data.id, threadId);
                             dataEnd("");
                         }
@@ -450,6 +449,21 @@ function getThreadMessages(threadId) {
         return result;
     });
 }
+function removeLastMessages(threadId_1) {
+    return __awaiter(this, arguments, void 0, function* (threadId, limit = 2) {
+        const result = yield openai.beta.threads.messages.list(threadId, { limit });
+        // console.log("-- Message cleanup");
+        try {
+            yield result.data.map((message) => __awaiter(this, void 0, void 0, function* () {
+                yield openai.beta.threads.messages.del(threadId, message.id);
+            }));
+            return void 0;
+        }
+        catch (error) {
+            console.error("Error removing messages:", error);
+        }
+    });
+}
 function getLastMessage(threadId) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield getThreadMessages(threadId);
@@ -468,6 +482,7 @@ function submitToolOutputs(tool, runId, threadId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_3, _b, _c;
         try {
+            console.log(tool);
             // Use the submitToolOutputsStream helper
             const stream = openai.beta.threads.runs.submitToolOutputsStream(threadId, runId, { tool_outputs: tool });
             try {
@@ -493,4 +508,4 @@ function submitToolOutputs(tool, runId, threadId) {
         }
     });
 }
-export { generatePlan, generateShoppingList, generateRecipie, generateRecipies, startThread, addMessages, startRun, getLastMessage, getThread, getThreadMessages };
+export { generatePlan, generateShoppingList, generateRecipie, generateRecipies, startThread, addMessages, startRun, getLastMessage, getThread, getThreadMessages, removeLastMessages };

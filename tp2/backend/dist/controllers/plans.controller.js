@@ -69,32 +69,6 @@ function generatePlan(req, res) {
         }
     });
 }
-/*async function generatePlanFromDraft(req: Request, res: Response) {
-  const planId = req.params.id;
-  const profileId = req.body.profileId;
-  let draftId;
-
-  if (!planId) {
-    console.log("No hay plan ID, tomando el plan del perfil");
-    const draft = await planService.getPlan(profileId);
-    draftId = draft?._id;
-  } else {
-    draftId = new ObjectId(planId);
-  }
-
-  if (!draftId) {
-    res.status(400).json({ error: { message: 'No se encontro el draft' } });
-    return;
-  }
-
-  try {
-    const newPlan = await planService.generatePlanFromDraft(draftId);
-    await planService.updatePlanMeta(draftId, { status: 'saved' });
-    res.status(200).json(newPlan);
-  } catch (err: any) {
-    res.status(400).json({ err, message: err.message });
-  }
-}*/
 function generatePlanFromDraft(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const planId = req.params.id;
@@ -114,27 +88,22 @@ function generatePlanFromDraft(req, res) {
         }
         try {
             const plan = yield planService.getPlanById(planId);
-            console.log(plan);
             const { threadId } = plan.meta;
-            const message = "Generame las recetas para el dia Monday";
-            yield openAiService.addMessages(threadId, message);
-            yield openAiService.startRun(threadId, (data) => {
-                console.log("Day Data: ", data);
-            }, (data) => {
-                console.log(data);
-            });
-            /*
+            const meals = {};
             for (let day in plan.meals) {
-              const message = "Generame las recetas para el dia " + day;
-              await openAiService.addMessages(threadId, message);
-              await openAiService.startRun(threadId, (data) => {
-                console.log("Day Data: ", data);
-              }, (data) => {
-                console.log(day, " finished");
-              });
+                const message = "Generame las recetas para el dia " + day;
+                yield openAiService.addMessages(threadId, message);
+                yield openAiService.startRun(threadId, (data) => {
+                    meals[day] = data;
+                }, () => __awaiter(this, void 0, void 0, function* () {
+                    console.log("Day finished ", day);
+                    // Al terminar, removemos los mensajes generados
+                    yield openAiService.removeLastMessages(threadId);
+                }));
             }
-            */
-            console.log("All days finished");
+            yield planService.savePlanMeals(planId, meals);
+            // console.log("All days finished", meals);
+            res.status(200).json({ message: "Plan finished" });
         }
         catch (err) {
             res.status(400).json({ err, message: err.message });
