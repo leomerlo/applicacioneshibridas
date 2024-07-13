@@ -187,15 +187,13 @@ function generatePlan(profileId) {
         return meals;
     });
 }
-function generatePlanFromDraft(draftId) {
+function generatePlanFromDraft(draftId, meals) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
         const plan = yield db.collection("plans").findOne({ _id: new ObjectId(draftId) });
         if (!plan) {
             throw new Error('No se encontro el plan');
         }
-        const rawOutput = yield openApi.generatePlan(plan.meta.restrictions, plan.meta.preferences, '');
-        const meals = JSON.parse(rawOutput);
         planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
             .then((meals) => __awaiter(this, void 0, void 0, function* () {
             yield db.collection("plans").findOneAndReplace({ _id: new ObjectId(draftId) }, Object.assign(Object.assign({}, plan), { meals }));
@@ -218,6 +216,27 @@ function savePlan(profileId, meals) {
             else {
                 const plan = Object.assign(Object.assign({}, blankPlan()), { meals, profileId: new ObjectId(profileId) });
                 yield db.collection("plans").insertOne(plan);
+            }
+        }))
+            .catch((err) => {
+            console.log('Validation error', err);
+        });
+    });
+}
+function savePlanMeals(plan, meals) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        if (typeof meals === 'string') {
+            meals = JSON.parse(meals);
+        }
+        planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+            .then((meals) => __awaiter(this, void 0, void 0, function* () {
+            const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(plan._id) });
+            if (planExists) {
+                yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan._id) }, { $set: { meals, "meta.status": "saved" } });
+            }
+            else {
+                throw new Error('El plan no existe');
             }
         }))
             .catch((err) => {
@@ -263,6 +282,13 @@ function getPlanById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
         const plan = yield db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
+        return plan;
+    });
+}
+function getPlanByThreadId(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const plan = yield db.collection("plans").findOne({ "meta.threadId": id }, { projection: { _id: 0, profileId: 0 } });
         return plan;
     });
 }
@@ -387,4 +413,4 @@ function generateRecipies(restrictions, preferences, listado) {
         return meals;
     });
 }
-export { draftPlan, updatePlanMeta, generatePlan, generatePlanFromDraft, savePlan, generateDocPlan, getPlan, getPlanById, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies };
+export { draftPlan, updatePlanMeta, generatePlan, generatePlanFromDraft, savePlan, savePlanMeals, generateDocPlan, getPlan, getPlanById, getPlanByThreadId, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies };

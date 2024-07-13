@@ -56,7 +56,7 @@ const PlanAssistant = () => {
     }
   };
 
-  const sendMessage = async (forceMessage: string) => {
+  const sendMessage = async (forceMessage: string = '') => {
     setMessage('');
     setStreamingMessage('');
     setLoadingResponse(true);

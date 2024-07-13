@@ -3,8 +3,9 @@ import dotenv from 'dotenv'
 import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
 import { Meals } from "../types/plan";
-import { Run } from "openai/resources/beta/threads/runs/runs";
+import { RequiredActionFunctionToolCall, Run } from "openai/resources/beta/threads/runs/runs";
 import { MessagesPage } from "openai/resources/beta/threads/messages";
+import * as planService from './plans.service.js';
 
 dotenv.config()
 
@@ -307,22 +308,101 @@ async function addMessages(threadId: string, message: string) {
   return void 0;
 }
 
-async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
-  const run = await openai.beta.threads.runs.create(
-    threadId,
-    { 
-      assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-      stream: true
-    }
-  );
+/*async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  try {
+    const run = await openai.beta.threads.runs.create(
+      threadId,
+      { 
+        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+        stream: true
+      }
+    );
 
-  for await (const event of run) {
-    if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
-      const response = event.data.delta.content[0].text.value;
-      dataCB(response);
-    } else if (event.event === "thread.message.completed") {
-      dataEnd(event.data.content[0].text.value);
+    for await (const event of run) {
+      if (event.event === "thread.run.step.delta") {
+        console.log("-- Event Delta");
+        console.log(event.data.delta.step_details.tool_calls[0].function.arguments);
+      } else if (event.event === "thread.run.requires_action") { 
+        try {
+          console.log("-- Event Requires Action");
+          const threadId = event.data.thread_id;
+          const meals = {};
+          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
+          tool_calls?.map(async (tool: RequiredActionFunctionToolCall) => {
+            console.log("-- Tools Calls", tool);
+            if (tool.function.name === "day_planner") {
+              const args = JSON.parse(tool.function.arguments);
+              console.log("-- Day Planner");
+              meals[args.day] = args.meals;
+            }
+          });
+          const plan = await planService.getPlanByThreadId(threadId);
+          if (plan) {
+            //console.log("-- Plan Exists");
+            console.log(meals);
+            //await planService.savePlanMeals(plan, meals);
+            submitToolOutputs({ success: true }, event.data.id, threadId);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+        const response = event.data.delta.content[0].text.value;
+        dataCB(response);
+      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
+        dataEnd("Plan guardado con éxito");
+      }
     }
+  } catch (error) {
+    // openai.beta.threads.runs.cancel(threadId, event.data.id);
+    console.log("Run failed", error);
+  }
+}*/
+
+async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  try {
+    const run = await openai.beta.threads.runs.create(
+      threadId,
+      { 
+        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+        stream: true
+      }
+    );
+
+    for await (const event of run) {
+      if (event.event === "thread.run.step.delta") {
+        // console.log("-- Event Delta");
+      } else if (event.event === "thread.run.requires_action") { 
+        try {
+          // console.log("-- Event Requires Action");
+          const threadId = event.data.thread_id;
+          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
+          const tool_outputs = tool_calls?.map((tool: RequiredActionFunctionToolCall) => {
+            if (tool.function.name === "day_planner") {
+              const args = JSON.parse(tool.function.arguments);
+              dataCB(args);
+              return { 
+                tool_call_id: tool.id,
+                output: "success"
+              };
+            }
+          });
+          // console.log(tool_outputs);
+          await submitToolOutputs(tool_outputs, event.data.id, threadId);
+          dataEnd("");
+        } catch (error) {
+          // console.log(error);
+        }
+      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+        const response = event.data.delta.content[0].text.value;
+        // dataCB(response);
+      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
+        dataEnd("Plan finalizado");
+      }
+    }
+  } catch (error) {
+    // openai.beta.threads.runs.cancel(threadId, event.data.id);
+    console.log("Run failed", error);
   }
 }
 
@@ -342,6 +422,24 @@ async function getThread(threadId: string) {
   const result = await openai.beta.threads.runs.list(threadId);
   const lastRun = result.data[0];
   return lastRun;
+}
+
+async function submitToolOutputs(tool: any, runId: string, threadId: string) {
+  try {
+    // Use the submitToolOutputsStream helper
+    const stream = openai.beta.threads.runs.submitToolOutputsStream(
+      threadId,
+      runId,
+      { tool_outputs: tool },
+    );
+    for await (const event of stream) {
+      if(event.event === "thread.run.completed") {
+        return event; 
+      }
+    }
+  } catch (error) {
+    console.error("Error submitting tool outputs:", error);
+  }
 }
 
 export {

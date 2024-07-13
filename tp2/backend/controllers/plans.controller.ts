@@ -72,7 +72,7 @@ async function generatePlan(req: Request, res: Response) {
   }
 }
 
-async function generatePlanFromDraft(req: Request, res: Response) {
+/*async function generatePlanFromDraft(req: Request, res: Response) {
   const planId = req.params.id;
   const profileId = req.body.profileId;
   let draftId;
@@ -94,6 +94,54 @@ async function generatePlanFromDraft(req: Request, res: Response) {
     const newPlan = await planService.generatePlanFromDraft(draftId);
     await planService.updatePlanMeta(draftId, { status: 'saved' });
     res.status(200).json(newPlan);
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
+}*/
+
+async function generatePlanFromDraft(req: Request, res: Response) {
+  const planId = req.params.id;
+  const profileId = req.body.profileId;
+  let draftId;
+
+  if (!planId) {
+    console.log("No hay plan ID, tomando el plan del perfil");
+    const draft = await planService.getPlan(profileId);
+    draftId = draft?._id;
+  } else {
+    draftId = new ObjectId(planId);
+  }
+
+  if (!draftId) {
+    res.status(400).json({ error: { message: 'No se encontro el draft' } });
+    return;
+  }
+
+  try {
+    const plan = await planService.getPlanById(planId);
+    console.log(plan);
+    const { threadId } = plan.meta as { threadId: string };
+
+    const message = "Generame las recetas para el dia Monday";
+    await openAiService.addMessages(threadId, message);
+    await openAiService.startRun(threadId, (data) => {
+      console.log("Day Data: ", data);
+    }, (data) => {
+      console.log(data);
+    });
+
+    /*
+    for (let day in plan.meals) {
+      const message = "Generame las recetas para el dia " + day;
+      await openAiService.addMessages(threadId, message);
+      await openAiService.startRun(threadId, (data) => {
+        console.log("Day Data: ", data);
+      }, (data) => {
+        console.log(day, " finished");
+      });
+    }
+    */
+    console.log("All days finished");
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
   }

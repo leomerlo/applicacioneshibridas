@@ -200,7 +200,7 @@ async function generatePlan(profileId: ObjectId): Promise<Meals> {
   return meals;
 }
 
-async function generatePlanFromDraft(draftId: ObjectId): Promise<Meals> {
+async function generatePlanFromDraft(draftId: ObjectId, meals: Meals): Promise<Meals> {
   await client.connect()
 
   const plan = await db.collection("plans").findOne({ _id: new ObjectId(draftId) });
@@ -208,10 +208,6 @@ async function generatePlanFromDraft(draftId: ObjectId): Promise<Meals> {
   if (!plan) {
     throw new Error('No se encontro el plan');
   }
-
-  const rawOutput = await openApi.generatePlan(plan.meta.restrictions, plan.meta.preferences, '');
-
-  const meals = JSON.parse(rawOutput as string);
 
   planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
   .then(async (meals) => {
@@ -240,6 +236,28 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
         profileId: new ObjectId(profileId)
       }
       await db.collection("plans").insertOne(plan);
+    }
+  })
+  .catch((err) => {
+    console.log('Validation error', err);
+  })
+}
+
+async function savePlanMeals(plan: Plan, meals: string | object): Promise<void> {
+  await client.connect()
+
+  if(typeof meals === 'string') {
+    meals = JSON.parse(meals);
+  }
+
+  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+  .then(async (meals) => {
+    const planExists = await db.collection("plans").findOne({ _id: new ObjectId(plan._id) });
+  
+    if (planExists) {
+      await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan._id) }, { $set: { meals, "meta.status": "saved" } });
+    } else {
+      throw new Error('El plan no existe');
     }
   })
   .catch((err) => {
@@ -284,6 +302,12 @@ async function getPlan(profileId: string): Promise<Plan> {
 async function getPlanById(id: string): Promise<Plan> {
   await client.connect()
   const plan = await db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
+  return plan as Plan;
+}
+
+async function getPlanByThreadId(id: string): Promise<Plan> {
+  await client.connect()
+  const plan = await db.collection("plans").findOne({ "meta.threadId": id }, { projection: { _id: 0, profileId: 0 } });
   return plan as Plan;
 }
 
@@ -430,9 +454,11 @@ export {
   generatePlan,
   generatePlanFromDraft,
   savePlan,
+  savePlanMeals,
   generateDocPlan,
   getPlan,
   getPlanById,
+  getPlanByThreadId,
   getList,
   generateShoppingList,
   getPlans,
