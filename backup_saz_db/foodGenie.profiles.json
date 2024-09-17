@@ -1,0 +1,458 @@
+[{
+  "_id": {
+    "$oid": "6498757e9b00e1cfdd583c21"
+  },
+  "diners": 1,
+  "preferences": "Ninguna",
+  "restrictions": "Nada",
+  "status": "active",
+  "name": "Leo Usuario",
+  "accountId": {
+    "$oid": "6498757e9b00e1cfdd583c20"
+  }
+},
+{
+  "_id": {
+    "$oid": "64aae66d236c1579a7b4adf7"
+  },
+  "diners": 1,
+  "preferences": "Rica en proteinas",
+  "restrictions": "Comida vegetariana",
+  "name": "Leo Merlo",
+  "accountId": {
+    "$oid": "64aae66d236c1579a7b4adf6"
+  },
+  "status": "active"
+},
+{
+  "_id": {
+    "$oid": "64c4176d4d59dad56e1f6f80"
+  },
+  "status": "active",
+  "name": "Leo",
+  "accountId": "64c4176d4d59dad56e1f6f7f"
+},
+{
+  "_id": {
+    "$oid": "64c41a04af7999e4f497a45d"
+  },
+  "accountType": "doc",
+  "status": "inactive",
+  "name": "Dra. Mabel Tres Tiempos",
+  "accountId": {
+    "$oid": "64c41a04af7999e4f497a45c"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c41a32143650fdb9b78365"
+  },
+  "accountType": "doc",
+  "status": "inactive",
+  "name": "Dr. Juan Carlos Pepe",
+  "accountId": {
+    "$oid": "64c41a32143650fdb9b78364"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c41a686fffca527b91d09b"
+  },
+  "accountType": "doc",
+  "status": "inactive",
+  "name": "Dra. Juana Mansa",
+  "accountId": {
+    "$oid": "64c41a686fffca527b91d09a"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c41c491007bf4e50e383d4"
+  },
+  "accountType": "doc",
+  "status": "inactive",
+  "name": "dr.leo@gmail.com",
+  "accountId": {
+    "$oid": "64c41c491007bf4e50e383d3"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c41c61e778b7229afc6e8c"
+  },
+  "accountType": "doc",
+  "status": "active",
+  "name": "Dr. Carlos Gonzales",
+  "accountId": {
+    "$oid": "64c41c61e778b7229afc6e8b"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c41d835729c55ecd2ac6f8"
+  },
+  "accountId": {
+    "$oid": "64c41d835729c55ecd2ac6f7"
+  },
+  "name": "user.leo",
+  "status": "active"
+},
+{
+  "_id": {
+    "$oid": "64c5021f07017b8b99b6f33d"
+  },
+  "accountId": {
+    "$oid": "64c5021f07017b8b99b6f33c"
+  },
+  "name": "patients.leo",
+  "status": "inactive",
+  "docId": {
+    "$oid": "64c41c61e778b7229afc6e8c"
+  },
+  "profileId": "64c41c61e778b7229afc6e8c"
+},
+{
+  "_id": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "accountType": "doc",
+  "docId": "64cff8161e005792cd6db9b7",
+  "status": "active",
+  "name": "Dr. Juan Carlos Pepe",
+  "accountId": {
+    "$oid": "64ce977a125cd9a4025ac6ee"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cea939e7cbc35ff9763bae"
+  },
+  "accountId": {
+    "$oid": "64cea939e7cbc35ff9763bad"
+  },
+  "name": "patient.leo.2",
+  "status": "active",
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ceaaef3e4d9f42dbd6dfad"
+  },
+  "accountId": {
+    "$oid": "64ceaaef3e4d9f42dbd6dfac"
+  },
+  "name": "juan.paciente@gmail.com",
+  "status": "active"
+},
+{
+  "_id": {
+    "$oid": "64ceb1c4d06d5163caf0501e"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "Juan Paciente Jr",
+  "accountId": {
+    "$oid": "64ceb1c4d06d5163caf0501d"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ceb6a9176faafd02e89cf4"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "ju.anpaciente@gmail.com",
+  "accountId": {
+    "$oid": "64ceb6a9176faafd02e89cf3"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ceb6ef176faafd02e89cf6"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "jua.npaciente@gmail.com",
+  "accountId": {
+    "$oid": "64ceb6ef176faafd02e89cf5"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cfcea2cc808a09e5ed240d"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "Leo Paciente 1",
+  "accountId": {
+    "$oid": "64cfcea2cc808a09e5ed240c"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff0c47b9a3de787c5726a"
+  },
+  "accountType": "user",
+  "docId": "64ce977a125cd9a4025ac6ef",
+  "status": "inactive",
+  "name": "m.erloleandro@gmail.com",
+  "accountId": {
+    "$oid": "64cff0c47b9a3de787c57269"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff18aeb440481c3521bb0"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "me.rloleandro@gmail.com",
+  "accountId": {
+    "$oid": "64cff18aeb440481c3521baf"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff2187850ec3ff4b03ba0"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "merl.oleandro@gmail.com",
+  "accountId": {
+    "$oid": "64cff2187850ec3ff4b03b9f"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff23583b1a67a444e9550"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "merlol.eandro@gmail.com",
+  "accountId": {
+    "$oid": "64cff23583b1a67a444e954f"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff25252e34591a68aea11"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "merlole.andro@gmail.com",
+  "accountId": {
+    "$oid": "64cff25252e34591a68aea10"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff2a4032b483fc9892db7"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "merlolean.dro@gmail.com",
+  "accountId": {
+    "$oid": "64cff2a4032b483fc9892db6"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cff3803549a8aba1d8e024"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "Leo Lei",
+  "accountId": {
+    "$oid": "64cff3803549a8aba1d8e023"
+  }
+},
+{
+  "_id": {
+    "$oid": "64d178a4dd5af8627af43a1e"
+  },
+  "accountType": "doc",
+  "idLicense": "1234567",
+  "idDocument": "35095166",
+  "status": "active",
+  "name": "florenciasepulveda.26@gmail.com",
+  "accountId": {
+    "$oid": "64d178a4dd5af8627af43a1d"
+  }
+},
+{
+  "_id": {
+    "$oid": "64d17af7dd5af8627af43a21"
+  },
+  "docId": {
+    "$oid": "64d178a4dd5af8627af43a1e"
+  },
+  "status": "active",
+  "name": "flor@hotmail.com",
+  "accountId": {
+    "$oid": "64d17af7dd5af8627af43a20"
+  }
+},
+{
+  "_id": {
+    "$oid": "64d17ee8dd5af8627af43a27"
+  },
+  "diners": 2,
+  "preferences": "Como de todo menos pepino, melòn y sandìa y huevos",
+  "restrictions": "Soy vegetariana e intolerante al gluten",
+  "status": "active",
+  "name": "Florcis",
+  "accountId": {
+    "$oid": "64d17ee8dd5af8627af43a26"
+  }
+},
+{
+  "_id": {
+    "$oid": "64d2a7ddbc4631d057687097"
+  },
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  },
+  "status": "active",
+  "name": "Leandro",
+  "accountId": {
+    "$oid": "64d2a7ddbc4631d057687096"
+  }
+},
+{
+  "_id": {
+    "$oid": "6533b9d45905d7c4e98afb9e"
+  },
+  "accountType": "user",
+  "diners": 2,
+  "preferences": "Alta en proteinas, cenas que permitan guardar sobras para el almuerzo.",
+  "restrictions": "Vegetariano",
+  "status": "active",
+  "name": "Leo Planner",
+  "accountId": {
+    "$oid": "6533b9d45905d7c4e98afb9d"
+  }
+},
+{
+  "_id": {
+    "$oid": "653590e3910c8658aa4eb7ba"
+  },
+  "accountId": {
+    "$oid": "653590e3910c8658aa4eb7b9"
+  },
+  "name": "test.admin@test.com",
+  "status": "active",
+  "accountType": "admin"
+},
+{
+  "_id": {
+    "$oid": "65359395c693a531d10cc0df"
+  },
+  "accountId": {
+    "$oid": "65359395c693a531d10cc0de"
+  },
+  "name": "Admin Leo",
+  "status": "active",
+  "accountType": "admin"
+},
+{
+  "_id": {
+    "$oid": "65669a9882ac117424f84428"
+  },
+  "accountType": "user",
+  "diners": 2,
+  "preferences": "Todas las comidas sean flan, flan salados para almuerzo y cena, flan dulces para desayuno",
+  "restrictions": "Ninguna",
+  "status": "active",
+  "name": "Ceci",
+  "accountId": {
+    "$oid": "65669a9882ac117424f84427"
+  }
+},
+{
+  "_id": {
+    "$oid": "65679dea82ac117424f8442f"
+  },
+  "accountType": "doc",
+  "status": "active",
+  "name": "Dra. Miriam Lens",
+  "accountId": {
+    "$oid": "65679dea82ac117424f8442e"
+  }
+},
+{
+  "_id": {
+    "$oid": "6567a87a82ac117424f84439"
+  },
+  "accountId": {
+    "$oid": "6567a87a82ac117424f84438"
+  },
+  "name": "test.user.6@test.com",
+  "status": "active",
+  "accountType": "user",
+  "docId": {
+    "$oid": "64ce977a125cd9a4025ac6ef"
+  }
+},
+{
+  "_id": {
+    "$oid": "663e8526de4cedfda738e591"
+  },
+  "accountId": {
+    "$oid": "663e8526de4cedfda738e590"
+  },
+  "name": "test.doc.5@test.com",
+  "status": "active",
+  "accountType": "user"
+},
+{
+  "_id": {
+    "$oid": "663e8547de4cedfda738e594"
+  },
+  "accountType": "doc",
+  "idLicense": "225135",
+  "idDocument": "33573509",
+  "status": "active",
+  "name": "test.doc.6@test.com",
+  "accountId": {
+    "$oid": "663e8547de4cedfda738e593"
+  },
+  "subscription_start": {
+    "$date": "2024-05-10T21:05:49.993Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "663f8912fad5308de5f032be"
+  },
+  "accountId": {
+    "$oid": "663f8912fad5308de5f032bd"
+  },
+  "name": "test.user.7@test.com",
+  "status": "active",
+  "accountType": "user",
+  "docId": {
+    "$oid": "663e8547de4cedfda738e594"
+  }
+}]

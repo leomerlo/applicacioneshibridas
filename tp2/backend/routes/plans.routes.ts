@@ -7,6 +7,9 @@ import { Request, Response } from 'express';
 const router = Router();
 
 router.get('/plan', [validateToken, addProfileIdToBody], controller.getPlan);
+router.post('/plan/draft', [validateToken, addProfileIdToBody], controller.draftPlan);
+router.post('/plan/saveDraft', [validateToken, addProfileIdToBody], controller.generatePlanFromDraft);
+router.post('/plan/saveDraft/:id', [validateToken, addProfileIdToBody], controller.generatePlanFromDraft);
 router.post('/plan/new', [validateToken, addProfileIdToBody], controller.generateRecipies);
 router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlanById);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);

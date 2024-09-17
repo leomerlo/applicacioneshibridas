@@ -21,7 +21,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const model3 = "gpt-3.5-turbo-16k";
-const model4 = "gpt-4-0125-preview";
+const model4 = "gpt-4o-mini";
 const temperature = 0;
 function promptHelper(systemPrompt, userPrompt) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -280,7 +280,7 @@ function generateRecipies(restrictions, preferences, listado) {
 
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
-  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  Usa esto como ejemplo manteniendo los nombres en inglés para el formato pero no para las comidas o valores nutricionales:
   {
     "monday": {
       "breakfast": {
@@ -313,16 +313,6 @@ function startThread(title, restrictions, preferences) {
     return __awaiter(this, void 0, void 0, function* () {
         const thread = yield openai.beta.threads.createAndRun({
             assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-            thread: {
-                messages: [
-                    {
-                        role: "user",
-                        content: `
-          Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
-          Restricciones: ${restrictions}. Preferencias: ${preferences}.`
-                    }
-                ]
-            },
             metadata: {
                 title,
                 restrictions,
@@ -341,18 +331,121 @@ function addMessages(threadId, message) {
         return void 0;
     });
 }
-function startRun(threadId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let run = yield openai.beta.threads.runs.create(threadId, {
-            assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-        });
-        while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-            yield new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            run = yield openai.beta.threads.runs.retrieve(run.thread_id, run.id);
+/*async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  try {
+    const run = await openai.beta.threads.runs.create(
+      threadId,
+      {
+        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+        stream: true
+      }
+    );
+
+    for await (const event of run) {
+      if (event.event === "thread.run.step.delta") {
+        console.log("-- Event Delta");
+        console.log(event.data.delta.step_details.tool_calls[0].function.arguments);
+      } else if (event.event === "thread.run.requires_action") {
+        try {
+          console.log("-- Event Requires Action");
+          const threadId = event.data.thread_id;
+          const meals = {};
+          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
+          tool_calls?.map(async (tool: RequiredActionFunctionToolCall) => {
+            console.log("-- Tools Calls", tool);
+            if (tool.function.name === "day_planner") {
+              const args = JSON.parse(tool.function.arguments);
+              console.log("-- Day Planner");
+              meals[args.day] = args.meals;
+            }
+          });
+          const plan = await planService.getPlanByThreadId(threadId);
+          if (plan) {
+            //console.log("-- Plan Exists");
+            console.log(meals);
+            //await planService.savePlanMeals(plan, meals);
+            submitToolOutputs({ success: true }, event.data.id, threadId);
+          }
+        } catch (error) {
+          console.log(error);
         }
-        if (run.status === 'completed') {
-            const messages = yield openai.beta.threads.messages.list(run.thread_id);
-            return messages;
+      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+        const response = event.data.delta.content[0].text.value;
+        dataCB(response);
+      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
+        dataEnd("Plan guardado con éxito");
+      }
+    }
+  } catch (error) {
+    // openai.beta.threads.runs.cancel(threadId, event.data.id);
+    console.log("Run failed", error);
+  }
+}*/
+function startRun(threadId, assistant, dataCB, dataEnd) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_2, _b, _c;
+        var _d;
+        const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
+        try {
+            const run = yield openai.beta.threads.runs.create(threadId, {
+                assistant_id: assistant_id,
+                stream: true
+            });
+            try {
+                for (var _e = true, run_1 = __asyncValues(run), run_1_1; run_1_1 = yield run_1.next(), _a = run_1_1.done, !_a; _e = true) {
+                    _c = run_1_1.value;
+                    _e = false;
+                    const event = _c;
+                    // console.log("-- Event", event.event);
+                    if (event.event === "thread.run.step.delta") {
+                        // console.log("-- Event Delta");
+                    }
+                    else if (event.event === "thread.run.requires_action") {
+                        try {
+                            // console.log("-- Event Requires Action");
+                            const threadId = event.data.thread_id;
+                            const tool_calls = (_d = event.data.required_action) === null || _d === void 0 ? void 0 : _d.submit_tool_outputs.tool_calls;
+                            const tool_outputs = tool_calls === null || tool_calls === void 0 ? void 0 : tool_calls.map((tool) => {
+                                console.log(tool.function.name);
+                                if (tool.function.name === "day_planner") {
+                                    const args = JSON.parse(tool.function.arguments);
+                                    dataCB(args);
+                                    return {
+                                        tool_call_id: tool.id,
+                                        output: "success"
+                                    };
+                                }
+                            });
+                            yield submitToolOutputs(tool_outputs, event.data.id, threadId);
+                            dataEnd("");
+                        }
+                        catch (error) {
+                            // console.log(error);
+                        }
+                    }
+                    else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+                        const response = event.data.delta.content[0].text.value;
+                        dataCB(response);
+                    }
+                    else if (event.event === "thread.message.completed") {
+                        dataEnd(event);
+                    }
+                    else if (event.event === "thread.run.completed") {
+                        dataEnd(event);
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (!_e && !_a && (_b = run_1.return)) yield _b.call(run_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+        }
+        catch (error) {
+            // openai.beta.threads.runs.cancel(threadId, event.data.id);
+            console.log("Run failed", error);
         }
     });
 }
@@ -360,6 +453,21 @@ function getThreadMessages(threadId) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield openai.beta.threads.messages.list(threadId);
         return result;
+    });
+}
+function removeLastMessages(threadId_1) {
+    return __awaiter(this, arguments, void 0, function* (threadId, limit = 2) {
+        const result = yield openai.beta.threads.messages.list(threadId, { limit });
+        // console.log("-- Message cleanup");
+        try {
+            yield result.data.map((message) => __awaiter(this, void 0, void 0, function* () {
+                yield openai.beta.threads.messages.del(threadId, message.id);
+            }));
+            return void 0;
+        }
+        catch (error) {
+            console.error("Error removing messages:", error);
+        }
     });
 }
 function getLastMessage(threadId) {
@@ -376,4 +484,34 @@ function getThread(threadId) {
         return lastRun;
     });
 }
-export { generatePlan, generateShoppingList, generateRecipie, generateRecipies, startThread, addMessages, startRun, getLastMessage, getThread, getThreadMessages };
+function submitToolOutputs(tool, runId, threadId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_3, _b, _c;
+        try {
+            console.log(tool);
+            // Use the submitToolOutputsStream helper
+            const stream = openai.beta.threads.runs.submitToolOutputsStream(threadId, runId, { tool_outputs: tool });
+            try {
+                for (var _d = true, stream_1 = __asyncValues(stream), stream_1_1; stream_1_1 = yield stream_1.next(), _a = stream_1_1.done, !_a; _d = true) {
+                    _c = stream_1_1.value;
+                    _d = false;
+                    const event = _c;
+                    if (event.event === "thread.run.completed") {
+                        return event;
+                    }
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (!_d && !_a && (_b = stream_1.return)) yield _b.call(stream_1);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+        }
+        catch (error) {
+            console.error("Error submitting tool outputs:", error);
+        }
+    });
+}
+export { generatePlan, generateShoppingList, generateRecipie, generateRecipies, startThread, addMessages, startRun, getLastMessage, getThread, getThreadMessages, removeLastMessages };

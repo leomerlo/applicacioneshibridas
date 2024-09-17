@@ -8,9 +8,11 @@ import { useNotifications } from "../contexts/NotificationsContext";
 import type { Patient } from "../services/patients.service";
 import FooterMenu from "../components/FooterMenu";
 import Button from "../components/Button";
+import { useProfile } from "../contexts/ProfileContext";
 
 const AssignPlan = () => {
   const { id } = useParams<{ id: string }>();
+  const { plans } = useProfile(); 
   const [loading, setLoading] = useState(false);
   const [patient, setPatient] = useState<Patient>();
   const notifications = useNotifications();
@@ -60,7 +62,7 @@ const AssignPlan = () => {
     <div className="container mx-auto">
       <GoBack />
       <h1 className="text-4xl mt-6 mb-2">Asignar Planes</h1>
-      <PlanList onPlanClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
+      <PlanList plans={plans.filter((plan) => plan.meta.status != 'draft')} onPlanClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
       <FooterMenu>
         <Button full onClick={createPlanHandler}>Crear Plan</Button>
       </FooterMenu>

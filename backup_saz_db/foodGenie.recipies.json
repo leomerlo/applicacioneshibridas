@@ -1,0 +1,84 @@
+[{
+  "_id": {
+    "$oid": "6496516707ec088f5ad13b25"
+  },
+  "nutrition": {
+    "calorias": 350,
+    "carbohidratos": 20,
+    "grasas": 15,
+    "proteinas": 25
+  },
+  "instructions": [
+    "Cortar el tofu en cubos y reservar.",
+    "Cortar la coliflor en floretes pequeños.",
+    "Pelar y cortar la zanahoria en rodajas finas.",
+    "Cortar el pimiento rojo en tiras.",
+    "Picar la cebolla y el ajo finamente.",
+    "En una sartén grande, calentar el aceite de oliva a fuego medio-alto.",
+    "Agregar la cebolla y el ajo, y cocinar hasta que estén dorados.",
+    "Añadir el tofu y cocinar por 5 minutos, removiendo ocasionalmente.",
+    "Agregar la coliflor, la zanahoria y el pimiento rojo a la sartén.",
+    "Cocinar por 8-10 minutos, o hasta que las verduras estén tiernas pero aún crujientes.",
+    "Agregar la salsa de soja, el jengibre, la sal y la pimienta. Mezclar bien.",
+    "Cocinar por 2 minutos más, asegurándose de que todos los ingredientes estén bien cubiertos con la salsa.",
+    "Servir caliente y disfrutar."
+  ],
+  "ingredients": [
+    {
+      "unit": "gr",
+      "quantity": 200,
+      "name": "tofu"
+    },
+    {
+      "unit": "gr",
+      "quantity": 200,
+      "name": "coliflor"
+    },
+    {
+      "unit": "unidad",
+      "quantity": 1,
+      "name": "zanahoria"
+    },
+    {
+      "unit": "unidad",
+      "quantity": 1,
+      "name": "pimiento rojo"
+    },
+    {
+      "unit": "unidad",
+      "quantity": 1,
+      "name": "cebolla"
+    },
+    {
+      "unit": "dientes",
+      "quantity": 2,
+      "name": "ajo"
+    },
+    {
+      "unit": "cucharadas",
+      "quantity": 2,
+      "name": "aceite de oliva"
+    },
+    {
+      "unit": "cucharadas",
+      "quantity": 2,
+      "name": "salsa de soja"
+    },
+    {
+      "unit": "cucharadita",
+      "quantity": 1,
+      "name": "jengibre"
+    },
+    {
+      "unit": "pizcas",
+      "quantity": 2,
+      "name": "sal"
+    },
+    {
+      "unit": "pizca",
+      "quantity": 1,
+      "name": "pimienta"
+    }
+  ],
+  "name": "salteado de tofu con vegetales y coliflor"
+}]

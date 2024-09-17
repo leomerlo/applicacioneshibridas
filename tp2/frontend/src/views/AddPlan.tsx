@@ -38,8 +38,8 @@ const AddPlan = () => {
     }).then((resp) => {
       setLoading(false);
       if(resp.status === 200){
-        const threadId = resp.data.thread_id;
-        navigate(`/plan/${threadId}/assistant`);
+        const planId = resp.data.planId;
+        navigate(`/plan/${planId}/assistant`);
       } else {
         
       }

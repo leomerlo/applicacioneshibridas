@@ -1,14 +1,20 @@
-import { useProfile } from "../contexts/ProfileContext"
 import { Plan } from "../contexts/PlanContext";
 import PlanCard from "./PlanCard";
 
 export type PlanListProps = {
+  plans: Plan[],
   onPlanClick: (planId: string) => void,
   patientName?: string
 }
 
 const PlanList = (props: PlanListProps) => {
-  const { plans } = useProfile();
+  const planClickHandler = (plan: Plan): void => {
+    if (plan.meta.status === "draft") {
+      props.onPlanClick(`${plan._id}/assistant`);
+    } else {
+      props.onPlanClick(plan._id as string);
+    }
+  }
   
   return (
     <div className="patient-list h-full flex flex-col overflow-y-auto">
@@ -17,9 +23,9 @@ const PlanList = (props: PlanListProps) => {
       </p> : <p className="mb-8"></p>}
       
       <ul className="flex-grow">
-        { plans.map((plan: Plan) => (
+        { props.plans.map((plan: Plan) => (
         <li key={plan._id}>
-          <PlanCard plan={plan} onClick={(planId: string) => { props.onPlanClick(planId) }}/>
+          <PlanCard plan={plan} onClick={() => { planClickHandler(plan) }}/>
         </li>
         ))}
       </ul>

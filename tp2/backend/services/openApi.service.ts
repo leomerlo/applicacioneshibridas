@@ -1,8 +1,7 @@
 import { OpenAI } from "openai";
 import dotenv from 'dotenv'
-import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
-import { Meals } from "../types/plan";
+import { RequiredActionFunctionToolCall, Run } from "openai/resources/beta/threads/runs/runs";
 
 dotenv.config()
 
@@ -10,7 +9,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const model3 = "gpt-3.5-turbo-16k";
-const model4 = "gpt-4-0125-preview";
+const model4 = "gpt-4o-mini";
 const temperature = 0;
 
 async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
@@ -250,7 +249,7 @@ async function generateRecipies(restrictions: string, preferences: string, lista
 
   Formatea la respuesta completa como un solo string JSON sin saltos de linea o palabras que no sean parte de la respuesta.
 
-  Usa esto como ejemplo para el formato pero no para las comidas o valores nutricionales:
+  Usa esto como ejemplo manteniendo los nombres en inglés para el formato pero no para las comidas o valores nutricionales:
   {
     "monday": {
       "breakfast": {
@@ -280,19 +279,9 @@ async function generateRecipies(restrictions: string, preferences: string, lista
   return await promptHelper(systemPrompt, userPrompt);
 }
 
-async function startThread(title: string, restrictions: string, preferences: string) {
+async function startThread(title: string, restrictions: string, preferences: string): Promise<Run> {
   const thread = await openai.beta.threads.createAndRun({
     assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-    thread: {
-      messages: [
-        {
-          role: "user",
-          content: `
-          Armame un plan de comidas semanal con las siguientes restricciones y preferencias.
-          Restricciones: ${restrictions}. Preferencias: ${preferences}.`
-        }
-      ]
-    },
     metadata: {
       title,
       restrictions,
@@ -315,34 +304,124 @@ async function addMessages(threadId: string, message: string) {
   return void 0;
 }
 
-async function startRun(threadId: string) {
-  let run = await openai.beta.threads.runs.create(
-    threadId,
-    { 
-      assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+/*async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+  try {
+    const run = await openai.beta.threads.runs.create(
+      threadId,
+      { 
+        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+        stream: true
+      }
+    );
+
+    for await (const event of run) {
+      if (event.event === "thread.run.step.delta") {
+        console.log("-- Event Delta");
+        console.log(event.data.delta.step_details.tool_calls[0].function.arguments);
+      } else if (event.event === "thread.run.requires_action") { 
+        try {
+          console.log("-- Event Requires Action");
+          const threadId = event.data.thread_id;
+          const meals = {};
+          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
+          tool_calls?.map(async (tool: RequiredActionFunctionToolCall) => {
+            console.log("-- Tools Calls", tool);
+            if (tool.function.name === "day_planner") {
+              const args = JSON.parse(tool.function.arguments);
+              console.log("-- Day Planner");
+              meals[args.day] = args.meals;
+            }
+          });
+          const plan = await planService.getPlanByThreadId(threadId);
+          if (plan) {
+            //console.log("-- Plan Exists");
+            console.log(meals);
+            //await planService.savePlanMeals(plan, meals);
+            submitToolOutputs({ success: true }, event.data.id, threadId);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+        const response = event.data.delta.content[0].text.value;
+        dataCB(response);
+      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
+        dataEnd("Plan guardado con éxito");
+      }
     }
-  );
-
-  while (['queued', 'in_progress', 'cancelling'].includes(run.status)) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-    run = await openai.beta.threads.runs.retrieve(
-      run.thread_id,
-      run.id
-    );
+  } catch (error) {
+    // openai.beta.threads.runs.cancel(threadId, event.data.id);
+    console.log("Run failed", error);
   }
+}*/
 
-  if (run.status === 'completed') {
-    const messages = await openai.beta.threads.messages.list(
-      run.thread_id
+async function startRun(threadId: string, assistant: 'message' | 'plan' ,dataCB: (data: string) => void, dataEnd: (data: unknown) => void) {
+  const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
+  try {
+    const run = await openai.beta.threads.runs.create(
+      threadId,
+      { 
+        assistant_id: assistant_id,
+        stream: true
+      }
     );
 
-    return messages;
+    for await (const event of run) {
+      // console.log("-- Event", event.event);
+      if (event.event === "thread.run.step.delta") {
+        // console.log("-- Event Delta");
+      } else if (event.event === "thread.run.requires_action") { 
+        try {
+          // console.log("-- Event Requires Action");
+          const threadId = event.data.thread_id;
+          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
+          const tool_outputs = tool_calls?.map((tool: RequiredActionFunctionToolCall) => {
+            console.log(tool.function.name);
+            if (tool.function.name === "day_planner") {
+              const args = JSON.parse(tool.function.arguments);
+              dataCB(args);
+              return { 
+                tool_call_id: tool.id,
+                output: "success"
+              };
+            }
+          });
+          await submitToolOutputs(tool_outputs, event.data.id, threadId);
+          dataEnd("");
+        } catch (error) {
+          // console.log(error);
+        }
+      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
+        const response = event.data.delta.content[0].text.value;
+        dataCB(response);
+      } else if (event.event === "thread.message.completed") {
+        dataEnd(event);
+      } else if (event.event === "thread.run.completed") {
+        dataEnd(event);
+      }
+    }
+  } catch (error) {
+    // openai.beta.threads.runs.cancel(threadId, event.data.id);
+    console.log("Run failed", error);
   }
 }
 
 async function getThreadMessages(threadId: string) {
   const result = await openai.beta.threads.messages.list(threadId);
   return result;
+}
+
+async function removeLastMessages(threadId: string, limit: number = 2) {
+  const result = await openai.beta.threads.messages.list(threadId, { limit });
+  // console.log("-- Message cleanup");
+  try {
+    await result.data.map(async (message) => {
+      await openai.beta.threads.messages.del(threadId, message.id)
+    });
+    return void 0;
+  } catch (error) {
+    console.error("Error removing messages:", error);
+  }
 }
 
 async function getLastMessage(threadId: string) {
@@ -358,6 +437,25 @@ async function getThread(threadId: string) {
   return lastRun;
 }
 
+async function submitToolOutputs(tool: any, runId: string, threadId: string) {
+  try {
+    console.log(tool);
+    // Use the submitToolOutputsStream helper
+    const stream = openai.beta.threads.runs.submitToolOutputsStream(
+      threadId,
+      runId,
+      { tool_outputs: tool },
+    );
+    for await (const event of stream) {
+      if(event.event === "thread.run.completed") {
+        return event; 
+      }
+    }
+  } catch (error) {
+    console.error("Error submitting tool outputs:", error);
+  }
+}
+
 export {
   generatePlan,
   generateShoppingList,
@@ -368,5 +466,6 @@ export {
   startRun,
   getLastMessage,
   getThread,
-  getThreadMessages
+  getThreadMessages,
+  removeLastMessages
 }

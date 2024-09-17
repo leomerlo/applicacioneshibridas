@@ -14,6 +14,163 @@ import * as openApi from './openApi.service.js';
 import * as profileService from './profile.service.js';
 import * as recipiesService from './recipies.service.js';
 import { db, client } from './mongo.service.js';
+function blankPlan() {
+    return {
+        meta: {
+            status: 'draft',
+            title: '',
+            restrictions: '',
+            preferences: ''
+        },
+        meals: {
+            monday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            tuesday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            wednesday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            thursday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            friday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            saturday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                }
+            },
+            sunday: {
+                breakfast: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                lunch: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+                dinner: {
+                    name: '',
+                    ingredients: [],
+                    instructions: [],
+                },
+            },
+        },
+    };
+}
+function draftPlan(profileId, plan) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const profile = yield profileService.getProfile(profileId);
+        if (!profile) {
+            throw new Error('El perfil no existe');
+        }
+        const blank = blankPlan();
+        const newPlan = Object.assign(Object.assign({}, blank), { meta: Object.assign(Object.assign({}, blank.meta), plan), docId: new ObjectId(profileId) });
+        // Saves the plan to the database and returns the id
+        const response = yield db.collection("plans").insertOne(newPlan);
+        return response.insertedId;
+    });
+}
+function updatePlanMeta(planId, planMeta) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(planId) });
+        if (planExists) {
+            yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(planId) }, { $set: { meta: Object.assign(Object.assign({}, planExists.meta), planMeta) } });
+        }
+        else {
+            throw new Error('El plan no existe');
+        }
+    });
+}
 function generatePlan(profileId) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
@@ -30,26 +187,64 @@ function generatePlan(profileId) {
         return meals;
     });
 }
+function generatePlanFromDraft(draftId, meals) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const plan = yield db.collection("plans").findOne({ _id: new ObjectId(draftId) });
+        if (!plan) {
+            throw new Error('No se encontro el plan');
+        }
+        planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
+            .then((meals) => __awaiter(this, void 0, void 0, function* () {
+            yield db.collection("plans").findOneAndReplace({ _id: new ObjectId(draftId) }, Object.assign(Object.assign({}, plan), { meals }));
+        }))
+            .catch((err) => {
+            console.log('Validation error', err);
+        });
+        return meals;
+    });
+}
 function savePlan(profileId, meals) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
         planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
             .then((meals) => __awaiter(this, void 0, void 0, function* () {
-            const plan = {
-                meals,
-                profileId: new ObjectId(profileId)
-            };
             const planExists = yield db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
             if (planExists) {
-                yield db.collection("plans").findOneAndReplace({ profileId: new ObjectId(profileId) }, plan);
+                yield db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
             }
             else {
+                const plan = Object.assign(Object.assign({}, blankPlan()), { meals, profileId: new ObjectId(profileId) });
                 yield db.collection("plans").insertOne(plan);
             }
         }))
             .catch((err) => {
             console.log('Validation error', err);
         });
+    });
+}
+function savePlanMeals(plan, meals) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        console.log(meals);
+        if (typeof meals === 'string') {
+            meals = JSON.parse(meals);
+        }
+        try {
+            console.log('Starting validation');
+            yield planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true });
+            const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(plan) });
+            if (planExists) {
+                console.log("Saving plan");
+                yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
+            }
+            else {
+                throw new Error('El plan no existe');
+            }
+        }
+        catch (err) {
+            console.log('Validation error', err);
+        }
     });
 }
 function generateDocPlan(docId, preferences, restrictions, title, listado, thread) {
@@ -90,6 +285,13 @@ function getPlanById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
         const plan = yield db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
+        return plan;
+    });
+}
+function getPlanByThreadId(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const plan = yield db.collection("plans").findOne({ "meta.threadId": id }, { projection: { _id: 0, profileId: 0 } });
         return plan;
     });
 }
@@ -214,4 +416,4 @@ function generateRecipies(restrictions, preferences, listado) {
         return meals;
     });
 }
-export { generatePlan, savePlan, generateDocPlan, getPlan, getPlanById, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies };
+export { draftPlan, updatePlanMeta, generatePlan, generatePlanFromDraft, savePlan, savePlanMeals, generateDocPlan, getPlan, getPlanById, getPlanByThreadId, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies };

@@ -10,6 +10,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
+function draftPlan(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const profileId = req.body.profileId;
+        const plan = req.body.plan;
+        if (!plan || !plan.title || (!plan.preferences && !plan.restrictions)) {
+            res.status(400).json({ error: { message: 'Faltan datos para crear el plan' } });
+            return;
+        }
+        // Si no es doctor, no puede tener planes ya creados
+        const profile = yield profileService.getProfile(profileId);
+        const profilePlan = yield planService.getPlan(profileId);
+        if (profile.accountType !== 'doc' && profilePlan) {
+            res.status(400).json({ error: { message: 'El perfil ya tiene un plan asignado' } });
+            return;
+        }
+        // Creamos el plan
+        let planId;
+        console.log("Creando el plan");
+        try {
+            planId = yield planService.draftPlan(profileId, plan);
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+        console.log("Plan creado", planId);
+        try {
+            console.log("Creando thread");
+            // Creamos el thread
+            const thread = yield openAiService.startThread(plan.title, plan.restrictions, plan.preferences);
+            console.log("Thread creado", thread.thread_id);
+            // Guardamos el thread id en la base de datos
+            yield planService.updatePlanMeta(planId, { threadId: thread.thread_id });
+            console.log("Plan", planId, "actualizado con thread", thread.thread_id);
+            res.status(200).json({ planId });
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+    });
+}
+;
 function generatePlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const profileId = req.body.profileId;
@@ -27,6 +68,76 @@ function generatePlan(req, res) {
         }
     });
 }
+function generatePlanFromDraft(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        const planId = req.params.id;
+        const profileId = req.body.profileId;
+        let draftId;
+        if (!planId) {
+            console.log("No hay plan ID, tomando el plan del perfil");
+            const draft = yield planService.getPlan(profileId);
+            draftId = (_a = draft === null || draft === void 0 ? void 0 : draft._id) === null || _a === void 0 ? void 0 : _a.toString();
+        }
+        else {
+            draftId = planId;
+        }
+        if (!draftId) {
+            res.status(400).json({ error: { message: 'No se encontro el draft' } });
+            return;
+        }
+        try {
+            const plan = yield planService.getPlanById(draftId);
+            const { threadId } = plan.meta;
+            const meals = yield generateRecipiesFull(threadId);
+            console.log("Ready for saving", meals);
+            yield planService.savePlanMeals(draftId, meals);
+            res.status(200).json({ message: "Plan finished" });
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
+    });
+}
+function generateRecipiesFull(threadId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let meals = {};
+        const message = "Guardar el plan completo";
+        yield openAiService.addMessages(threadId, message);
+        console.log("Full plan start");
+        let i = 0;
+        yield openAiService.startRun(threadId, 'plan', (data) => {
+            i++;
+            if (i < 10) {
+                console.log(data);
+            }
+        }, (data) => __awaiter(this, void 0, void 0, function* () {
+            if (data.event === 'thread.message.completed') {
+                console.log("Full plan finished");
+                meals = data.data.content[0].text.value;
+                return meals;
+            }
+            return meals;
+        }));
+        return meals;
+    });
+}
+// async function generateRecipiesByDay(meals: any, threadId: string) {
+//   let plan = [];
+//   for (let day in meals) {
+//     console.log("Day start ", day);
+//     const message = "Generame las recetas para el dia " + day;
+//     await openAiService.addMessages(threadId, message);
+//     await openAiService.startRun(threadId, (data) => {
+//       plan[day] = data;
+//     }, async () => {
+//       console.log("Day finished ", day);
+//       // Al terminar, removemos los mensajes generados
+//       await openAiService.removeLastMessages(threadId);
+//     });
+//   }
+//   return plan;
+// }
 function generateDocPlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const docId = req.body.profileId;
@@ -230,8 +341,11 @@ function assistantAddMessage(req, res) {
         const threadId = req.body.thread;
         const message = req.body.message;
         yield openAiService.addMessages(threadId, message);
-        const response = yield openAiService.startRun(threadId);
-        res.status(200).json(response);
+        yield openAiService.startRun(threadId, 'message', (data) => {
+            res.write(data);
+        }, (data) => {
+            res.end(data);
+        });
     });
 }
 function assistantGeneratePlan(req, res) {
@@ -247,4 +361,4 @@ function assistantGeneratePlan(req, res) {
         res.status(200).json(plan);
     });
 }
-export { generatePlan, generateDocPlan, getPlans, getPlan, getPlanById, getList, assignPlan, deletePlan, replaceRecipie, generateRecipies, assistantStartThread, assistantAddMessage, assistantGeneratePlan, assistantGetThreadMessages, assistantGetThread };
+export { draftPlan, generatePlanFromDraft, generatePlan, generateDocPlan, getPlans, getPlan, getPlanById, getList, assignPlan, deletePlan, replaceRecipie, generateRecipies, assistantStartThread, assistantAddMessage, assistantGeneratePlan, assistantGetThreadMessages, assistantGetThread };

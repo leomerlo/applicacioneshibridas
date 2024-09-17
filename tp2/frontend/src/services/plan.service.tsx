@@ -8,6 +8,10 @@ export function newDocPlan({ title, preferences, restrictions, thread, listado }
   return API.call({ uri: 'plan/doc', method: 'POST', body: { title, preferences, restrictions, thread, listado } })
 }
 
+export function savePlanFromDraft(id: string) {
+  return API.call({ uri: `plan/saveDraft/${id}`, method: 'POST' })
+}
+
 export function getPlan() {
   return API.call({ uri: 'plan' })
 }
@@ -38,15 +42,21 @@ export function replaceRecipie(day: string, meal: string, dataCB: (data: any) =>
 }
 
 export function newPlanAssistant({ title, preferences, restrictions }: { title: string, preferences: string, restrictions: string }) {
-  return API.call({ uri: 'plan/assistant/thread', method: 'POST', body: { preferences, restrictions, title } })
+  return API.call({ uri: 'plan/draft', method: 'POST', body: { plan: { preferences, restrictions, title } } })
 }
 
 export function getPlanAssistantThread(threadId: string) {
   return API.call({ uri: `plan/assistant/thread/${threadId}` })
 }
 
-export function assistantSendMessage(threadId: string, message: string) {
-  return API.call({ uri: 'plan/assistant/message', method: 'POST', body: { thread: threadId, message } })
+export function assistantSendMessage(threadId: string, message: string, dataCB: (data: any) => void, dataEnd: (response: any) => void) {
+  return API.callStream({
+    uri: 'plan/assistant/message',
+    method: 'POST',
+    body: { thread: threadId, message },
+    dataCB,
+    dataEnd
+  });
 }
 
 export default {
@@ -60,5 +70,6 @@ export default {
   replaceRecipie,
   newPlanAssistant,
   getPlanAssistantThread,
-  assistantSendMessage
+  assistantSendMessage,
+  savePlanFromDraft
 }

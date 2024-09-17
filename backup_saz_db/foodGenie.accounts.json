@@ -1,0 +1,364 @@
+[{
+  "_id": {
+    "$oid": "6484b884a81f0c4c3def6f09"
+  },
+  "userName": "leo@leo.com",
+  "password": "$2b$10$GH9hx.04Tad68FHb/.zttO9ndFzZlIDHPY8e.lzgBq5XvtZnlBCKC"
+},
+{
+  "_id": {
+    "$oid": "6486a9d9b811cb79db11c966"
+  },
+  "userName": "Jlors",
+  "password": "$2b$10$xFuaoMhX17Tvym5.TKMqoOrIB5GbKcPZ2LT1KBgAAD/SIo4p.tdOu"
+},
+{
+  "_id": {
+    "$oid": "64984f447cc249616c8dc6f0"
+  },
+  "userName": "LeoXXX",
+  "password": "$2b$10$.EkazNHunNp0xYohp16rS.TcEdny1w5HhXC1Bphngzp/3eCrtFSge"
+},
+{
+  "_id": {
+    "$oid": "649871729b00e1cfdd583c18"
+  },
+  "userName": "jlors",
+  "password": "$2b$10$Dh2xkF5R8/HGdWlhgUXfUukp6l1wcsTMdwYJTu.FhfChwqh3grH8W"
+},
+{
+  "_id": {
+    "$oid": "649871e69b00e1cfdd583c1a"
+  },
+  "userName": "Flor",
+  "password": "$2b$10$MKLVOVNflF4spn5bHutPP.gDmPPME7S.IaI1J1kuctljnN0W7RGQK"
+},
+{
+  "_id": {
+    "$oid": "6498757e9b00e1cfdd583c20"
+  },
+  "userName": "merloleandro@gmail.com",
+  "password": "$2b$10$lRb4S00BP0PVolNVFIRxk.izcJqBS6cY9gItHbbVKFrp6WJAgUuVa"
+},
+{
+  "_id": {
+    "$oid": "649a16dcf0eaa42bc5ee3f6c"
+  },
+  "userName": "merlo.leandro.luis@gmail.com",
+  "password": "$2b$10$XlMVcqeBeIIn7FdNkMCjien8Edao03pYYQ92zOlEQBIna.sdzvJOa"
+},
+{
+  "_id": {
+    "$oid": "64aae66d236c1579a7b4adf6"
+  },
+  "userName": "merlo.leandro@gmail.com",
+  "password": "$2b$10$4j.U6pqYQVqMVwja1RoyEeawz0mJSybdgv/UbERTQtesGYz8h0WyG"
+},
+{
+  "_id": {
+    "$oid": "64c4176d4d59dad56e1f6f7f"
+  },
+  "userName": "Leo",
+  "password": "$2b$10$UOZ.p2R5/HugzuwQeSKFeenxRltkLDPGeTM8lkTpcwcHEURzvBP/C"
+},
+{
+  "_id": {
+    "$oid": "64c41c61e778b7229afc6e8b"
+  },
+  "userName": "dr.leo@test.com",
+  "password": "$2b$10$EVU2mempvAi4tA4kl0bssedj/kcPfPrtF5EsUWfnp0a3ocmic30aC"
+},
+{
+  "_id": {
+    "$oid": "64c41d835729c55ecd2ac6f7"
+  },
+  "userName": "user.leo",
+  "password": "$2b$10$fuDC9nVGV53mMtOa2FR0hucE/RNChryXrenGjoQ/eDs6qizLIWYrC"
+},
+{
+  "_id": {
+    "$oid": "64c5021f07017b8b99b6f33c"
+  },
+  "userName": "patient.leo",
+  "password": "$2b$10$.1liJWqarIAz8Ck/5BalTeHE89GWXWMQzIh8hkzJtAcuIRGs/BW2m"
+},
+{
+  "_id": {
+    "$oid": "64ce977a125cd9a4025ac6ee"
+  },
+  "userName": "test.doc@test.com",
+  "password": "$2b$10$D/prDpl4rB0cS0Yz.4Yw2.pGhCuA2gQd0j8svXeTXZ8Bzoe5m.mPe"
+},
+{
+  "_id": {
+    "$oid": "64cea939e7cbc35ff9763bad"
+  },
+  "userName": "patient.leo.2",
+  "password": "$2b$10$O4u1TyznTx9bzQau3mx6q.Fc6f/qtprrXpQOiAXA/ItRS7Ws8jqDO"
+},
+{
+  "_id": {
+    "$oid": "64ceaaef3e4d9f42dbd6dfac"
+  },
+  "userName": "juan.paciente@gmail.com",
+  "password": "$2b$10$G67Ruli0AaAP.5FW/vSwAem6ecCoc8r1Rc3f/v0qDXXh/xRYEMzcS"
+},
+{
+  "_id": {
+    "$oid": "64ceb1c4d06d5163caf0501d"
+  },
+  "userName": "j.uanpaciente@gmail.com",
+  "password": "$2b$10$66E8mkTKG.q2z4eBJXmoB.jSKg4Qpf.IwzO6Y7PU7Wi9xbKeRCdWK"
+},
+{
+  "_id": {
+    "$oid": "64ceb6a9176faafd02e89cf3"
+  },
+  "userName": "ju.anpaciente@gmail.com",
+  "password": "$2b$10$nxiFnjHRALc.p1hmBU.af.p7.eV6ub2o3NMQn0mz1Xc1iySPdcCXu"
+},
+{
+  "_id": {
+    "$oid": "64ceb6ef176faafd02e89cf5"
+  },
+  "userName": "jua.npaciente@gmail.com",
+  "password": "$2b$10$3wUpL7x94T4C0Un8PpnPEOTMhefSC8lO4n6Ltaf8ZRQzYDgfQJO1K"
+},
+{
+  "_id": {
+    "$oid": "64cfcea2cc808a09e5ed240c"
+  },
+  "userName": "mer.loleandro@gmail.com",
+  "password": "$2b$10$w3e0c/MtVJdUtYRajhd5R.koLFJlTZRlXUFTzkkhlFtAUZ2YzxNbq"
+},
+{
+  "_id": {
+    "$oid": "64cff0c47b9a3de787c57269"
+  },
+  "userName": "m.erloleandro@gmail.com",
+  "password": "12345"
+},
+{
+  "_id": {
+    "$oid": "64cff18aeb440481c3521baf"
+  },
+  "userName": "me.rloleandro@gmail.com",
+  "password": "12345"
+},
+{
+  "_id": {
+    "$oid": "64cff2187850ec3ff4b03b9f"
+  },
+  "userName": "merl.oleandro@gmail.com",
+  "password": "12345"
+},
+{
+  "_id": {
+    "$oid": "64cff23583b1a67a444e954f"
+  },
+  "userName": "merlol.eandro@gmail.com",
+  "password": "12345"
+},
+{
+  "_id": {
+    "$oid": "64cff25252e34591a68aea10"
+  },
+  "userName": "merlole.andro@gmail.com",
+  "password": "12345"
+},
+{
+  "_id": {
+    "$oid": "64cff2a4032b483fc9892db6"
+  },
+  "userName": "merlolean.dro@gmail.com",
+  "password": "5A5vl556cg"
+},
+{
+  "_id": {
+    "$oid": "64cff3803549a8aba1d8e023"
+  },
+  "userName": "merlolea.ndro@gmail.com",
+  "password": "$2b$10$X3.yhzqxUHB93BtBvnDTt.hl/Lty/FTPFEA2EAoFDAdT/GrgHDdh6"
+},
+{
+  "_id": {
+    "$oid": "64d178a4dd5af8627af43a1d"
+  },
+  "userName": "florenciasepulveda.26@gmail.com",
+  "password": "$2b$10$XBPx77ui4EUBQZChzqLgQ.QLm2uRez8xWZvanCJWd9SYGNQtUTFLi"
+},
+{
+  "_id": {
+    "$oid": "64d17af7dd5af8627af43a20"
+  },
+  "userName": "flor@hotmail.com",
+  "password": "$2b$10$G/m8if2sPp6cUs6f5iaiTOjJ4MkFKTZIJsz7v.RDPPVNrwCpoMzb2"
+},
+{
+  "_id": {
+    "$oid": "64d17ee8dd5af8627af43a26"
+  },
+  "userName": "flor@flor.com",
+  "password": "$2b$10$lDfzADDqykKSdwTLvxpIN.A7JzjXC0caCX2IlGFSknHIDD3B5ucjq"
+},
+{
+  "_id": {
+    "$oid": "64d2a7ddbc4631d057687096"
+  },
+  "userName": "paciente@gmail.com",
+  "password": "$2b$10$V8mqZyW92UWE0gLdxf/BzOTbWxsREBEitiVgXeexMqj9c3SC3o0ga"
+},
+{
+  "_id": {
+    "$oid": "6533b9d45905d7c4e98afb9d"
+  },
+  "userName": "test.user@test.com",
+  "password": "$2b$10$eB3ub8cfiLwSNGE00w8CAeGKmYjPMDzRRtMcD02d0z4CMhPc7rEbC"
+},
+{
+  "_id": {
+    "$oid": "65359395c693a531d10cc0de"
+  },
+  "userName": "test.admin@test.com",
+  "password": "$2b$10$Yf0aVx1bNRcGXm2JngVI7OgPzMKeBTigxH1DLDEaAEjVIOrQ2N1/C"
+},
+{
+  "_id": {
+    "$oid": "6552ac4778981e15e48ca65e"
+  },
+  "userName": "test.admin.2@test.com",
+  "password": "$2b$10$aaof.C6DUIjgjTTe5z2Tge7PPiDh97HojWOFYR9HeGyYJ6jUZLq3e"
+},
+{
+  "_id": {
+    "$oid": "6552acdd51f2cb7399f48977"
+  },
+  "userName": "test.admin.3@test.com",
+  "password": "$2b$10$hUPfmfStpVoFLykiBCcFButoYkTrJhmvnxbwnMgIFQvNp.bU9gJRK"
+},
+{
+  "_id": {
+    "$oid": "6552aea851f2cb7399f48979"
+  },
+  "userName": "user.admin.3@test.com",
+  "password": "$2b$10$zQFtWCv0z4NLJj9/IKRBReEMtu0Z7huQ1wMhUKpg1jV27oyFMsU3G"
+},
+{
+  "_id": {
+    "$oid": "6552b08251f2cb7399f4897b"
+  },
+  "userName": "user.type.test@test.com",
+  "password": "$2b$10$Bl6ayyEAa1Z4E0S8fPhNA.KUG7xiZT605T4A2XylAh5keof2GGPXG"
+},
+{
+  "_id": {
+    "$oid": "6552b1ac51f2cb7399f4897d"
+  },
+  "userName": "pinino.pinino.yo.soy.pinino@gmail.com",
+  "password": "$2b$10$zYcuzo4j4Lx5eQ6BhHeyOu5Lf3Ki22VuOmKfwTEC/wBkTXHyRH/WK"
+},
+{
+  "_id": {
+    "$oid": "6552b25a51f2cb7399f48980"
+  },
+  "userName": "test.user.patient@test.com",
+  "password": "$2b$10$JfCsV32LUGlcDI0g5EHuxuYbjteWcyb2b4Mmcx8P3nOSSJ74uv9y6"
+},
+{
+  "_id": {
+    "$oid": "655e7cd8a5098edb00ef1c78"
+  },
+  "userName": "user.admin.4@test.com",
+  "password": "$2b$10$tyh90/dSq/4Cr/86bIxmNuegQhGPGH.2cr8nTOphn.jCwhF1B9WZa"
+},
+{
+  "_id": {
+    "$oid": "656113afa5098edb00ef1c82"
+  },
+  "userName": "test.paciente@test.com",
+  "password": "$2b$10$y9l4C4TF1oOpdKPDrzivNeZlFfspaZmr6g1ovFmXxvJd0MBzIPCry"
+},
+{
+  "_id": {
+    "$oid": "6563bc63c0651e9dbd9fa888"
+  },
+  "userName": "test.planner@test.com",
+  "password": "$2b$10$QOk.I39ZXI6oPGenacslG.fwyTYEK6pQNvcq28xTT6yIC4Y9CHCyq"
+},
+{
+  "_id": {
+    "$oid": "6563c1033c96d6c5fd4ae7d5"
+  },
+  "userName": "test.paciente.pretesis@test.com",
+  "password": "$2b$10$UMzgW5HV9zr69u4nX2fGgu5LmEsCs4Kz7y..W/gPUPXw4XKW0yfNO"
+},
+{
+  "_id": {
+    "$oid": "6563caaf7de1f4cef8575e72"
+  },
+  "userName": "test.doc.pretesis@test.com",
+  "password": "$2b$10$ymIZ3q8dqtOC8KBDDtbz0ug0bU9ca/hYAw33sh/tJ2tdujZE8E2IC"
+},
+{
+  "_id": {
+    "$oid": "6563cb9c7de1f4cef8575e76"
+  },
+  "userName": "test.admin.4@test.com",
+  "password": "$2b$10$33SmglIcttUYuvb4dkJ5yOsrqPDEfzetb8wVxACDqgY93hr5KIla."
+},
+{
+  "_id": {
+    "$oid": "6566389253e6ee254249a581"
+  },
+  "userName": "test.doc.3@test.com",
+  "password": "$2b$10$Zfru/dmBGyTfx3oDneQpm.Du1L21ctLz18H0SP3X1fe3AbLRVzHGu"
+},
+{
+  "_id": {
+    "$oid": "65667f2b53e6ee254249a587"
+  },
+  "userName": "test.user.4@test.com",
+  "password": "$2b$10$LWUkjXDKCVFrCrDqPCRYu.Pfu.n6ZNXLH3TZAQqUgQu.wwcNv8zpi"
+},
+{
+  "_id": {
+    "$oid": "65669a9882ac117424f84427"
+  },
+  "userName": "test.user.5@test.com",
+  "password": "$2b$10$99Y2IMHWT5i71CmYGMDwLuGPICF9g.5Tlsi8x.q4e4yZFQP54etOe"
+},
+{
+  "_id": {
+    "$oid": "65679dea82ac117424f8442e"
+  },
+  "userName": "test.doc.4@test.com",
+  "password": "$2b$10$ZON6PSmMe8MuwZDC7JcUgeQcYiu9YM4BqGLVtsiwE..BMJ3ly3qsu"
+},
+{
+  "_id": {
+    "$oid": "6567a87a82ac117424f84438"
+  },
+  "userName": "test.user.6@test.com",
+  "password": "$2b$10$C/FedtJJuP6LvkPmvZxZouDIRVn5LE.a5/T48ujWevQrrT8R/SXqm"
+},
+{
+  "_id": {
+    "$oid": "663e8526de4cedfda738e590"
+  },
+  "userName": "test.doc.5@test.com",
+  "password": "$2b$10$b7uwdZ3EJMhMdf3ILVOhheKC83u.oOFU6LVxZsK8AF4t.2kDokQPW"
+},
+{
+  "_id": {
+    "$oid": "663e8547de4cedfda738e593"
+  },
+  "userName": "test.doc.6@test.com",
+  "password": "$2b$10$yrakKYikoDZIoZzBPm6.UOcEoiuYzqqLoXpf41kfnu84pMXfpP6IG"
+},
+{
+  "_id": {
+    "$oid": "663f8912fad5308de5f032bd"
+  },
+  "userName": "test.user.7@test.com",
+  "password": "$2b$10$BDVAHPsaEZFgpEDIhr1TluXm4ABpSGhYjlsjw/.tnDrvmKYizdXmG"
+}]
