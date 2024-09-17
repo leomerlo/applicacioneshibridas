@@ -105,12 +105,7 @@ function generateRecipiesFull(threadId) {
         const message = "Guardar el plan completo";
         yield openAiService.addMessages(threadId, message);
         console.log("Full plan start");
-        let i = 0;
         yield openAiService.startRun(threadId, 'plan', (data) => {
-            i++;
-            if (i < 10) {
-                console.log(data);
-            }
         }, (data) => __awaiter(this, void 0, void 0, function* () {
             if (data.event === 'thread.message.completed') {
                 console.log("Full plan finished");

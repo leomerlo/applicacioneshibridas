@@ -111,15 +111,8 @@ async function generateRecipiesFull(threadId: string) {
   await openAiService.addMessages(threadId, message);
 
   console.log("Full plan start");
-
-  let i = 0;
       
   await openAiService.startRun(threadId, 'plan', (data) => {
-    i++;
-
-    if (i < 10) {
-      console.log(data);
-    }
   }, async (data) => {
     if (data.event === 'thread.message.completed') {
       console.log("Full plan finished");
