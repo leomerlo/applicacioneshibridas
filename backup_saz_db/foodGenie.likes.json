@@ -1,0 +1,110 @@
+[{
+  "_id": {
+    "$oid": "6498414366f593ca05755ffb"
+  },
+  "nutrition": {
+    "calorias": 300,
+    "carbohidratos": 40,
+    "grasas": 15,
+    "proteinas": 10
+  },
+  "instructions": [
+    "Cortar el aguacate, la lechuga y el tomate en trozos.",
+    "En un tazón grande, mezclar los garbanzos cocidos, el aguacate, la lechuga y el tomate.",
+    "Agregar el aceite de oliva, el vinagre balsámico y la sal.",
+    "Mezclar bien y servir frío."
+  ],
+  "ingredients": [
+    {
+      "unit": "gr",
+      "quantity": 100,
+      "name": "garbanzos cocidos"
+    },
+    {
+      "unit": "unidad",
+      "quantity": 1,
+      "name": "aguacate"
+    },
+    {
+      "unit": "gr",
+      "quantity": 50,
+      "name": "lechuga"
+    },
+    {
+      "unit": "unidad",
+      "quantity": 1,
+      "name": "tomate"
+    },
+    {
+      "unit": "ml",
+      "quantity": 10,
+      "name": "aceite de oliva"
+    },
+    {
+      "unit": "ml",
+      "quantity": 5,
+      "name": "vinagre balsámico"
+    },
+    {
+      "unit": "gr",
+      "quantity": 2,
+      "name": "sal"
+    }
+  ],
+  "name": "Ensalada de garbanzos y aguacate",
+  "profileId": {
+    "$oid": "6484b884a81f0c4c3def6f0a"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ab5aad665096349fdfe365"
+  },
+  "name": "Tortilla de espinacas",
+  "ingredients": [
+    {
+      "name": "espinacas",
+      "quantity": 100,
+      "unit": "gr"
+    },
+    {
+      "name": "huevos",
+      "quantity": 2,
+      "unit": "unidades"
+    },
+    {
+      "name": "queso feta",
+      "quantity": 50,
+      "unit": "gr"
+    },
+    {
+      "name": "aceite de oliva",
+      "quantity": 10,
+      "unit": "ml"
+    },
+    {
+      "name": "sal",
+      "quantity": 2,
+      "unit": "gr"
+    }
+  ],
+  "instructions": [
+    "Lavar y picar las espinacas.",
+    "Batir los huevos en un recipiente.",
+    "Agregar las espinacas picadas y el queso feta desmenuzado a los huevos batidos.",
+    "Calentar el aceite de oliva en una sartén.",
+    "Verter la mezcla de huevos, espinacas y queso en la sartén caliente.",
+    "Cocinar a fuego medio hasta que la tortilla esté dorada por ambos lados.",
+    "Agregar sal al gusto.",
+    "Servir caliente."
+  ],
+  "nutrition": {
+    "calorias": 300,
+    "carbohidratos": 5,
+    "grasas": 20,
+    "proteinas": 25
+  },
+  "profileId": {
+    "$oid": "64aae66d236c1579a7b4adf7"
+  }
+}]

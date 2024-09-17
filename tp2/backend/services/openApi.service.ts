@@ -1,11 +1,7 @@
 import { OpenAI } from "openai";
 import dotenv from 'dotenv'
-import { IncomingMessage } from 'http';
 import { Ingredients } from "../types/recipies";
-import { Meals } from "../types/plan";
 import { RequiredActionFunctionToolCall, Run } from "openai/resources/beta/threads/runs/runs";
-import { MessagesPage } from "openai/resources/beta/threads/messages";
-import * as planService from './plans.service.js';
 
 dotenv.config()
 
@@ -13,7 +9,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const model3 = "gpt-3.5-turbo-16k";
-const model4 = "gpt-4-0125-preview";
+const model4 = "gpt-4o-mini";
 const temperature = 0;
 
 async function promptHelper(systemPrompt: string, userPrompt: string): Promise<string> {
@@ -359,17 +355,19 @@ async function addMessages(threadId: string, message: string) {
   }
 }*/
 
-async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
+async function startRun(threadId: string, assistant: 'message' | 'plan' ,dataCB: (data: string) => void, dataEnd: (data: unknown) => void) {
+  const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
   try {
     const run = await openai.beta.threads.runs.create(
       threadId,
       { 
-        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+        assistant_id: assistant_id,
         stream: true
       }
     );
 
     for await (const event of run) {
+      // console.log("-- Event", event.event);
       if (event.event === "thread.run.step.delta") {
         // console.log("-- Event Delta");
       } else if (event.event === "thread.run.requires_action") { 
@@ -378,6 +376,7 @@ async function startRun(threadId: string, dataCB: (data: string) => void, dataEn
           const threadId = event.data.thread_id;
           const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
           const tool_outputs = tool_calls?.map((tool: RequiredActionFunctionToolCall) => {
+            console.log(tool.function.name);
             if (tool.function.name === "day_planner") {
               const args = JSON.parse(tool.function.arguments);
               dataCB(args);
@@ -394,9 +393,11 @@ async function startRun(threadId: string, dataCB: (data: string) => void, dataEn
         }
       } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
         const response = event.data.delta.content[0].text.value;
-        // dataCB(response);
-      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
-        dataEnd("Plan finalizado");
+        dataCB(response);
+      } else if (event.event === "thread.message.completed") {
+        dataEnd(event);
+      } else if (event.event === "thread.run.completed") {
+        dataEnd(event);
       }
     }
   } catch (error) {

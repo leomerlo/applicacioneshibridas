@@ -226,22 +226,25 @@ function savePlan(profileId, meals) {
 function savePlanMeals(plan, meals) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
+        console.log(meals);
         if (typeof meals === 'string') {
             meals = JSON.parse(meals);
         }
-        planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
-            .then((meals) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log('Starting validation');
+            yield planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true });
             const planExists = yield db.collection("plans").findOne({ _id: new ObjectId(plan) });
             if (planExists) {
+                console.log("Saving plan");
                 yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
             }
             else {
                 throw new Error('El plan no existe');
             }
-        }))
-            .catch((err) => {
+        }
+        catch (err) {
             console.log('Validation error', err);
-        });
+        }
     });
 }
 function generateDocPlan(docId, preferences, restrictions, title, listado, thread) {

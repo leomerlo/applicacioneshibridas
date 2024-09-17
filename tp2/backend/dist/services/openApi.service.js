@@ -21,7 +21,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const model3 = "gpt-3.5-turbo-16k";
-const model4 = "gpt-4-0125-preview";
+const model4 = "gpt-4o-mini";
 const temperature = 0;
 function promptHelper(systemPrompt, userPrompt) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -381,13 +381,14 @@ function addMessages(threadId, message) {
     console.log("Run failed", error);
   }
 }*/
-function startRun(threadId, dataCB, dataEnd) {
+function startRun(threadId, assistant, dataCB, dataEnd) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_2, _b, _c;
         var _d;
+        const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
         try {
             const run = yield openai.beta.threads.runs.create(threadId, {
-                assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+                assistant_id: assistant_id,
                 stream: true
             });
             try {
@@ -395,6 +396,7 @@ function startRun(threadId, dataCB, dataEnd) {
                     _c = run_1_1.value;
                     _e = false;
                     const event = _c;
+                    // console.log("-- Event", event.event);
                     if (event.event === "thread.run.step.delta") {
                         // console.log("-- Event Delta");
                     }
@@ -404,6 +406,7 @@ function startRun(threadId, dataCB, dataEnd) {
                             const threadId = event.data.thread_id;
                             const tool_calls = (_d = event.data.required_action) === null || _d === void 0 ? void 0 : _d.submit_tool_outputs.tool_calls;
                             const tool_outputs = tool_calls === null || tool_calls === void 0 ? void 0 : tool_calls.map((tool) => {
+                                console.log(tool.function.name);
                                 if (tool.function.name === "day_planner") {
                                     const args = JSON.parse(tool.function.arguments);
                                     dataCB(args);
@@ -422,10 +425,13 @@ function startRun(threadId, dataCB, dataEnd) {
                     }
                     else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
                         const response = event.data.delta.content[0].text.value;
-                        // dataCB(response);
+                        dataCB(response);
                     }
-                    else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
-                        dataEnd("Plan finalizado");
+                    else if (event.event === "thread.message.completed") {
+                        dataEnd(event);
+                    }
+                    else if (event.event === "thread.run.completed") {
+                        dataEnd(event);
                     }
                 }
             }

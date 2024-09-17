@@ -4,7 +4,7 @@ import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
 import { Ingredients } from '../types/recipies.js';
-import { Plan } from '../types/plan.js';
+import { Meals, Plan } from '../types/plan.js';
 import type { Profile } from '../types/profile.js';
 
 async function draftPlan(req: Request, res: Response) {
@@ -80,9 +80,9 @@ async function generatePlanFromDraft(req: Request, res: Response) {
   if (!planId) {
     console.log("No hay plan ID, tomando el plan del perfil");
     const draft = await planService.getPlan(profileId);
-    draftId = draft?._id;
+    draftId = draft?._id?.toString();
   } else {
-    draftId = new ObjectId(planId);
+    draftId = planId;
   }
 
   if (!draftId) {
@@ -91,29 +91,65 @@ async function generatePlanFromDraft(req: Request, res: Response) {
   }
 
   try {
-    const plan = await planService.getPlanById(planId);
+    const plan = await planService.getPlanById(draftId as string);
     const { threadId } = plan.meta as { threadId: string };
-    const meals = {};
+    
+    const meals = await generateRecipiesFull(threadId);
 
-    for (let day in plan.meals) {
-      const message = "Generame las recetas para el dia " + day;
-      await openAiService.addMessages(threadId, message);
-      await openAiService.startRun(threadId, (data) => {
-        meals[day] = data;
-      }, async () => {
-        console.log("Day finished ", day);
-        // Al terminar, removemos los mensajes generados
-        await openAiService.removeLastMessages(threadId);
-      });
-    }
+    console.log("Ready for saving", meals);
 
-    await planService.savePlanMeals(planId, meals);
-    // console.log("All days finished", meals);
+    await planService.savePlanMeals(draftId, meals);
     res.status(200).json({ message: "Plan finished" });
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
   }
 }
+
+async function generateRecipiesFull(threadId: string) {
+  let meals = {};
+  const message = "Guardar el plan completo";
+  await openAiService.addMessages(threadId, message);
+
+  console.log("Full plan start");
+
+  let i = 0;
+      
+  await openAiService.startRun(threadId, 'plan', (data) => {
+    i++;
+
+    if (i < 10) {
+      console.log(data);
+    }
+  }, async (data) => {
+    if (data.event === 'thread.message.completed') {
+      console.log("Full plan finished");
+      meals = data.data.content[0].text.value;
+      return meals;
+    }
+    return meals;
+  });
+
+  return meals;
+}
+
+// async function generateRecipiesByDay(meals: any, threadId: string) {
+//   let plan = [];
+  
+//   for (let day in meals) {
+//     console.log("Day start ", day);
+//     const message = "Generame las recetas para el dia " + day;
+//     await openAiService.addMessages(threadId, message);
+//     await openAiService.startRun(threadId, (data) => {
+//       plan[day] = data;
+//     }, async () => {
+//       console.log("Day finished ", day);
+//       // Al terminar, removemos los mensajes generados
+//       await openAiService.removeLastMessages(threadId);
+//     });
+//   }
+
+//   return plan;
+// }
 
 async function generateDocPlan(req: Request, res: Response) {
   const docId = req.body.profileId;
@@ -326,7 +362,7 @@ async function assistantAddMessage(req: Request, res: Response) {
   const message = req.body.message;
 
   await openAiService.addMessages(threadId, message);
-  await openAiService.startRun(threadId, (data) => {
+  await openAiService.startRun(threadId, 'message', (data) => {
     res.write(data);
   }, (data) => {
     res.end(data);

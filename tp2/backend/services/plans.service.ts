@@ -246,23 +246,26 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
 async function savePlanMeals(plan: string, meals: string | object): Promise<void> {
   await client.connect()
 
+  console.log(meals);
+
   if(typeof meals === 'string') {
     meals = JSON.parse(meals);
   }
 
-  planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true })
-  .then(async (meals) => {
+  try {
+    console.log('Starting validation');
+    await planSchema.meals.validate(meals, { abortEarly: false, stripUnknown: true });
     const planExists = await db.collection("plans").findOne({ _id: new ObjectId(plan) });
-  
+
     if (planExists) {
+      console.log("Saving plan");
       await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
     } else {
       throw new Error('El plan no existe');
     }
-  })
-  .catch((err) => {
+  } catch(err) {
     console.log('Validation error', err);
-  })
+  }
 }
 
 async function generateDocPlan(docId: ObjectId, preferences: string, restrictions: string, title: string, listado: string, thread: string): Promise<void> {

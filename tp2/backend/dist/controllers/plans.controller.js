@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ObjectId } from 'mongodb';
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
@@ -71,38 +70,28 @@ function generatePlan(req, res) {
 }
 function generatePlanFromDraft(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         const planId = req.params.id;
         const profileId = req.body.profileId;
         let draftId;
         if (!planId) {
             console.log("No hay plan ID, tomando el plan del perfil");
             const draft = yield planService.getPlan(profileId);
-            draftId = draft === null || draft === void 0 ? void 0 : draft._id;
+            draftId = (_a = draft === null || draft === void 0 ? void 0 : draft._id) === null || _a === void 0 ? void 0 : _a.toString();
         }
         else {
-            draftId = new ObjectId(planId);
+            draftId = planId;
         }
         if (!draftId) {
             res.status(400).json({ error: { message: 'No se encontro el draft' } });
             return;
         }
         try {
-            const plan = yield planService.getPlanById(planId);
+            const plan = yield planService.getPlanById(draftId);
             const { threadId } = plan.meta;
-            const meals = {};
-            for (let day in plan.meals) {
-                const message = "Generame las recetas para el dia " + day;
-                yield openAiService.addMessages(threadId, message);
-                yield openAiService.startRun(threadId, (data) => {
-                    meals[day] = data;
-                }, () => __awaiter(this, void 0, void 0, function* () {
-                    console.log("Day finished ", day);
-                    // Al terminar, removemos los mensajes generados
-                    yield openAiService.removeLastMessages(threadId);
-                }));
-            }
-            yield planService.savePlanMeals(planId, meals);
-            // console.log("All days finished", meals);
+            const meals = yield generateRecipiesFull(threadId);
+            console.log("Ready for saving", meals);
+            yield planService.savePlanMeals(draftId, meals);
             res.status(200).json({ message: "Plan finished" });
         }
         catch (err) {
@@ -110,6 +99,45 @@ function generatePlanFromDraft(req, res) {
         }
     });
 }
+function generateRecipiesFull(threadId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let meals = {};
+        const message = "Guardar el plan completo";
+        yield openAiService.addMessages(threadId, message);
+        console.log("Full plan start");
+        let i = 0;
+        yield openAiService.startRun(threadId, 'plan', (data) => {
+            i++;
+            if (i < 10) {
+                console.log(data);
+            }
+        }, (data) => __awaiter(this, void 0, void 0, function* () {
+            if (data.event === 'thread.message.completed') {
+                console.log("Full plan finished");
+                meals = data.data.content[0].text.value;
+                return meals;
+            }
+            return meals;
+        }));
+        return meals;
+    });
+}
+// async function generateRecipiesByDay(meals: any, threadId: string) {
+//   let plan = [];
+//   for (let day in meals) {
+//     console.log("Day start ", day);
+//     const message = "Generame las recetas para el dia " + day;
+//     await openAiService.addMessages(threadId, message);
+//     await openAiService.startRun(threadId, (data) => {
+//       plan[day] = data;
+//     }, async () => {
+//       console.log("Day finished ", day);
+//       // Al terminar, removemos los mensajes generados
+//       await openAiService.removeLastMessages(threadId);
+//     });
+//   }
+//   return plan;
+// }
 function generateDocPlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const docId = req.body.profileId;
@@ -313,7 +341,7 @@ function assistantAddMessage(req, res) {
         const threadId = req.body.thread;
         const message = req.body.message;
         yield openAiService.addMessages(threadId, message);
-        yield openAiService.startRun(threadId, (data) => {
+        yield openAiService.startRun(threadId, 'message', (data) => {
             res.write(data);
         }, (data) => {
             res.end(data);
