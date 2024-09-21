@@ -34,8 +34,8 @@ const NavBar = () => {
             <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block p-4">Inicio</Link>
           </li>
           { profile.accountType === 'doc' ? <>
-            <li><Link to={'/'} className="block p-4">Mis Pacientes</Link></li>
-            <li><Link to={'/plans'} className="block p-4">Mis Planes</Link></li>
+            <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>
+            <li><Link to={'/plans'} className="block p-4">Mis planes</Link></li>
           </> : <></> }
         </ul>
       </div>

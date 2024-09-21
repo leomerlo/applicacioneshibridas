@@ -1,35 +1,34 @@
 import { Plan } from "../contexts/PlanContext";
+import { useProfile } from "../contexts/ProfileContext";
 import PlanCard from "./PlanCard";
 
 export type PlanListProps = {
-  plans: Plan[],
-  onPlanClick: (planId: string) => void,
+  onClick: (planId: string) => void,
   patientName?: string
 }
 
 const PlanList = (props: PlanListProps) => {
+  const { plans } = useProfile();
+
   const planClickHandler = (plan: Plan): void => {
     if (plan.meta.status === "draft") {
-      props.onPlanClick(`${plan._id}/assistant`);
+      props.onClick(`${plan._id}/assistant`);
     } else {
-      props.onPlanClick(plan._id as string);
+      props.onClick(plan._id as string);
     }
   }
   
   return (
-    <div className="patient-list h-full flex flex-col overflow-y-auto">
-      { props.patientName ? <p className="mb-8">
-        Seleccioná un plan para asignarlo al paciente { props.patientName }.
-      </p> : <p className="mb-8"></p>}
-      
+    <>
+      <h2 className="text-xl mb-5">Mis planes</h2>
       <ul className="flex-grow">
-        { props.plans.map((plan: Plan) => (
+        { plans.map((plan: Plan) => (
         <li key={plan._id}>
           <PlanCard plan={plan} onClick={() => { planClickHandler(plan) }}/>
         </li>
         ))}
       </ul>
-    </div>
+    </>
   )
 }
 

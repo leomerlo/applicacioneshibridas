@@ -2,9 +2,12 @@ import { useProfile } from "../contexts/ProfileContext"
 import { Patient } from "../services/patients.service";
 import PatientCard from "./PatientCard";
 
-const PatientList = (props: {
-  onClick: (id: string) => void
-}) => {
+export type PatientListProps = {
+  onClick: (planId: string) => void,
+  patientName?: string
+}
+
+const PatientList = (props: PatientListProps) => {
   const { patients } = useProfile();
   
   const clickHandler = (id: string) => {
@@ -13,7 +16,7 @@ const PatientList = (props: {
   
   return (
     <>
-      <h2>Mis Pacientes</h2>
+      <h2 className="text-xl mb-5">Mis pacientes</h2>
       <ul className="flex-grow">
         { patients.map((patient: Patient) => (
           <li key={patient._id}>

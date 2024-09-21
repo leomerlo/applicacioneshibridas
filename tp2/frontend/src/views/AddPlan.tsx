@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 import planService from "../services/plan.service";
 import Loading from "../components/Loading";
+import NutriLayout from "../components/NutriLayout";
+import PlanList from "../components/PlanList";
 
 const AddPlan = () => {
   const [title, setTitle] = useState("");
@@ -46,43 +48,58 @@ const AddPlan = () => {
     });
   };
 
+  const planClickHandler = (planId: string) => {
+    void 0;
+  }
+
   return (
-    <div className="container mx-auto h-full">
-      <div className="flex flex-col h-full">
-        { loading ? <Loading action="Estamos creando tu plan." /> : <>
-          <div className="text-left">
-            <GoBack />
+    <NutriLayout
+      sidebar={
+        <div className="h-full flex flex-col justify-between">
+          <div className="flex-1">
+            <PlanList onClick={planClickHandler} />
           </div>
-          <div className="flex-grow">
-            <h1 className="text-4xl text-gray-80 mt-5">Nuevo Plan</h1>
-            <div className="mt-8">
-              <Input name="title" type="text" label="Titulo" value={title} onInput={titleHandler} placeholder="Un titulo para el plan" />
-            </div>
-            <div className="mt-8">
-              <Input
-                name="restrictions"
-                type="textarea"
-                label="Restricciones"
-                value={restrictions}
-                onInput={restrictionHandler}
-                placeholder="Sin gluten, vegetariano, alergia al tofu, etc." />
-            </div>
-            <div className="mt-8">
-              <Input
-                name="preferences"
-                type="textarea"
-                label="Preferencias"
-                value={preferences}
-                onInput={preferencesHandler}
-                placeholder="Rico en proteínas, fideos los jueves, pizza los sabados, etc." />
-            </div>
+        </div>
+      }
+      content={
+        <div className="container mx-auto h-full">
+          <div className="flex flex-col h-full">
+            { loading ? <Loading action="Estamos creando tu plan." /> : <>
+              <div className="text-left">
+                <GoBack />
+              </div>
+              <div className="flex-grow">
+                <h1 className="text-2xl text-gray-80 mt-5">Nuevo Plan</h1>
+                <div className="mt-8">
+                  <Input name="title" type="text" label="Titulo" value={title} onInput={titleHandler} placeholder="Un titulo para el plan" />
+                </div>
+                <div className="mt-8">
+                  <Input
+                    name="restrictions"
+                    type="textarea"
+                    label="Restricciones"
+                    value={restrictions}
+                    onInput={restrictionHandler}
+                    placeholder="Sin gluten, vegetariano, alergia al tofu, etc." />
+                </div>
+                <div className="mt-8">
+                  <Input
+                    name="preferences"
+                    type="textarea"
+                    label="Preferencias"
+                    value={preferences}
+                    onInput={preferencesHandler}
+                    placeholder="Rico en proteínas, fideos los jueves, pizza los sabados, etc." />
+                </div>
+              </div>
+              <div className="mt-4">
+                <Button full loading={loading} onClick={createPlan}>Nuevo Plan</Button>
+              </div>
+            </>}
           </div>
-          <div>
-            <Button full loading={loading} onClick={createPlan}>Nuevo Plan</Button>
-          </div>
-        </>}
-      </div>
-    </div>
+        </div>
+      }
+    />
   )
 }
 

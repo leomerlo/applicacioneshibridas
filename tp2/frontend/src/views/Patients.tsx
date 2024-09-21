@@ -1,23 +1,36 @@
 import { useProfile } from "../contexts/ProfileContext"
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import NutriLayout from "../components/NutriLayout";
 import PatientList from "../components/PatientList";
 import Patient from "../components/Patient";
 import { useState } from "react";
+import Button from "../components/Button";
 
 const Patients = () => {
   const { patients } = useProfile();
+  const navigate = useNavigate();
 
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null)
 
   const patientClickHandler = (id: string) => {
     setSelectedPatient(id as string);
   }
+
+  const addPatientHandler = () => {
+    navigate('/addPatient');
+  }
   
   return (
     <NutriLayout
       sidebar={
-        <PatientList onClick={patientClickHandler}/>
+        <div className="h-full flex flex-col justify-between">
+          <div className="flex-1">
+            <PatientList onClick={patientClickHandler}/>
+          </div>
+          <div>
+            <Button onClick={addPatientHandler} full>Agregar paciente</Button>
+          </div>
+        </div>
       }
       content={
         <>
