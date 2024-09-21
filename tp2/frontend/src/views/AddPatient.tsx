@@ -3,6 +3,8 @@ import * as patientsService from "../services/patients.service";
 import { useNotifications } from "../contexts/NotificationsContext";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
+import NutriLayout from "../components/NutriLayout";
+import PatientList from "../components/PatientList";
 
 const AddPatient = () => {
   const notifications = useNotifications();
@@ -27,7 +29,14 @@ const AddPatient = () => {
   }
 
   return (
-    <AddUser type="user" addService={addPatientService} label="paciente" />
+    <NutriLayout
+      sidebar={
+        <PatientList />
+      }
+      content={
+        <AddUser type="user" addService={addPatientService} label="paciente" />
+      }
+    />
   )
 }
 

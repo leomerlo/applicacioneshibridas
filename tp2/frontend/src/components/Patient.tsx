@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useNotifications } from "../contexts/NotificationsContext"
-import GoBack from "../components/GoBack"
+import GoBack from "./GoBack"
 import patientsService from "../services/patients.service"
 import type { Patient } from "../services/patients.service"
 import LoginImage from '../assets/loginImage.png'
-import Button from "../components/Button"
+import Button from "./Button"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare, faCircleCheck } from "@fortawesome/free-regular-svg-icons"
 import { faCarrot, faUserSlash } from "@fortawesome/free-solid-svg-icons"
-import PatientNextMeal from "../components/NextMeals/PlanNextMeal"
+import PatientNextMeal from "./NextMeals/PlanNextMeal"
 import { useProfile } from "../contexts/ProfileContext"
 import { usePlan } from "../contexts/PlanContext"
-import FooterMenu from "../components/FooterMenu"
-import HeadDivider from "../components/HeadDivider"
-import DaysCarousel from "../components/DaysCarousel/DaysCarousel"
+import FooterMenu from "./FooterMenu"
+import HeadDivider from "./HeadDivider"
+import DaysCarousel from "./DaysCarousel/DaysCarousel"
 
-const Patient = () => {
-  const { id } = useParams();
+const Patient = (props: { id: string}) => {
   const navigate = useNavigate();
   const { todayString } = usePlan();
   const [day, setDay] = useState<string>(todayString);
@@ -32,18 +31,14 @@ const Patient = () => {
     diners: 1
   });
 
-  if (!id) {
-    navigate('/');
-  }
-
   useEffect(() => {
     setDay(todayString);
   }, [todayString]);
 
   useEffect(() => {
-    patientsService.getPatient(id as string).then((resp) => {
+    patientsService.getPatient(props.id as string).then((resp) => {
       if (resp.status === 200) {
-        setCurrentPatient(id as string);
+        setCurrentPatient(props.id as string);
         setActivePatient(resp.data);
       } else {
         notifications.updateNotifications({
@@ -56,7 +51,7 @@ const Patient = () => {
   }, [patients]);
 
   const assignPlanHandler = () => {
-    navigate(`/patient/${id}/assignPlan`);
+    navigate(`/patient/${props.id}/assignPlan`);
   }
 
   const unAssignPatient = () => {
@@ -83,11 +78,10 @@ const Patient = () => {
             <DaysCarousel day={day} onDayChange={changeDayHandler} />
             <PatientNextMeal plan={activePatient.plan} day={day} />
           </> : <>
-            <img src={LoginImage} aria-hidden="true" className="w-1/2 mx-auto my-8" />
-            <h2 className="text-2xl text-gray-80 text-center font-bold">Este paciente aún no tiene ningún plan asignado</h2>
+            <h2 className="text-2xl text-gray-80 mt-4">Este paciente aún no tiene ningún plan asignado</h2>
           </> }
         </div>
-        <FooterMenu>
+        {/* <FooterMenu>
           <Button variant="secondary" full>
             <FontAwesomeIcon icon={faPenToSquare} className="me-2" />
             Editar perfil
@@ -100,7 +94,7 @@ const Patient = () => {
             <FontAwesomeIcon icon={faCarrot} className="me-2" />
             { activePatient.plan ? 'Modificar plan' : 'Asignar plan'}
           </Button>
-        </FooterMenu>
+        </FooterMenu> */}
       </div>
     </div>
   )

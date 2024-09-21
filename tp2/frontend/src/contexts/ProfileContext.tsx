@@ -89,6 +89,7 @@ function ProfileProvider({children}: PropsWithChildren){
   const refreshProfile = async (): Promise<void> => {
     accountService.getSession()
     .then((profile) => {
+      console.log(profile);
       if (profile.status === 200) {
         setProfile(profile.data)
 
