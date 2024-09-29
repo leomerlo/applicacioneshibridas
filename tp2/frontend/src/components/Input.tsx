@@ -38,7 +38,7 @@ const Input = (props: Props) => {
         props.error ? 
           <div className="mt-1">
             { props.error.map((e: string) => (
-              <p className="text-red-500 text-xs italic">{e}</p>
+              <p key={e} className="text-red-500 text-xs italic">{e}</p>
             ))}
           </div>
           :

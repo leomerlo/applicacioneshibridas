@@ -23,7 +23,7 @@ const AddPatient = () => {
     } else {
       notifications.updateNotifications({
         variant: 'error',
-        message: 'Hubo un problema al crear al paciente'
+        message: resp.data.error.message
       });
     }
   }
