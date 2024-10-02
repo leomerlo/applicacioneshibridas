@@ -9,15 +9,38 @@ import planService from "../services/plan.service";
 import Loading from "../components/Loading";
 import NutriLayout from "../components/NutriLayout";
 import PlanList from "../components/PlanList";
+import Schema, { Rules, ValidateError } from "async-validator";
 
 const AddPlan = () => {
   const [title, setTitle] = useState("");
   const [restrictions, setRestrictions] = useState("");
   const [preferences, setPreferences] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    title: [],
+    restrictions: [],
+    preferences: []
+  });
   const [loading, setLoading] = useState(false);
   const notifications = useNotifications();
   const navigate = useNavigate();
   const { refreshProfile } = useProfile();
+  const definition: Rules = {
+    title: {
+      type: "string",
+      required: true,
+      message: "El título es requerido",
+    },
+    restrictions: {
+      type: "string",
+      required: true,
+      message: "Las restricciones son requeridas",
+    },
+    preferences: {
+      type: "string",
+      required: false,
+    }
+  };
+  const validator = new Schema(definition);
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -31,21 +54,41 @@ const AddPlan = () => {
     setPreferences(event.target.value);
   }
 
-  const createPlan = () => {
+  const createPlan = async () => {
+    await validator.validate({ title, restrictions, preferences }, (errors) => {
+      if (errors) {
+        const errorList = formErrors;
+        errors.forEach((e: ValidateError) => {
+          errorList[e.field as string] = [e.message];
+        });
+        setFormErrors({
+          ...formErrors,
+          ...errorList
+        });
+      } else {
+        setFormErrors({
+          title: [],
+          restrictions: [],
+          preferences: []
+        });
+      }
+    });
     setLoading(true);
-    planService.newPlanAssistant({
+    const resp = await planService.newPlanAssistant({
       title,
       preferences,
       restrictions,
-    }).then((resp) => {
-      setLoading(false);
-      if(resp.status === 200){
-        const planId = resp.data.planId;
-        navigate(`/plan/${planId}/assistant`);
-      } else {
-        
-      }
     });
+    setLoading(false);
+    if(resp.status === 200){
+      const planId = resp.data.planId;
+      navigate(`/plan/${planId}/assistant`);
+    } else {
+      notifications.updateNotifications({
+        variant: 'error',
+        message: resp.data.error.message
+      });
+    }
   };
 
   const planClickHandler = (planId: string) => {
@@ -71,12 +114,14 @@ const AddPlan = () => {
               <div className="flex-grow">
                 <h1 className="text-2xl text-gray-80 mt-5">Nuevo Plan</h1>
                 <div className="mt-8">
-                  <Input name="title" type="text" label="Titulo" value={title} onInput={titleHandler} placeholder="Un titulo para el plan" />
+                  <Input name="title" required type="text" label="Titulo" value={title} onInput={titleHandler} placeholder="Un titulo para el plan" error={formErrors.title} />
                 </div>
                 <div className="mt-8">
                   <Input
                     name="restrictions"
                     type="textarea"
+                    required
+                    error={formErrors.restrictions}
                     label="Restricciones"
                     value={restrictions}
                     onInput={restrictionHandler}
@@ -88,6 +133,7 @@ const AddPlan = () => {
                     type="textarea"
                     label="Preferencias"
                     value={preferences}
+                    error={formErrors.preferences}
                     onInput={preferencesHandler}
                     placeholder="Rico en proteínas, fideos los jueves, pizza los sabados, etc." />
                 </div>
