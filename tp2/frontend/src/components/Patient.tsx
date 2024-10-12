@@ -20,7 +20,7 @@ const Patient = () => {
   const { todayString } = usePlan();
   const [day, setDay] = useState<string>(todayString);
   const notifications = useNotifications();
-  const { patient, setCurrentPatient } = useProfile();
+  const { patient, setCurrentPatient, refreshPatients } = useProfile();
   const emptyPatient: Patient = {
     _id: '',
     name: '',
@@ -55,9 +55,23 @@ const Patient = () => {
   }
 
   const unAssignPatient = () => {
-    // TODO: Unassign patient
+    patientsService.unassignPatient(patient._id as string).then((resp) => {
+      if (resp.status === 201) {
+        notifications.updateNotifications({
+          variant: 'success',
+          message: 'Paciente desvinculado'
+        });
+        refreshPatients();
+        setCurrentPatient('');
+        navigate('/patients');
+      } else {
+        notifications.updateNotifications({
+          variant: 'error',
+          message: 'Error al desvincular paciente'
+        });
+      }
+    });
     // TODO: Confirmation
-    return false; 
   }
 
   const changeDayHandler = (day: string) => {
@@ -80,8 +94,8 @@ const Patient = () => {
             <HeadDivider>
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl mb-4">{activePatient.name}</h1>
-                <Button variant="danger" onClick={unAssignPatient} size="small">
-                  Desasignar paciente
+                <Button variant="secondary" onClick={unAssignPatient} size="small">
+                  Desvincular paciente
                 </Button>
               </div>
               <div className="flex justify-between items-center">
@@ -102,7 +116,12 @@ const Patient = () => {
             <div className="flex flex-col justify-center w-1/2 items-center mx-auto mt-12">
               <h1 className="text-4xl mt-6">{activePatient.name}</h1>
               <h2 className="text-2xl text-gray-80 mb-4">Este paciente aún no tiene ningún plan asignado</h2>
-              <Button onClick={assignPlanHandler}>Asignar plan</Button>
+              <div className="flex gap-3">
+                <Button size="small" onClick={assignPlanHandler}>Asignar plan</Button>
+                <Button variant="secondary" onClick={unAssignPatient} size="small">
+                  Desvincular paciente
+                </Button>
+              </div>
             </div>
           </> }
         </div>

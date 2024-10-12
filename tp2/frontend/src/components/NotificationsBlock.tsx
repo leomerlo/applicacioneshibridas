@@ -6,7 +6,7 @@ const NotificationsBlock = () => {
 
   return (
     <>
-    { notifications.length > 0 ? <div className="fixed top-16 container-fluid left-1/2 -translate-x-1/2 z-40">
+    { notifications.length > 0 ? <div className="fixed w-96 top-16 right-2 z-40">
       {notifications.map((notification, index) => (
         <NotificationItem notification={notification} index={index} key={index} />
       ))}
