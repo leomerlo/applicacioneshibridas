@@ -357,8 +357,9 @@ async function assistantAddMessage(req: Request, res: Response) {
   await openAiService.addMessages(threadId, message);
   await openAiService.startRun(threadId, 'message', (data) => {
     res.write(data);
-  }, (data) => {
-    res.end(data);
+  }, (response) => {
+    const answer = response.data.content[0].text.value;
+    res.end(answer);
   });
 }
 

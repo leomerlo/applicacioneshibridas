@@ -2,6 +2,7 @@ import { OpenAI } from "openai";
 import dotenv from 'dotenv'
 import { Ingredients } from "../types/recipies";
 import { RequiredActionFunctionToolCall, Run } from "openai/resources/beta/threads/runs/runs";
+import { Thread } from "openai/resources/beta/threads/threads";
 
 dotenv.config()
 
@@ -282,12 +283,34 @@ async function generateRecipies(restrictions: string, preferences: string, lista
 async function startThread(title: string, restrictions: string, preferences: string): Promise<Run> {
   const thread = await openai.beta.threads.createAndRun({
     assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+    instructions: `
+    Cuando te pida ayuda, vas a actuar como un jefe de cocina y asistir a un nutricionista para armar un plan de comida semanal para un paciente, siguiendo las "restricciones" y "preferencias" especificadas en la metadata del chat.
+
+    Restricciones: ${restrictions}
+
+    Preferencias: ${preferences}
+ 
+    Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
+
+    Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
+
+    El plan de comida debe incluir desayuno, almuerzo y cena para cada dia de la semana.
+
+    Durante el chat, solo devolve los titulos de las comidas, sin ingredientes ni instrucciones.
+    `,
     metadata: {
       title,
       restrictions,
       preferences
     }
   });
+
+  let run;
+
+  do {
+    run = await openai.beta.threads.runs.retrieve(thread.thread_id, thread.id);
+    await new Promise(r => setTimeout(r, 2000));
+  } while (run.status !== "completed");
 
   return thread;
 }
@@ -304,65 +327,21 @@ async function addMessages(threadId: string, message: string) {
   return void 0;
 }
 
-/*async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
-  try {
-    const run = await openai.beta.threads.runs.create(
-      threadId,
-      { 
-        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-        stream: true
-      }
-    );
-
-    for await (const event of run) {
-      if (event.event === "thread.run.step.delta") {
-        console.log("-- Event Delta");
-        console.log(event.data.delta.step_details.tool_calls[0].function.arguments);
-      } else if (event.event === "thread.run.requires_action") { 
-        try {
-          console.log("-- Event Requires Action");
-          const threadId = event.data.thread_id;
-          const meals = {};
-          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
-          tool_calls?.map(async (tool: RequiredActionFunctionToolCall) => {
-            console.log("-- Tools Calls", tool);
-            if (tool.function.name === "day_planner") {
-              const args = JSON.parse(tool.function.arguments);
-              console.log("-- Day Planner");
-              meals[args.day] = args.meals;
-            }
-          });
-          const plan = await planService.getPlanByThreadId(threadId);
-          if (plan) {
-            //console.log("-- Plan Exists");
-            console.log(meals);
-            //await planService.savePlanMeals(plan, meals);
-            submitToolOutputs({ success: true }, event.data.id, threadId);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
-        const response = event.data.delta.content[0].text.value;
-        dataCB(response);
-      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
-        dataEnd("Plan guardado con éxito");
-      }
-    }
-  } catch (error) {
-    // openai.beta.threads.runs.cancel(threadId, event.data.id);
-    console.log("Run failed", error);
-  }
-}*/
-
 async function startRun(threadId: string, assistant: 'message' | 'plan' ,dataCB: (data: string) => void, dataEnd: (data: unknown) => void) {
   const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
+  const thread = await openai.beta.threads.retrieve(threadId);
+  const threadMeta = thread.metadata as {
+    restrictions: string,
+    preferences: string,
+    title: string
+  };
   try {
     const run = await openai.beta.threads.runs.create(
       threadId,
       { 
         assistant_id: assistant_id,
-        stream: true
+        stream: true,
+        additional_instructions: `Restricciones: ${threadMeta.restrictions} Preferencias: ${threadMeta.preferences}`
       }
     );
 
@@ -395,8 +374,6 @@ async function startRun(threadId: string, assistant: 'message' | 'plan' ,dataCB:
         const response = event.data.delta.content[0].text.value;
         dataCB(response);
       } else if (event.event === "thread.message.completed") {
-        dataEnd(event);
-      } else if (event.event === "thread.run.completed") {
         dataEnd(event);
       }
     }

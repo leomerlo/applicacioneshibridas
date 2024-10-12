@@ -26,7 +26,7 @@ const Plans = () => {
       sidebar={
         <div className="h-full flex flex-col justify-between">
           <div className="flex-1">
-            <PlanList plans={plans} onPlanClick={planClickHandler} />
+            <PlanList plans={plans} onClick={planClickHandler} />
           </div>
           <div>
             <Button onClick={addPlanHandler} full>Crear plan</Button>
@@ -37,7 +37,7 @@ const Plans = () => {
         <>
           { plans.length > 0 ? <>
               { !selectedPlan ? <>
-                <h1 className="text-2xl">Seleccioná un paciente para ver su información</h1>
+                <h1 className="text-2xl">Seleccioná un plan para comenzar.</h1>
               </> : <>
                 <Plan id={selectedPlan} />
               </>}

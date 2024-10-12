@@ -11,11 +11,7 @@ const PlanList = (props: PlanListProps) => {
   const { plans } = useProfile();
 
   const planClickHandler = (plan: Plan): void => {
-    if (plan.meta.status === "draft") {
-      props.onClick(`${plan._id}/assistant`);
-    } else {
-      props.onClick(plan._id as string);
-    }
+    props.onClick(`${plan._id}/assistant`);
   }
   
   return (

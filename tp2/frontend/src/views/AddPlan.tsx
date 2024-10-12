@@ -81,6 +81,7 @@ const AddPlan = () => {
     });
     setLoading(false);
     if(resp.status === 200){
+      await refreshProfile();
       const planId = resp.data.planId;
       navigate(`/plan/${planId}/assistant`);
     } else {
@@ -91,8 +92,8 @@ const AddPlan = () => {
     }
   };
 
-  const planClickHandler = (planId: string) => {
-    void 0;
+  const planClickHandler = (assistantURI: string) => {
+    navigate(`/plan/${assistantURI}`);
   }
 
   return (

@@ -9,7 +9,7 @@ export interface PlanCardProps {
 
 const PlanCard = (props: PlanCardProps) => {
   return (
-    <button className="block w-full mb-3" onClick={() => { props.onClick(props.plan._id as string) }}>
+    <button className="block w-full mb-3" onClick={() => { props.onClick(props.plan._id as string) }} aria-label={`Seleccionar plan ${props.plan.title}`}>
       <div className="bg-white rounded-lg border-gray-20 border p-4 flex justify-between">
         <div>
           <span className="text-gray-80 font-bold">{props.plan.title ? props.plan.title : props.plan.meta.title}</span>

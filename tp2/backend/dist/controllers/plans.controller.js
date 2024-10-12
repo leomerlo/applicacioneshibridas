@@ -338,8 +338,9 @@ function assistantAddMessage(req, res) {
         yield openAiService.addMessages(threadId, message);
         yield openAiService.startRun(threadId, 'message', (data) => {
             res.write(data);
-        }, (data) => {
-            res.end(data);
+        }, (response) => {
+            const answer = response.data.content[0].text.value;
+            res.end(answer);
         });
     });
 }
