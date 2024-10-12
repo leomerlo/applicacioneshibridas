@@ -30,16 +30,16 @@ const NavBar = () => {
       <div className="flex gap-12 items-center">
         <img src={logo} aria-hidden="true" className="h-4" />
         <ul className="flex gap-3">
-          <li>
-            <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block p-4">Inicio</Link>
-          </li>
+          { profile.accountType === 'admin' ? <li>
+            <Link to={'/admin'} className="block p-4">Inicio</Link>
+          </li> : <></> }
           { profile.accountType === 'doc' ? <>
             <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>
             <li><Link to={'/plans'} className="block p-4">Mis planes</Link></li>
           </> : <></> }
         </ul>
       </div>
-      <Button className="grow-0" onClick={logout}>Cerrar sesión</Button>
+      <Button className="grow-0" onClick={logout} variant="secondary" size="small">Cerrar sesión</Button>
     </nav>
   )
 }
