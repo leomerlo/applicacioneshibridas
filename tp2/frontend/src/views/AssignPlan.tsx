@@ -79,7 +79,9 @@ const AssignPlan = () => {
           <div className="flex flex-col">
             <h1 className="text-4xl mt-6 mb-2">Asignar Planes</h1>
             <PlanList plans={plans.filter((plan) => plan.meta.status != 'draft')} onClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
-            <Button onClick={createPlanHandler} full>Crear plan</Button>
+            <div className="flex justify-end items-center mt-8">
+              <span className="me-4">O podés también</span> <Button onClick={createPlanHandler}>Crear un nuevo plan</Button>
+            </div>
           </div>
         </>
       }
