@@ -14,12 +14,22 @@ type Props = {
   selected?: boolean;
   disabled?: boolean;
   required?: boolean;
+  srOnly?: boolean;
 }
 
 const Input = (props: Props) => {
+
+  const labelClasses = () => {
+    let classes = ["block","text-base","text-gray-700"]
+    if (props.srOnly) {
+      classes.push("sr-only")
+    }
+    return classes.join(" ")
+  }
+
   return (
     <div className="mt-4">
-      <label htmlFor={props.name} className="block text-base text-gray-700">{props.label} { props.required ? <span className="text-red-500">*</span> : <></> }</label>
+      <label htmlFor={props.name} className={labelClasses()}>{props.label} { props.required ? <span className="text-red-500">*</span> : <></> }</label>
       <div className="mt-1">
         { props.type === 'textarea' ? 
           // @ts-ignore 
