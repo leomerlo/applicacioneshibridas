@@ -125,6 +125,8 @@ const PlanAssistant = () => {
 
     const resp = await planService.savePlanFromDraft(params.id as string);
 
+    // Actualizar planes de usuarios con el plan guardado
+
     setLoadingSave(false);
 
     if (resp.status === 200) {
