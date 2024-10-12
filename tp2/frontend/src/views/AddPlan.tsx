@@ -106,7 +106,7 @@ const AddPlan = () => {
         </div>
       }
       content={
-        <div className="container mx-auto h-full">
+        <div className="container-fluid mx-auto h-full">
           <div className="flex flex-col h-full">
             { loading ? <Loading action="Estamos creando tu plan." /> : <>
               <div className="text-left">

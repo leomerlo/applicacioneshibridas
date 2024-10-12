@@ -124,7 +124,7 @@ const Recipie = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container-fluid mx-auto">
       <div>
         {
           isLoading || loading ?

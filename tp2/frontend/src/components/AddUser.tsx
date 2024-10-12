@@ -100,7 +100,7 @@ const AddUser = (props: Props) => {
   };
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container-fluid mx-auto h-full">
       <div className="flex flex-col justify-stretch">
         <div className="text-left">
           <GoBack />

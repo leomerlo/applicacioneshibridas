@@ -72,7 +72,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container-fluid mx-auto">
       { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
       <>
         <div className="flex justify-between">

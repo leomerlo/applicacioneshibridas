@@ -203,13 +203,13 @@ const PlanAssistant = () => {
       }
       content={<>
         { !planReady || loadingResponse || loadingSave ? <>
-          <div className="container mx-auto h-full">
+          <div className="container-fluid mx-auto h-full">
             <div className="flex flex-col h-full">
               <Loading action={getLoadingText()} />
             </div>
           </div>
         </> : <>
-          <div className="container mx-auto h-full">
+          <div className="container-fluid mx-auto h-full">
             <div className="flex flex-col h-full">
               <div className="header border-b-2 pb-6">
                 <div className="flex justify-between align-center">

@@ -27,7 +27,7 @@ const NavBar = () => {
   
   return (
     <nav className={`flex flex-col items-center justify-between fixed z-20 top-0 left-0 w-full bg-white p-2 ${menuOpen ? "h-screen" : "h-navbar"} transition-all duration-500 ease-in-out`}>
-      <div className="flex container justify-between items-center">
+      <div className="flex container-fluid justify-between items-center">
         <div className="flex items-center flex-shrink-0 mr-6">
           <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block">
             <img src={logo} aria-hidden="true" className="h-4" />
@@ -39,7 +39,7 @@ const NavBar = () => {
           </button>
         </div>
       </div>
-      <div className={`container flex flex-col justify-between bg-white flex-grow ${menuOpen ? "" : "h-0"} overflow-y-hidden`}>
+      <div className={`container-fluid flex flex-col justify-between bg-white flex-grow ${menuOpen ? "" : "h-0"} overflow-y-hidden`}>
         <div className="text-sm mt-4">
           <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Inicio</Link>
           { profile.accountType !== 'admin' ? <>
