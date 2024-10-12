@@ -48,7 +48,7 @@ const PlanAssistant = () => {
   const validator = new Schema(definition);
   
   const planClickHandler = (assistantURI: string) => {
-    navigate(`/plan/${assistantURI}`);
+    navigate(`/plan/${assistantURI}/assistant`);
   }
 
   const messageInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,7 +191,8 @@ const PlanAssistant = () => {
       sidebar={
         <div className="h-full flex flex-col justify-between">
           <div className="flex-1">
-            <PlanList onClick={planClickHandler} />
+            <h2 className="text-xl mb-5">Mis planes</h2>
+            <PlanList onClick={planClickHandler} active={params.id} />
           </div>
           <div>
             <Button onClick={addPlanHandler} full>Crear plan</Button>
@@ -212,8 +213,8 @@ const PlanAssistant = () => {
                 <div className="flex justify-between align-center">
                   <h1 className="text-2xl text-primary-main mt-5 flex items-center gap-4">
                     { plan?.meta.title }
-                    { plan?.meta && plan.meta.status == "draft" ? <Badge text="Borrador" /> : ''}
-                    <Button size="small" variant="secondary" onClick={viewPlanHandler}>Ver plan</Button>
+                    { plan?.meta && plan.meta.status == "draft" ? <Badge text="Borrador" /> : <Button size="small" variant="secondary" onClick={viewPlanHandler}>Ver plan</Button>}
+                    
                   </h1>
                   <div className="flex gap-4">
                     <Button size="small" variant="secondary" onClick={deletePlanHandler}>Eliminar</Button>

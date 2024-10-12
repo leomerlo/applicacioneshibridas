@@ -9,6 +9,8 @@ import type { Patient } from "../services/patients.service";
 import FooterMenu from "../components/FooterMenu";
 import Button from "../components/Button";
 import { useProfile } from "../contexts/ProfileContext";
+import NutriLayout from "../components/NutriLayout";
+import PatientList from "../components/PatientList";
 
 const AssignPlan = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +37,10 @@ const AssignPlan = () => {
     navigate(`/addPlan`);
   }
 
+  const patientClickHandler = (id: string) => {
+    navigate(`/patient/${id}`);
+  }
+
   const planClickHandler = (planId: string) => {
     const planAssignment = {
       patientId: id as string,
@@ -59,14 +65,25 @@ const AssignPlan = () => {
   }
 
   return (
-    <div className="container mx-auto">
-      <GoBack />
-      <h1 className="text-4xl mt-6 mb-2">Asignar Planes</h1>
-      <PlanList plans={plans.filter((plan) => plan.meta.status != 'draft')} onPlanClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
-      <FooterMenu>
-        <Button full onClick={createPlanHandler}>Crear Plan</Button>
-      </FooterMenu>
-    </div>
+    <NutriLayout
+      sidebar={
+        <div className="h-full flex flex-col justify-between">
+          <div className="flex-1">
+            <PatientList onClick={patientClickHandler}/>
+          </div>
+        </div>
+      }
+      content={
+        <>
+          <GoBack />
+          <div className="flex flex-col">
+            <h1 className="text-4xl mt-6 mb-2">Asignar Planes</h1>
+            <PlanList plans={plans.filter((plan) => plan.meta.status != 'draft')} onClick={(planId: string) => { planClickHandler(planId) }} patientName={patient?.name} />
+            <Button onClick={createPlanHandler} full>Crear plan</Button>
+          </div>
+        </>
+      }
+    />
   )
 }
 

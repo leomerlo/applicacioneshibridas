@@ -88,6 +88,10 @@ const router = createBrowserRouter([
         element: <RoutePrivateDoctor><PlanAssistant /></RoutePrivateDoctor>
       },
       {
+        path: '/patient/:id',
+        element: <Patients />
+      },
+      {
         path: '/patient/:id/assignPlan',
         element: <RoutePrivateDoctor><AssignPlan /></RoutePrivateDoctor>
       },

@@ -12,33 +12,33 @@ import { faCarrot, faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import PatientNextMeal from "./NextMeals/PlanNextMeal"
 import { useProfile } from "../contexts/ProfileContext"
 import { usePlan } from "../contexts/PlanContext"
-import FooterMenu from "./FooterMenu"
 import HeadDivider from "./HeadDivider"
 import DaysCarousel from "./DaysCarousel/DaysCarousel"
 
-const Patient = (props: { id: string}) => {
+const Patient = () => {
   const navigate = useNavigate();
   const { todayString } = usePlan();
   const [day, setDay] = useState<string>(todayString);
   const notifications = useNotifications();
-  const { setCurrentPatient, patients } = useProfile();
-  const [activePatient, setActivePatient] = useState<Patient>({
+  const { patient, setCurrentPatient } = useProfile();
+  const emptyPatient: Patient = {
     _id: '',
     name: '',
     plan: null,
     status: 'inactive',
     accountType: 'user',
     diners: 1
-  });
+  };
+
+  const [activePatient, setActivePatient] = useState<Patient>(emptyPatient);
 
   useEffect(() => {
     setDay(todayString);
   }, [todayString]);
 
   useEffect(() => {
-    patientsService.getPatient(props.id as string).then((resp) => {
+    patientsService.getPatient(patient._id as string).then((resp) => {
       if (resp.status === 200) {
-        setCurrentPatient(props.id as string);
         setActivePatient(resp.data);
       } else {
         notifications.updateNotifications({
@@ -48,13 +48,15 @@ const Patient = (props: { id: string}) => {
         navigate('/');
       }
     });
-  }, [patients]);
+  }, [patient._id]);
 
   const assignPlanHandler = () => {
-    navigate(`/patient/${props.id}/assignPlan`);
+    navigate(`/patient/${patient._id}/assignPlan`);
   }
 
   const unAssignPatient = () => {
+    // TODO: Unassign patient
+    // TODO: Confirmation
     return false; 
   }
 
@@ -62,23 +64,46 @@ const Patient = (props: { id: string}) => {
     setDay(day);
   }
 
+  const unsetPatient = () => {
+    setCurrentPatient('');
+    navigate('/patients');
+  }
+
   return (
     <div className="container mx-auto h-full">
       <div className="flex flex-col h-full pb-20">
         <div>
-          <GoBack />
+          <GoBack onClick={unsetPatient} />
         </div>
         <div className="flex-grow">
-          <h1 className="text-4xl mt-6">{activePatient.name}</h1>
           { activePatient.plan ? <>
             <HeadDivider>
-              <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
-              <span className="text-gray-80 font-bold">Plan activo: {activePatient.plan.title}</span>
+              <div className="flex items-center justify-between">
+                <h1 className="text-3xl mb-4">{activePatient.name}</h1>
+                <Button variant="danger" onClick={unAssignPatient} size="small">
+                  Desasignar paciente
+                </Button>
+              </div>
+              <div className="flex justify-between items-center">
+                <div>
+                  <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
+                  <span className="text-gray-80 font-bold">Plan activo: {activePatient.plan.meta.title}</span>
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="secondary" full onClick={assignPlanHandler} size="small">
+                    Asignar otro plan
+                  </Button>
+                </div>
+              </div>
             </HeadDivider>
             <DaysCarousel day={day} onDayChange={changeDayHandler} />
             <PatientNextMeal plan={activePatient.plan} day={day} />
           </> : <>
-            <h2 className="text-2xl text-gray-80 mt-4">Este paciente aún no tiene ningún plan asignado</h2>
+            <div className="flex flex-col justify-center w-1/2 items-center mx-auto mt-12">
+              <h1 className="text-4xl mt-6">{activePatient.name}</h1>
+              <h2 className="text-2xl text-gray-80 mb-4">Este paciente aún no tiene ningún plan asignado</h2>
+              <Button onClick={assignPlanHandler}>Asignar plan</Button>
+            </div>
           </> }
         </div>
         {/* <FooterMenu>

@@ -11,14 +11,14 @@ const Plans = () => {
   const { plans } = useProfile();
   const navigate = useNavigate(); 
 
-  const [selectedPlan, SetselectedPlan] = useState<string | null>(null);
+  const [selectedPlan, SetSelectedPlan] = useState<string | null>(null);
   
   const addPlanHandler = () => {
     navigate('/addPlan');
   }
 
   const planClickHandler = (planId: string) => {
-    navigate(`/plan/${planId}`);
+    navigate(`/plan/${planId}/assistant`);
   }
 
   return (
@@ -26,6 +26,7 @@ const Plans = () => {
       sidebar={
         <div className="h-full flex flex-col justify-between">
           <div className="flex-1">
+            <h2 className="text-xl mb-5">Mis planes</h2>
             <PlanList plans={plans} onClick={planClickHandler} />
           </div>
           <div>
@@ -36,14 +37,14 @@ const Plans = () => {
       content={
         <>
           { plans.length > 0 ? <>
-              { !selectedPlan ? <>
+              <div className="w-1/2 mx-auto mt-4 text-center">
                 <h1 className="text-2xl">Seleccioná un plan para comenzar.</h1>
-              </> : <>
-                <Plan id={selectedPlan} />
-              </>}
+              </div>
             </> : <>
+              <div className="flex flex-col justify-center w-1/2 items-center mx-auto mt-12">
               <h1 className="py-3 text-xl">No tenés planes creados.</h1>
-              <h2 className="py-3 text-lg"><Link className="underline" to={'/addPlan'}>Creá tu primer plan</Link></h2>
+                <Button onClick={() => {navigate('/addPlan')}}>Creá tu primer plan</Button>
+              </div>
             </>
           }
         </>

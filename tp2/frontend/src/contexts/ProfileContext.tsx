@@ -138,6 +138,8 @@ function ProfileProvider({children}: PropsWithChildren){
     const currentPatient = patients?.find((patient) => patient._id === id);
     if(currentPatient) {
       setPatient(currentPatient);
+    } else {
+      setPatient(emptyProfile.patient);
     }
   }
   

@@ -2,11 +2,17 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 
-const GoBack = () => {
+const GoBack = (props: {
+  onClick?: () => void
+}) => {
   const navigate = useNavigate();
 
   const goBack = () => {
-    navigate(-1);
+    if (props.onClick) {
+      props.onClick();
+    } else {
+      navigate(-1);
+    }
   }
 
   return (
