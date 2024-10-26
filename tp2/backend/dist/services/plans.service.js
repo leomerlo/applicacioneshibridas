@@ -211,7 +211,7 @@ function savePlan(profileId, meals) {
             .then((meals) => __awaiter(this, void 0, void 0, function* () {
             const planExists = yield db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
             if (planExists) {
-                yield db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
+                const plan = yield db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
             }
             else {
                 const plan = Object.assign(Object.assign({}, blankPlan()), { meals, profileId: new ObjectId(profileId) });
@@ -237,6 +237,8 @@ function savePlanMeals(plan, meals) {
             if (planExists) {
                 console.log("Saving plan");
                 yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
+                console.log("Updating linked plans");
+                yield db.collection("plans").updateMany({ planId: new ObjectId(plan) }, { $set: { meals } });
             }
             else {
                 throw new Error('El plan no existe');
@@ -291,7 +293,7 @@ function getPlanById(id) {
 function getPlanByThreadId(id) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
-        const plan = yield db.collection("plans").findOne({ "meta.threadId": id }, { projection: { _id: 0, profileId: 0 } });
+        const plan = yield db.collection("plans").findOne({ "meta.threadId": id }, { projection: { profileId: 0 } });
         return plan;
     });
 }
@@ -408,6 +410,20 @@ function replaceRecipie(profileId, day, meal, recipie) {
         return Promise.resolve(recipie);
     });
 }
+function syncAssignedPlans(planId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        const plan = yield db.collection("plans").findOne({ _id: new ObjectId(planId) });
+        if (!plan) {
+            throw new Error('El plan no existe');
+        }
+        const assignedPlans = yield db.collection("plans").find({ planId: new ObjectId(planId) }).toArray();
+        assignedPlans.forEach((assignedPlan) => __awaiter(this, void 0, void 0, function* () {
+            // actualiza meals con plan.meals
+            yield db.collection("plans").findOneAndUpdate({ _id: new ObjectId(assignedPlan._id) }, { $set: { meals: plan.meals } });
+        }));
+    });
+}
 function generateRecipies(restrictions, preferences, listado) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
@@ -416,4 +432,4 @@ function generateRecipies(restrictions, preferences, listado) {
         return meals;
     });
 }
-export { draftPlan, updatePlanMeta, generatePlan, generatePlanFromDraft, savePlan, savePlanMeals, generateDocPlan, getPlan, getPlanById, getPlanByThreadId, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies };
+export { draftPlan, updatePlanMeta, generatePlan, generatePlanFromDraft, savePlan, savePlanMeals, generateDocPlan, getPlan, getPlanById, getPlanByThreadId, getList, generateShoppingList, getPlans, assignPlan, deletePlan, editPlan, replaceRecipie, generateRecipies, syncAssignedPlans };

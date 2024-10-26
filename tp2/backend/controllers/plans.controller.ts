@@ -99,6 +99,9 @@ async function generatePlanFromDraft(req: Request, res: Response) {
     console.log("Ready for saving", meals);
 
     await planService.savePlanMeals(draftId, meals);
+
+    console.log("Sync assigned plans", meals);
+    await planService.syncAssignedPlans(draftId);
     res.status(200).json({ message: "Plan finished" });
   } catch (err: any) {
     res.status(400).json({ err, message: err.message });
@@ -354,10 +357,13 @@ async function assistantAddMessage(req: Request, res: Response) {
   const threadId = req.body.thread;
   const message = req.body.message;
 
+  const { _id, meta } = await planService.getPlanByThreadId(threadId);
+  meta.status = 'dirty';
+  await planService.updatePlanMeta(new ObjectId(_id), meta);
   await openAiService.addMessages(threadId, message);
   await openAiService.startRun(threadId, 'message', (data) => {
     res.write(data);
-  }, (response) => {
+  }, async (response) => {
     const answer = response.data.content[0].text.value;
     res.end(answer);
   });
