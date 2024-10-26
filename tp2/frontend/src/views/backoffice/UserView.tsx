@@ -84,7 +84,7 @@ const UserView = () => {
   }
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container-fluid mx-auto h-full">
       <div className="flex flex-col h-full pb-20">
         <div>
           <GoBack />

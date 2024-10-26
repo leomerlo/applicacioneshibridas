@@ -13,22 +13,35 @@ type Props = {
   error?: string[];
   selected?: boolean;
   disabled?: boolean;
+  required?: boolean;
+  srOnly?: boolean;
 }
 
 const Input = (props: Props) => {
+
+  const labelClasses = () => {
+    let classes = ["block","text-base","text-gray-700"]
+    if (props.srOnly) {
+      classes.push("sr-only")
+    }
+    return classes.join(" ")
+  }
+
   return (
     <div className="mt-4">
-      <label htmlFor={props.name} className="block text-base text-gray-700">{props.label}</label>
+      <label htmlFor={props.name} className={labelClasses()}>{props.label} { props.required ? <span className="text-red-500">*</span> : <></> }</label>
       <div className="mt-1">
         { props.type === 'textarea' ? 
           // @ts-ignore 
           <textarea
             disabled={props.disabled || false}
+            required={props.required || false}
             className="shadow-sm py-3 px-4 border border-solid border-gray-300 background-grey-10 block w-full sm:text-sm rounded-md"
             { ...props } />
           :
           <input
             disabled={props.disabled || false}
+            required={props.required || false}
             className="shadow-sm py-3 px-4 border border-solid border-gray-300 background-grey-10 block w-full sm:text-sm rounded-md"
             { ...props }
           />
@@ -38,7 +51,7 @@ const Input = (props: Props) => {
         props.error ? 
           <div className="mt-1">
             { props.error.map((e: string) => (
-              <p className="text-red-500 text-xs italic">{e}</p>
+              <p key={e} className="text-red-500 text-xs italic">{e}</p>
             ))}
           </div>
           :

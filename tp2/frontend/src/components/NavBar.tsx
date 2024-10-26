@@ -26,32 +26,20 @@ const NavBar = () => {
   }
   
   return (
-    <nav className={`flex flex-col items-center justify-between fixed z-20 top-0 left-0 w-full bg-white p-2 ${menuOpen ? "h-screen" : "h-navbar"} transition-all duration-500 ease-in-out`}>
-      <div className="flex container justify-between items-center">
-        <div className="flex items-center flex-shrink-0 mr-6">
-          <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block">
-            <img src={logo} aria-hidden="true" className="h-4" />
-          </Link>
-        </div>
-        <div className="block">
-          <button className="flex items-center px-3 py-2 text-primary-main hover:text-primary-secondary transition-colors duration-300 ease-in-out" onClick={() => {setMenuOpen(menuOpen ? false : true)}}>
-            <FontAwesomeIcon icon={faBars} />
-          </button>
-        </div>
-      </div>
-      <div className={`container flex flex-col justify-between bg-white flex-grow ${menuOpen ? "" : "h-0"} overflow-y-hidden`}>
-        <div className="text-sm mt-4">
-          <Link to={profile.accountType === 'admin' ? '/admin' : '/'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Inicio</Link>
-          { profile.accountType !== 'admin' ? <>
-            { plan ? <><Link to={'/plan'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Plan</Link></> : <></> }
-            <Link to={'/profile'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Perfil</Link>
-            { plan ? <Link to={'/shoppingList'} className="block py-8" onClick={() => {setMenuOpen(false)}}>Lista de compras</Link> : <></> }
+    <nav className="px-6 py-4 flex justify-between items-center border-b border-b-gray-40">
+      <div className="flex gap-12 items-center">
+        <img src={logo} aria-hidden="true" className="h-4" />
+        <ul className="flex gap-3">
+          { profile.accountType === 'admin' ? <li>
+            <Link to={'/admin'} className="block p-4">Inicio</Link>
+          </li> : <></> }
+          { profile.accountType === 'doc' ? <>
+            <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>
+            <li><Link to={'/plans'} className="block p-4">Mis planes</Link></li>
           </> : <></> }
-        </div>
-        <div>
-          <Button onClick={logout} full>Cerrar sesión</Button>
-        </div>
+        </ul>
       </div>
+      <Button className="grow-0" onClick={logout} variant="secondary" size="small">Cerrar sesión</Button>
     </nav>
   )
 }

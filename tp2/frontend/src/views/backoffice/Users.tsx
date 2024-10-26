@@ -112,7 +112,7 @@ const Users = () => {
   }
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container-fluid mx-auto h-full">
       <div className="mb-4">
         <GoBack />
       </div>

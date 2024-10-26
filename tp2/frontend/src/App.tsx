@@ -1,24 +1,18 @@
 import { Outlet } from 'react-router-dom'
 import './App.scss'
 import NavBar from './components/NavBar';
-import { ProfileProvider } from './contexts/ProfileContext';
-import { PlanProvider } from './contexts/PlanContext';
 import NotificationsBlock from './components/NotificationsBlock';
+import { useProfile } from './contexts/ProfileContext';
 
 function App() {
-
   return (
-    <PlanProvider>
-    <ProfileProvider>
-      <div className="flex min-h-screen">
-        <NotificationsBlock />
-        <NavBar />
-        <div className="pt-navbar p-5 w-full z-10">
-          <Outlet />
-        </div>
+    <div className="flex flex-col min-h-screen">
+      <NotificationsBlock />
+      <NavBar />
+      <div className="flex-1 w-full flex">
+        <Outlet />
       </div>
-    </ProfileProvider>
-    </PlanProvider>
+    </div>
   )
 }
 

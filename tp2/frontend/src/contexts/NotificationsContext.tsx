@@ -27,7 +27,7 @@ function NotificationsProvider({children}: PropsWithChildren){
   const updateNotifications = (notification: Notification) => {
     setNotifications([...notifications, notification]);
     setTimeout(() => {
-      closeNotification(notification);
+      //closeNotification(notification);
     }, 5000);
   }
 

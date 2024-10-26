@@ -29,7 +29,7 @@ const Dashboard = () => {
   }, [users]);
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container-fluid mx-auto h-full">
       <h1 className="text-4xl text-gray-80">Bienvenid@, {profile.name}</h1>
       <div className="flex flex-col md:flex-row gap-6 my-6">
         <GradientCard title="Usuarios totales">

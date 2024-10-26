@@ -18,6 +18,10 @@ export function assignPlan({ patientId, planId }: { patientId: string, planId: s
   return API.call({ uri: `plan/${planId}/${patientId}`, method: 'POST' })
 };
 
+export function unassignPatient(patientId: string) {
+  return API.call({ uri: `patient/${patientId}`, method: 'DELETE' })
+}
+
 export interface Patient extends Profile {
   plan: Plan | null
 }
@@ -26,6 +30,6 @@ export default {
   getPatients,
   addPatient,
   getPatient,
-  // removePatient,
+  unassignPatient,
   // updatePatient
 }

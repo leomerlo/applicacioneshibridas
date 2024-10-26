@@ -10,7 +10,7 @@ const NoPermissions = () => {
   }
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container-fluid mx-auto h-full">
       <div className="flex flex-col h-full">
         <div className="flex-grow">
           <h1 className="text-4xl text-gray-80 my-8 text-center">No tenés permisos para ver esta sección</h1>

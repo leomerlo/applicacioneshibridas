@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { ObjectId } from 'mongodb';
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
@@ -92,6 +93,8 @@ function generatePlanFromDraft(req, res) {
             const meals = yield generateRecipiesFull(threadId);
             console.log("Ready for saving", meals);
             yield planService.savePlanMeals(draftId, meals);
+            console.log("Sync assigned plans", meals);
+            yield planService.syncAssignedPlans(draftId);
             res.status(200).json({ message: "Plan finished" });
         }
         catch (err) {
@@ -335,12 +338,16 @@ function assistantAddMessage(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const threadId = req.body.thread;
         const message = req.body.message;
+        const { _id, meta } = yield planService.getPlanByThreadId(threadId);
+        meta.status = 'dirty';
+        yield planService.updatePlanMeta(new ObjectId(_id), meta);
         yield openAiService.addMessages(threadId, message);
         yield openAiService.startRun(threadId, 'message', (data) => {
             res.write(data);
-        }, (data) => {
-            res.end(data);
-        });
+        }, (response) => __awaiter(this, void 0, void 0, function* () {
+            const answer = response.data.content[0].text.value;
+            res.end(answer);
+        }));
     });
 }
 function assistantGeneratePlan(req, res) {

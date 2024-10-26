@@ -313,12 +313,32 @@ function startThread(title, restrictions, preferences) {
     return __awaiter(this, void 0, void 0, function* () {
         const thread = yield openai.beta.threads.createAndRun({
             assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
+            instructions: `
+    Cuando te pida ayuda, vas a actuar como un jefe de cocina y asistir a un nutricionista para armar un plan de comida semanal para un paciente, siguiendo las "restricciones" y "preferencias" especificadas en la metadata del chat.
+
+    Restricciones: ${restrictions}
+
+    Preferencias: ${preferences}
+ 
+    Las restricciones son más importantes que las preferencias. Las restricciones son lo mas importante de todo ya que una restriccion que no se siga puede resultar en problemas.
+
+    Las preferencias son menos importantes que las restricciones, pero aun asi son importantes.
+
+    El plan de comida debe incluir desayuno, almuerzo y cena para cada dia de la semana.
+
+    Durante el chat, solo devolve los titulos de las comidas, sin ingredientes ni instrucciones.
+    `,
             metadata: {
                 title,
                 restrictions,
                 preferences
             }
         });
+        let run;
+        do {
+            run = yield openai.beta.threads.runs.retrieve(thread.thread_id, thread.id);
+            yield new Promise(r => setTimeout(r, 2000));
+        } while (run.status !== "completed");
         return thread;
     });
 }
@@ -331,65 +351,18 @@ function addMessages(threadId, message) {
         return void 0;
     });
 }
-/*async function startRun(threadId: string, dataCB: (data: string) => void, dataEnd: (data: string) => void) {
-  try {
-    const run = await openai.beta.threads.runs.create(
-      threadId,
-      {
-        assistant_id: "asst_XbEObay3S8R1P6eU5QGWESuy",
-        stream: true
-      }
-    );
-
-    for await (const event of run) {
-      if (event.event === "thread.run.step.delta") {
-        console.log("-- Event Delta");
-        console.log(event.data.delta.step_details.tool_calls[0].function.arguments);
-      } else if (event.event === "thread.run.requires_action") {
-        try {
-          console.log("-- Event Requires Action");
-          const threadId = event.data.thread_id;
-          const meals = {};
-          const tool_calls = event.data.required_action?.submit_tool_outputs.tool_calls;
-          tool_calls?.map(async (tool: RequiredActionFunctionToolCall) => {
-            console.log("-- Tools Calls", tool);
-            if (tool.function.name === "day_planner") {
-              const args = JSON.parse(tool.function.arguments);
-              console.log("-- Day Planner");
-              meals[args.day] = args.meals;
-            }
-          });
-          const plan = await planService.getPlanByThreadId(threadId);
-          if (plan) {
-            //console.log("-- Plan Exists");
-            console.log(meals);
-            //await planService.savePlanMeals(plan, meals);
-            submitToolOutputs({ success: true }, event.data.id, threadId);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      } else if (event.event === "thread.message.delta" && event.data.delta.content && event.data.delta.content.length > -1) {
-        const response = event.data.delta.content[0].text.value;
-        dataCB(response);
-      } else if (event.event === "thread.message.completed" || event.event === "thread.run.completed") {
-        dataEnd("Plan guardado con éxito");
-      }
-    }
-  } catch (error) {
-    // openai.beta.threads.runs.cancel(threadId, event.data.id);
-    console.log("Run failed", error);
-  }
-}*/
 function startRun(threadId, assistant, dataCB, dataEnd) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_2, _b, _c;
         var _d;
         const assistant_id = assistant === 'message' ? "asst_XbEObay3S8R1P6eU5QGWESuy" : "asst_VgpCeGz34c0CmjfIRfINHL4o";
+        const thread = yield openai.beta.threads.retrieve(threadId);
+        const threadMeta = thread.metadata;
         try {
             const run = yield openai.beta.threads.runs.create(threadId, {
                 assistant_id: assistant_id,
-                stream: true
+                stream: true,
+                additional_instructions: `Restricciones: ${threadMeta.restrictions} Preferencias: ${threadMeta.preferences}`
             });
             try {
                 for (var _e = true, run_1 = __asyncValues(run), run_1_1; run_1_1 = yield run_1.next(), _a = run_1_1.done, !_a; _e = true) {
@@ -428,9 +401,6 @@ function startRun(threadId, assistant, dataCB, dataEnd) {
                         dataCB(response);
                     }
                     else if (event.event === "thread.message.completed") {
-                        dataEnd(event);
-                    }
-                    else if (event.event === "thread.run.completed") {
                         dataEnd(event);
                     }
                 }

@@ -3,6 +3,8 @@ import * as patientsService from "../services/patients.service";
 import { useNotifications } from "../contexts/NotificationsContext";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
+import NutriLayout from "../components/NutriLayout";
+import PatientList from "../components/PatientList";
 
 const AddPatient = () => {
   const notifications = useNotifications();
@@ -21,13 +23,20 @@ const AddPatient = () => {
     } else {
       notifications.updateNotifications({
         variant: 'error',
-        message: 'Hubo un problema al crear al paciente'
+        message: resp.data.error.message
       });
     }
   }
 
   return (
-    <AddUser type="user" addService={addPatientService} label="paciente" />
+    <NutriLayout
+      sidebar={
+        <PatientList />
+      }
+      content={
+        <AddUser type="user" addService={addPatientService} label="paciente" />
+      }
+    />
   )
 }
 

@@ -21,7 +21,7 @@ const PatientNextMeal = (props: PatientNextMealProps) => {
       dayMeals = props.plan.meals[props.day]
     }
     setMeals(dayMeals);
-  }, [props.day]);
+  }, [props.day, props.plan]);
 
   return (
     <div className="mt-6">

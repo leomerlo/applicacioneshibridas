@@ -89,6 +89,7 @@ function ProfileProvider({children}: PropsWithChildren){
   const refreshProfile = async (): Promise<void> => {
     accountService.getSession()
     .then((profile) => {
+      console.log(profile);
       if (profile.status === 200) {
         setProfile(profile.data)
 
@@ -137,6 +138,8 @@ function ProfileProvider({children}: PropsWithChildren){
     const currentPatient = patients?.find((patient) => patient._id === id);
     if(currentPatient) {
       setPatient(currentPatient);
+    } else {
+      setPatient(emptyProfile.patient);
     }
   }
   

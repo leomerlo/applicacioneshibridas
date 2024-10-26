@@ -13,6 +13,7 @@ import { db, client } from './mongo.service.js';
 import transporter from './email.service.js';
 import * as profileService from './profile.service.js';
 const profilesColelction = db.collection('profiles');
+const plansCollection = db.collection('plans');
 export function addPatient(docId, patient) {
     return __awaiter(this, void 0, void 0, function* () {
         patient.type = 'user';
@@ -102,7 +103,20 @@ export function getPatient(docId, patientId) {
 export function deletePatient(docId, patientId) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
-        return yield profilesColelction.findOneAndUpdate({ docId: new ObjectId(docId), _id: new ObjectId(patientId) }, { $set: { status: 'inactive' } });
+        const patient = profilesColelction.findOne({ docId: new ObjectId(docId), _id: new ObjectId(patientId) });
+        if (!patient) {
+            throw new Error('Patient not found');
+        }
+        const promises = yield Promise.all([
+            profilesColelction.findOneAndUpdate({ docId: new ObjectId(docId), _id: new ObjectId(patientId) }, { $unset: { docId } }),
+            plansCollection.findOneAndDelete({ profileId: new ObjectId(patientId) })
+        ]).catch((err) => {
+            throw new Error(err.message);
+        });
+        if (promises[0].value === null) {
+            throw new Error('Patient not found');
+        }
+        return promises;
     });
 }
 export function updatePatient(docId, patientId, patient) {

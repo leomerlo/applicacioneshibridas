@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import GoBack from "../components/GoBack";
 import generator from "generate-password-browser";
+import Schema, { Rules, ValidateError, ValidateFieldsError, Values } from 'async-validator';
 
 export type UserForm = {
   userName: string,
@@ -23,12 +24,28 @@ export type Props = {
 
 const AddUser = (props: Props) => {
   const [userName, setUserName] = useState("");
+  const [userError, setUserError] = useState<string[]>([]);
   const [userType, setUserType] = useState(props.type);
   const [loading, setLoading] = useState(false);
+  const descriptor: Rules = {
+    userName: [{
+      required: true,
+      message: 'El correo electrónico es requerido'
+    },
+    {
+      type: "email",
+      message: 'El correo electrónico no es válido'
+    }]
+  };
+  const validator  = new Schema(descriptor);
 
   const userNameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
   };
+
+  const userTypeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setUserType(event.target.value as UserType);
+  }
 
   useEffect(() => {
     if(!props.type) {
@@ -57,6 +74,18 @@ const AddUser = (props: Props) => {
   }
 
   const createPatient = async () => {
+    await validator.validate({ userName }, (errors) => {
+      if (errors) {
+        const userError = errors?.map((e: ValidateError) => e.message) || [];
+        if (userError !== undefined) {
+          setUserError(userError);
+        } else {
+          setUserError([]);
+        }
+        return false;
+      }
+    });
+
     setLoading(true);
     const password = generator.generate({
       length: 10,
@@ -71,22 +100,22 @@ const AddUser = (props: Props) => {
   };
 
   return (
-    <div className="container mx-auto h-full">
-      <div className="flex flex-col h-full">
+    <div className="container-fluid mx-auto h-full">
+      <div className="flex flex-col justify-stretch">
         <div className="text-left">
           <GoBack />
         </div>
-        <div className="flex-grow">
-          <h1 className="text-4xl text-gray-80 mt-5">Agregar { userTypeText(userType) }</h1>
+        <div className="flex-1">
+          <h1 className="text-2xl text-gray-80 mt-5">Agregar { userTypeText(userType) }</h1>
           { !userType ? <div className="mt-8">
-            <select>
+            <select name="userType" value={userType} onChange={userTypeHandler}>
               <option value="user">Paciente</option>
               <option value="doc">Nutricionista</option>
               <option value="user">Administrador</option>
             </select>
           </div> : <></> }
-          <div className="mt-8">
-            <Input name="userName" type="email" label="Correo electrónico" value={userName} onInput={userNameHandler} placeholder="Ingresá un correo electrónico" />
+          <div className="my-8">
+            <Input name="userName" type="email" label="Correo electrónico" error={userError} value={userName} onInput={userNameHandler} placeholder="Ingresá un correo electrónico" />
           </div>
         </div>
         <div>

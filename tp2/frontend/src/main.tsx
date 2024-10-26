@@ -14,11 +14,12 @@ import './index.scss'
 import { RecipieProvider } from './contexts/RecipiesContext.tsx';
 import { NotificationsProvider } from './contexts/NotificationsContext.tsx';
 import { AdminProvider } from './contexts/AdminContext.tsx';
+import { PlanProvider } from './contexts/PlanContext.tsx';
+import { ProfileProvider } from './contexts/ProfileContext.tsx';
 import AddPatient from './views/AddPatient.tsx';
 import AddPlan from './views/AddPlan.tsx';
 import RoutePrivateDoctor from './components/RoutePrivateDoctor.tsx';
 import NoPermissions from './views/NoPermissions.tsx';
-import Patient from './views/Patient.tsx';
 import AssignPlan from './views/AssignPlan.tsx';
 import Plans from './views/Plans.tsx';
 import PlanView from './views/Plan.tsx';
@@ -34,11 +35,12 @@ import Subscription from './views/Subscription.tsx';
 import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
 import SubscriptionError from './views/subcription/SubscriptionError.tsx';
 import PlanAssistant from './views/PlanAssistant.tsx';
+import Patients from './views/Patients.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RoutePrivate><App /></RoutePrivate>,
+    element: <RoutePrivate><PlanProvider><ProfileProvider><App /></ProfileProvider></PlanProvider></RoutePrivate>,
     // errorElement: <Error404Page />,
     children: [
       {
@@ -56,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: '/shoppingList',
         element: <ShoppingListPage />
+      },
+      {
+        path: '/patients',
+        element: <Patients />
       },
       {
         path: '/plans',
@@ -83,7 +89,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/patient/:id',
-        element: <RoutePrivateDoctor><Patient /></RoutePrivateDoctor>
+        element: <Patients />
       },
       {
         path: '/patient/:id/assignPlan',

@@ -228,7 +228,7 @@ async function savePlan(profileId: ObjectId, meals: Meals): Promise<void> {
     const planExists = await db.collection("plans").findOne({ profileId: new ObjectId(profileId) });
   
     if (planExists) {
-      await db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
+      const plan = await db.collection("plans").findOneAndUpdate({ profileId: new ObjectId(profileId) }, { $set: { meals, profileId: new ObjectId(profileId) } });
     } else {
       const plan = {
         ...blankPlan(),
@@ -260,6 +260,8 @@ async function savePlanMeals(plan: string, meals: string | object): Promise<void
     if (planExists) {
       console.log("Saving plan");
       await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(plan) }, { $set: { meals, "meta.status": "saved" } });
+      console.log("Updating linked plans");
+      await db.collection("plans").updateMany({ planId: new ObjectId(plan) }, { $set: { meals } });
     } else {
       throw new Error('El plan no existe');
     }
@@ -310,7 +312,7 @@ async function getPlanById(id: string): Promise<Plan> {
 
 async function getPlanByThreadId(id: string): Promise<Plan> {
   await client.connect()
-  const plan = await db.collection("plans").findOne({ "meta.threadId": id }, { projection: { _id: 0, profileId: 0 } });
+  const plan = await db.collection("plans").findOne({ "meta.threadId": id }, { projection: { profileId: 0 } });
   return plan as Plan;
 }
 
@@ -441,6 +443,23 @@ async function replaceRecipie(profileId: ObjectId, day: string, meal: string, re
   return Promise.resolve(recipie);
 }
 
+async function syncAssignedPlans(planId: string): Promise<void> {
+  await client.connect()
+
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(planId) });
+
+  if (!plan) {
+    throw new Error('El plan no existe');
+  }
+
+  const assignedPlans = await db.collection("plans").find({ planId: new ObjectId(planId) }).toArray();
+
+  assignedPlans.forEach(async (assignedPlan) => {
+    // actualiza meals con plan.meals
+    await db.collection("plans").findOneAndUpdate({ _id: new ObjectId(assignedPlan._id) }, { $set: { meals: plan.meals } });
+  });
+}
+
 async function generateRecipies(restrictions: string, preferences: string, listado: any) {
   await client.connect()
 
@@ -469,5 +488,6 @@ export {
   deletePlan,
   editPlan,
   replaceRecipie,
-  generateRecipies
+  generateRecipies,
+  syncAssignedPlans
 }

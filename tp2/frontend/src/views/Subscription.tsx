@@ -25,7 +25,7 @@ const Subscription = () => {
 
   return (
     <>
-      <div className="container mx-auto">
+      <div className="container-fluid mx-auto">
         <div className="flex justify-between">
             <GoBack />
         </div>

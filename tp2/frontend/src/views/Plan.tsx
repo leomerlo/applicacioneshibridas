@@ -69,7 +69,7 @@ const PlanView = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container-fluid mx-auto">
       <div className="pb-20">
         <GoBack />
         { planData ? <>
