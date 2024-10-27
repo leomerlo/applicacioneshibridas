@@ -2,7 +2,7 @@ import { CardPayment } from '@mercadopago/sdk-react'
 import { subscribe } from '../services/subscription.service';
 import { useNavigate } from 'react-router-dom';
 import girlBowl from '../assets/girlBowl.png';
-import GoBack from '../components/GoBack';
+import GoBack from './GoBack';
 
 const Block = ({ title, description }) => (
   <div className="bg-white p-4 shadow-md rounded-lg">
@@ -11,7 +11,7 @@ const Block = ({ title, description }) => (
   </div>
 );
 
-const Subscription = () => {
+const SubscriptionInfo = () => {
   const navigate = useNavigate();
 
   const submitHandler = async (param: any) => {
@@ -26,9 +26,6 @@ const Subscription = () => {
   return (
     <>
       <div className="container-fluid mx-auto">
-        <div className="flex justify-between">
-            <GoBack />
-        </div>
         <div className="flex justify-between mt-12">
           <div className="md:w-1/2">
             <span className="text-primary-main font-bold">Tecnología avanzada y atención personalizada</span>
@@ -75,4 +72,4 @@ const Subscription = () => {
     </>
   );
 };
-export default Subscription;
+export default SubscriptionInfo;

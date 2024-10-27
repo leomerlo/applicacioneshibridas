@@ -49,7 +49,7 @@ function createAccount(account) {
                 const docAccount = account;
                 const docProfile = newProfile;
                 docProfile.accountId = new ObjectId(newProfile.accountId);
-                docProfile.status = ProfileStatus.pending;
+                docProfile.status = ProfileStatus.inactive;
                 docProfile.idDocument = docAccount.idDocument;
                 docProfile.idLicense = docAccount.idLicense;
                 docProfile.email = docAccount.userName;
