@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import './App.scss'
 import NavBar from './components/NavBar';
 import NotificationsBlock from './components/NotificationsBlock';
-import { useProfile } from './contexts/ProfileContext';
 
 function App() {
   return (

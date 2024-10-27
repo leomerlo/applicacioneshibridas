@@ -31,7 +31,6 @@ import Users from './views/backoffice/Users.tsx';
 import AddUserPage from './views/backoffice/AddUserPage.tsx';
 import UserView from './views/backoffice/UserView.tsx';
 import LandingPage from './views/LandingPage.tsx';
-import Subscription from './views/Subscription.tsx';
 import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
 import SubscriptionError from './views/subcription/SubscriptionError.tsx';
 import PlanAssistant from './views/PlanAssistant.tsx';
@@ -102,10 +101,6 @@ const router = createBrowserRouter([
       {
         path: '/recipie/:profileId/:name',
         element: <RecipieProvider><RecipiePage /></RecipieProvider>
-      },
-      {
-        path: '/subscription',
-        element: <Subscription />,
       },
       {
         path: '/subscription/success',

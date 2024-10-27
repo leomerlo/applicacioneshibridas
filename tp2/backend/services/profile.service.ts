@@ -76,7 +76,11 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
     update.docId = new ObjectId(payload.docId)
   }
 
-  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
+  // Merge the new profile with the existing one
+  const existingProfile = await profilesColelction.findOne({ _id: new ObjectId(updateId) });
+  const mergedProfile = { ...existingProfile, ...update };
+
+  const updated = await profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, mergedProfile);
 
   if (updated.matchedCount == 0) {
     throw new Error('El perfil que intentas modificar no existe.')
