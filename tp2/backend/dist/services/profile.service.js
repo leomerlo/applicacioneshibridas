@@ -72,7 +72,10 @@ function updateProfile(token_1, profile_1) {
         if (payload.docId) {
             update.docId = new ObjectId(payload.docId);
         }
-        const updated = yield profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, update);
+        // Merge the new profile with the existing one
+        const existingProfile = yield profilesColelction.findOne({ _id: new ObjectId(updateId) });
+        const mergedProfile = Object.assign(Object.assign({}, existingProfile), update);
+        const updated = yield profilesColelction.replaceOne({ _id: new ObjectId(updateId) }, mergedProfile);
         if (updated.matchedCount == 0) {
             throw new Error('El perfil que intentas modificar no existe.');
         }
