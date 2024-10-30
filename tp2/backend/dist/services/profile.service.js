@@ -57,18 +57,12 @@ function getProfileByAccount(accountId) {
 function updateProfile(token_1, profile_1) {
     return __awaiter(this, arguments, void 0, function* (token, profile, profileId = null) {
         yield client.connect();
-        const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB");
+        const payload = yield jwt.verify(token, "7tm4puxhVbjf73X7j3vB");
         const updateId = profileId ? profileId : payload._id;
         if (profileId && payload.accountType !== ProfileType.admin) {
             throw new Error('No tienes permisos para modificar este perfil.');
         }
         const update = Object.assign({}, profile);
-        if (!profileId) {
-            update.accountId = new ObjectId(payload.accountId);
-        }
-        else {
-            update.accountId = new ObjectId(profile.accountId);
-        }
         if (payload.docId) {
             update.docId = new ObjectId(payload.docId);
         }

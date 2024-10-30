@@ -2,8 +2,9 @@ import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as profileSchema from '../schemas/profile.schema.js';
 import * as profileService from '../services/profile.service.js';
-import { DocProfile } from '../types/profile.js';
+import { DocProfile, Profile } from '../types/profile.js';
 import { ProfileType } from '../schemas/profile.schema.js';
+import jwt from 'jsonwebtoken';
 
 async function validateProfileData(req: Request, res: Response, next: NextFunction) {
   let userTypeSchema;
@@ -69,14 +70,18 @@ async function validatePatient(req: Request, res: Response, next: NextFunction) 
 }
 
 async function validateAdmin(req: Request, res: Response, next: NextFunction) {
-  await profileService.getProfileByAccount(new ObjectId(req.body.accountId))
+  const token = req.headers['auth-token'] as string;
+  if(!token) {
+    res.status(401).json({ error: { message: 'No se ha enviado el token' } })
+    return;
+  }
+  const payload = await jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
+  await profileService.getProfileByAccount(new ObjectId(payload.accountId))
   .then((profile) => {
     if(profile && profile.accountType === ProfileType.admin) {
       next()
       return;
     }
-
-    console.log(req.body.accountId);
 
     throw new Error('No tenés los permisos correctos para realizar esta acción');
   })

@@ -55,7 +55,7 @@ async function getProfileByAccount(accountId: ObjectId) {
 
 async function updateProfile(token: string, profile: Profile | DocProfile, profileId: ObjectId | null = null) {
   await client.connect()
-  const payload = jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
+  const payload = await jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile | DocProfile;
   const updateId = profileId ? profileId : payload._id;
 
   if(profileId && payload.accountType !== ProfileType.admin) {
@@ -65,13 +65,7 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
   const update = {
     ...profile
   }
-
-  if(!profileId) {
-    update.accountId = new ObjectId(payload.accountId)
-  } else {
-    update.accountId = new ObjectId(profile.accountId)
-  }
-
+  
   if(payload.docId) {
     update.docId = new ObjectId(payload.docId)
   }

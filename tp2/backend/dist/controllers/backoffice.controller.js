@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as services from '../services/backoffice.service.js';
 import * as accountServices from '../services/account.service.js';
 import * as profileServices from '../services/profile.service.js';
+import * as backofficeService from '../services/backoffice.service.js';
 import { ObjectId } from 'mongodb';
 function getDashboard(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -34,7 +35,7 @@ function editUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const token = req.headers['auth-token'];
         const profileId = req.params.profileId;
-        return profileServices.updateProfile(token, req.body.user, new ObjectId(profileId))
+        return profileServices.updateProfile(token, req.body, new ObjectId(profileId))
             .then(() => {
             res.status(200).json({ message: "Cuenta editada" });
         })
@@ -46,7 +47,6 @@ function editUser(req, res) {
 function getUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const profileId = req.params.profileId;
-        console.log(profileId);
         return profileServices.getProfile(new ObjectId(profileId))
             .then((profile) => {
             res.status(200).json(profile);
@@ -68,4 +68,16 @@ function deleteUser(req, res) {
         });
     });
 }
-export { getDashboard, createUser, editUser, getUser, deleteUser };
+function activateUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const profileId = req.params.profileId;
+        return backofficeService.activateUser(profileId)
+            .then(() => {
+            res.status(200).json({ message: "Cuenta activada" });
+        })
+            .catch((err) => {
+            res.status(400).json({ error: { message: err.message } });
+        });
+    });
+}
+export { activateUser, getDashboard, createUser, editUser, getUser, deleteUser };
