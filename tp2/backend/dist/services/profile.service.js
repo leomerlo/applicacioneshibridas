@@ -62,6 +62,7 @@ function updateProfile(token_1, profile_1) {
         if (profileId && payload.accountType !== ProfileType.admin) {
             throw new Error('No tienes permisos para modificar este perfil.');
         }
+        profile._id = new ObjectId(updateId);
         const update = Object.assign({}, profile);
         if (payload.docId) {
             update.docId = new ObjectId(payload.docId);

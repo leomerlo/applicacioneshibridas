@@ -6,10 +6,10 @@ import NavBar from '../../components/NavBar';
 function BackOffice() {
   return (
     <ProfileProvider>
-      <div className="flex min-h-screen">
+      <div className="flex flex-col min-h-screen">
         <NotificationsBlock />
         <NavBar />
-        <div className="pt-navbar p-5 w-full z-10">
+        <div className="flex-1 w-full flex">
           <Outlet />
         </div>
       </div>

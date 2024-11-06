@@ -62,6 +62,8 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
     throw new Error('No tienes permisos para modificar este perfil.')
   }
 
+  profile._id = new ObjectId(updateId);
+
   const update = {
     ...profile
   }

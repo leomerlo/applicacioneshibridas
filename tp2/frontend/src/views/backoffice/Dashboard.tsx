@@ -5,6 +5,7 @@ import { useAdmin } from "../../contexts/AdminContext";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import NutriLayout from "../../components/NutriLayout";
 
 const Dashboard = () => {
   const { profile } = useProfile();
@@ -29,17 +30,17 @@ const Dashboard = () => {
   }, [users]);
 
   return (
-    <div className="container-fluid mx-auto h-full">
+    <div className="container mt-6 mx-auto h-full">
       <h1 className="text-4xl text-gray-80">Bienvenid@, {profile.name}</h1>
       <div className="flex flex-col md:flex-row gap-6 my-6">
         <GradientCard title="Usuarios totales">
-          <span className="text-6xl text-white">{dashboard.users.length}</span>
+          <span className="text-4xl text-white">{dashboard.users.length}</span>
         </GradientCard>
         <GradientCard title="Nutricionistas">
-          <span className="text-6xl text-white">{dashboard.docs}</span>
+          <span className="text-4xl text-white">{dashboard.docs}</span>
         </GradientCard>
         <GradientCard title="Esperando aprobación">
-          <span className="text-6xl text-white">{dashboard.awaiting.length}</span>
+          <span className="text-4xl text-white">{dashboard.awaiting.length}</span>
         </GradientCard>
       </div>
       <div className="flex flex-col md:flex-row my-6 gap-6">
