@@ -11,7 +11,6 @@ import { useParams } from "react-router-dom";
 import NutriLayout from "../../components/NutriLayout";
 import UserSidebar from "./UserSidebar";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
-import SubscriptionStatus from "../../components/SubscriptionStatus";
 import SubscriptionActiveStatus from "../../components/SubscriptionActiveStatus";
 
 const UserView = () => {
@@ -54,7 +53,7 @@ const UserView = () => {
   };
 
   const deleteHandler = () => {
-    backofficeService.updateAccount(userProfile._id as string, { ...tempProfile, status: 'inactive' }).then((resp) => {
+    backofficeService.deactivateAccount(userProfile._id as string).then((resp) => {
       if(resp.status === 200) {
         tempProfile.status = 'inactive';
         notifications.updateNotifications({
@@ -106,14 +105,14 @@ const UserView = () => {
                     <FontAwesomeIcon icon={faPenToSquare} className="me-2" />
                     Guardar
                   </Button>
-                  { tempProfile.status === 'pending' ? <Button size="small" variant="secondary" onClick={activateHandler}>
+                  { tempProfile.status !== 'active'  ? <Button size="small" variant="secondary" onClick={activateHandler}>
                     <FontAwesomeIcon icon={faThumbsUp} className="me-2" />
                     Activar
                   </Button> : <></> }
-                  <Button size="small" variant="secondary" onClick={deleteHandler}>
+                  { tempProfile.status !== 'inactive'  ? <Button size="small" variant="secondary" onClick={deleteHandler}>
                     <FontAwesomeIcon icon={faTrashCan} className="me-2" />
                     Desactivar
-                  </Button>
+                  </Button> : <></> }
                 </div>
               </div>
               <form onSubmit={saveHandler}>

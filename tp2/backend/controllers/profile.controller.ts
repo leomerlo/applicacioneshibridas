@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import * as profileService from "../services/profile.service.js";
 import { Profile } from "../types/profile.js";
+import { ObjectId } from "mongodb";
 
 async function updateProfile(req: Request, res: Response) {
   const token = req.headers['auth-token'] as string;

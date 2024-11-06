@@ -19,9 +19,14 @@ export function updateAccount(id: string, payload: Profile) {
   }});
 }
 
+export function deactivateAccount(id: string) {
+  return API.call({ uri: `admin/account/${id}`, method: 'DELETE' });
+}
+
 export default {
   getDashboard,
   createAccount,
   getAccount,
-  updateAccount
+  updateAccount,
+  deactivateAccount
 }
