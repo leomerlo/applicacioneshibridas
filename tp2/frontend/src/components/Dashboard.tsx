@@ -1,11 +1,11 @@
-import { useProfile } from "../../contexts/ProfileContext";
-import GradientCard from "../../components/GradientCard";
+import { useProfile } from "../contexts/ProfileContext";
+import GradientCard from "./GradientCard";
 import { useEffect, useState } from "react";
-import { useAdmin } from "../../contexts/AdminContext";
+import { useAdmin } from "../contexts/AdminContext";
 import { Link } from "react-router-dom";
-import Button from "../../components/Button";
+import Button from "./Button";
 import { useNavigate } from "react-router-dom";
-import NutriLayout from "../../components/NutriLayout";
+import NutriLayout from "./NutriLayout";
 
 const Dashboard = () => {
   const { profile } = useProfile();
@@ -53,11 +53,6 @@ const Dashboard = () => {
               </li>
             ))}
           </ul>
-          <Button className="ml-auto" onClick={
-            () => {
-              navigate("/admin/users");
-            }
-          }>Ver todos</Button>
         </div>
         <div className="flex-1">
           <h2 className="text-2xl text-gray-80">En espera de aprobación</h2>

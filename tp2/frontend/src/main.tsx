@@ -25,7 +25,7 @@ import Plans from './views/Plans.tsx';
 import PlanView from './views/Plan.tsx';
 import ForgotPassword from './views/ForgotPassword.tsx';
 import BackOffice from './views/backoffice/BackOffice.tsx';
-import Dashboard from './views/backoffice/Dashboard.tsx';
+import Dashboard from './components/Dashboard.tsx';
 import RouteAdmin from './components/RouteAdmin.tsx';
 import Users from './views/backoffice/Users.tsx';
 import AddUserPage from './views/backoffice/AddUserPage.tsx';
@@ -119,7 +119,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <RouteAdmin><Dashboard /></RouteAdmin>,
+        element: <RouteAdmin><Users /></RouteAdmin>,
       },
       {
         path: '/admin/users',
