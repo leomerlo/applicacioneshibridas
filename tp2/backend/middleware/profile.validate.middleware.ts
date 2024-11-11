@@ -90,9 +90,31 @@ async function validateAdmin(req: Request, res: Response, next: NextFunction) {
   })
 }
 
+async function validateDoctorORAdmin(req: Request, res: Response, next: NextFunction) {
+  const token = req.headers['auth-token'] as string;
+  if(!token) {
+    res.status(401).json({ error: { message: 'No se ha enviado el token' } })
+    return;
+  }
+  const payload = await jwt.verify(token, "7tm4puxhVbjf73X7j3vB") as Profile;
+  await profileService.getProfileByAccount(new ObjectId(payload.accountId))
+  .then((profile) => {
+    if(profile && (profile.accountType === ProfileType.admin || profile.accountType === ProfileType.doc)) {
+      next()
+      return;
+    }
+
+    throw new Error('No tenés los permisos correctos para realizar esta acción');
+  })
+  .catch((err) => {
+    res.status(500).json({ error: { message: err.message } })
+  })
+}
+
 export {
   validateProfileData,
   validateDoctor,
   validatePatient,
-  validateAdmin
+  validateAdmin,
+  validateDoctorORAdmin
 }

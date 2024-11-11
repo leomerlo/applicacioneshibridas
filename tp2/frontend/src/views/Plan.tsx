@@ -79,7 +79,7 @@ const PlanView = () => {
           <PatientNextMeal day={planSelectedDay} plan={planData as Plan} />
         </>: null }
       </div>
-      { id ? 
+      { id && plan?.can_edit ? 
         <FooterMenu>
           <Button onClick={deletePlanHandler} full>Eliminar plan</Button>
         </FooterMenu>

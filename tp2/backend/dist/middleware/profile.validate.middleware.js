@@ -97,4 +97,25 @@ function validateAdmin(req, res, next) {
         });
     });
 }
-export { validateProfileData, validateDoctor, validatePatient, validateAdmin };
+function validateDoctorORAdmin(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const token = req.headers['auth-token'];
+        if (!token) {
+            res.status(401).json({ error: { message: 'No se ha enviado el token' } });
+            return;
+        }
+        const payload = yield jwt.verify(token, "7tm4puxhVbjf73X7j3vB");
+        yield profileService.getProfileByAccount(new ObjectId(payload.accountId))
+            .then((profile) => {
+            if (profile && (profile.accountType === ProfileType.admin || profile.accountType === ProfileType.doc)) {
+                next();
+                return;
+            }
+            throw new Error('No tenés los permisos correctos para realizar esta acción');
+        })
+            .catch((err) => {
+            res.status(500).json({ error: { message: err.message } });
+        });
+    });
+}
+export { validateProfileData, validateDoctor, validatePatient, validateAdmin, validateDoctorORAdmin };

@@ -283,11 +283,21 @@ function getPlan(profileId) {
         return plan;
     });
 }
-function getPlanById(id) {
+function getPlanById(id, profileId) {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
-        const plan = yield db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
-        return plan;
+        const isAdmin = yield db.collection("profiles").findOne({ _id: new ObjectId(profileId), accountType: 'admin' });
+        const plan = yield db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0 } });
+        if (plan && (isAdmin || (plan === null || plan === void 0 ? void 0 : plan.docId.toString()) === profileId || (plan === null || plan === void 0 ? void 0 : plan.profileId.toString()) === profileId)) {
+            // Si es doctor, puede eliminar el plan
+            if ((plan === null || plan === void 0 ? void 0 : plan.docId.toString()) === profileId) {
+                plan.can_edit = true;
+            }
+            return plan;
+        }
+        else {
+            throw new Error('No tenés permisos para ver este plan');
+        }
     });
 }
 function getPlanByThreadId(id) {

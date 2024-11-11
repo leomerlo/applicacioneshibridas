@@ -7,17 +7,20 @@ import Button from "../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan, faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import Input from "../../components/Input";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import NutriLayout from "../../components/NutriLayout";
 import UserSidebar from "../../components/UserSidebar";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import SubscriptionActiveStatus from "../../components/SubscriptionActiveStatus";
+import { Plan } from "../../contexts/PlanContext";
+import planService from "../../services/plan.service";
 
 const UserView = () => {
   const { id } = useParams();
   const notifications = useNotifications();
   const [userProfile, setUserProfile] = useState({} as Profile);
   const [tempProfile, setTempProfile] = useState({} as Profile);
+  const [plans, setPlans] = useState([] as Plan[]);
 
   useEffect(() => {
       backofficeService.getAccount(id as string).then((resp) => {
@@ -26,7 +29,7 @@ const UserView = () => {
       } else {
         notifications.updateNotifications({
           variant: 'error',
-          message: 'Error al obtener el plan'
+          message: 'Error al obtener el perfil'
         });
       }
     });
@@ -34,6 +37,18 @@ const UserView = () => {
 
   useEffect(() => {
     setTempProfile(userProfile);
+    if (userProfile._id) {
+      planService.getPlansById(userProfile._id as string).then((resp) => {
+        if (resp.status === 200) {
+          setPlans(resp.data);
+        } else {
+          notifications.updateNotifications({
+            variant: 'error',
+            message: 'Error al obtener los planes'
+          });
+        }
+      });
+    }
   }, [userProfile])
 
   const saveHandler = () => {
@@ -216,6 +231,14 @@ const UserView = () => {
                         </> : <>
                           <span>No tiene suscripción activa</span>
                         </>}
+                      </div>
+                      <div>
+                        <h2 className="text-xl my-4">Planes</h2>
+                        { plans.map((plan) => (
+                          <div key={plan._id} className="bg-white rounded-lg shadow-lg p-5 mb-2 flex justify-between">
+                            <Link to={`/plan/${plan._id}`}>{plan.meta.title}</Link>
+                          </div>
+                        )) }
                       </div>
                     </>
                     }

@@ -19,6 +19,7 @@ export interface ShoppingListIngredient {
 export interface Plan {
   _id?: string;
   title?: string;
+  can_edit?: boolean;
   meta: {
     title: string,
     threadId: string,
