@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useAdmin } from '../../contexts/AdminContext';
+import { useAdmin } from '../contexts/AdminContext';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../components/Input';
-import UserCard from '../../components/UserCard';
-import Button from '../../components/Button';
+import Input from './Input';
+import UserCard from './UserCard';
+import Button from './Button';
 
-const UserSidebar = () => {
+export type Props = {
+  active?: string
+}
+
+const UserSidebar = (props: Props) => {
   const { users } = useAdmin();
   const [filteredList, setFilteredList] = useState(users)
   const navigate = useNavigate();
@@ -15,9 +19,16 @@ const UserSidebar = () => {
     name: null | string
   }>({
     status: null,
-    type: null,
+    type: "",
     name: null,
   });
+
+  const isActive = (id: string) => {
+    if (props.active === id) {
+      return true;
+    }
+    return false;
+  }
 
   useEffect(() => {
     if (users.length > 0) {
@@ -103,18 +114,18 @@ const UserSidebar = () => {
           <div className="mb-4 flex gap-4 items-center">
             <label htmlFor="user-filter">Filtro</label>
             <select id="user-filter" className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer" name="filter" onChange={filterTypeHandler}>
-              <option value="doc">Nutricionistas</option>
-              <option value="patient">Pacientes</option>
-              <option value="planner">Planner</option>
-              <option value="admin">Administradores</option>
-              <option value="">Todos</option>
+              <option value="doc" selected={filters.type === "doc"}>Nutricionistas</option>
+              <option value="patient" selected={filters.type === "patient"}>Pacientes</option>
+              <option value="planner" selected={filters.type === "user"}>Planner</option>
+              <option value="admin" selected={filters.type === "admin"}>Administradores</option>
+              <option value="" selected={filters.type === ""}>Todos</option>
             </select>
           </div>
         </div>
         <ul className="flex-grow flex flex-col gap-4">
           { filteredList.map((user: any) => (
             <li key={user.accountId}>
-              <UserCard user={user} onClick={selectUser} />
+              <UserCard active={isActive(user._id)} user={user} onClick={selectUser} />
             </li>
           ))}
         </ul>

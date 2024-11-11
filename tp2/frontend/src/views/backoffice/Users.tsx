@@ -1,10 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import GoBack from '../../components/GoBack';
 import NutriLayout from '../../components/NutriLayout';
-import UserSidebar from './UserSidebar';
+import UserSidebar from '../../components/UserSidebar';
 
 const Users = () => {
-  const navigate = useNavigate();
   
   return (
     <NutriLayout

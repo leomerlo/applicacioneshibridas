@@ -9,7 +9,7 @@ import { faPenToSquare, faTrashCan, faThumbsUp } from "@fortawesome/free-regular
 import Input from "../../components/Input";
 import { useParams } from "react-router-dom";
 import NutriLayout from "../../components/NutriLayout";
-import UserSidebar from "./UserSidebar";
+import UserSidebar from "../../components/UserSidebar";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import SubscriptionActiveStatus from "../../components/SubscriptionActiveStatus";
 
@@ -89,7 +89,7 @@ const UserView = () => {
   return (
     <NutriLayout
       sidebar={
-        <UserSidebar />
+        <UserSidebar active={id} />
       }
       content={
         <div className="container-fluid mx-auto h-full">
