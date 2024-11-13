@@ -62,6 +62,7 @@ function updateProfile(token_1, profile_1) {
         if (profileId && payload.accountType !== ProfileType.admin) {
             throw new Error('No tienes permisos para modificar este perfil.');
         }
+        profile._id = new ObjectId(updateId);
         const update = Object.assign({}, profile);
         if (payload.docId) {
             update.docId = new ObjectId(payload.docId);
@@ -84,4 +85,31 @@ function deactivateProfile(profileId) {
         }
     });
 }
-export { createProfile, getProfile, updateProfile, getProfileByAccount, deactivateProfile };
+function getAdmins() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.connect();
+        // Join profile with account to get the email with foreign key profiles.accountId
+        return profilesColelction.aggregate([
+            {
+                "$match": { "accountType": ProfileType.admin }
+            },
+            {
+                "$lookup": {
+                    "from": "accounts",
+                    "foreignField": "_id",
+                    "localField": "accountId",
+                    "as": "account"
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    status: 1,
+                    name: 1,
+                    email: { $first: '$account.userName' }
+                }
+            }
+        ]).toArray();
+    });
+}
+export { createProfile, getProfile, getAdmins, updateProfile, getProfileByAccount, deactivateProfile };

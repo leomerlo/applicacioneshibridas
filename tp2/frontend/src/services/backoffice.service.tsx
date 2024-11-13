@@ -15,13 +15,18 @@ export function getAccount(id: string) {
 
 export function updateAccount(id: string, payload: Profile) {
   return API.call({ uri: `admin/account/${id}`, method: 'PATCH', body: {
-    user: payload
+    ...payload
   }});
+}
+
+export function deactivateAccount(id: string) {
+  return API.call({ uri: `admin/account/${id}`, method: 'DELETE' });
 }
 
 export default {
   getDashboard,
   createAccount,
   getAccount,
-  updateAccount
+  updateAccount,
+  deactivateAccount
 }

@@ -170,7 +170,7 @@ async function generateDocPlan(req: Request, res: Response) {
 }
 
 async function getPlans(req: Request, res: Response) {
-  const profileId = req.body.profileId;
+  const profileId = req.params.id ? req.params.id : req.body.profileId;
 
   planService.getPlans(profileId)
     .then((plans) => {
@@ -195,8 +195,9 @@ async function getPlan(req: Request, res: Response) {
 
 async function getPlanById(req: Request, res: Response) {
   const planId = req.params.planId;
+  const profileId = req.body.profileId;
 
-  planService.getPlanById(planId)
+  planService.getPlanById(planId, profileId)
     .then((plan) => {
       res.status(200).json(plan)
     })

@@ -62,6 +62,8 @@ async function updateProfile(token: string, profile: Profile | DocProfile, profi
     throw new Error('No tienes permisos para modificar este perfil.')
   }
 
+  profile._id = new ObjectId(updateId);
+
   const update = {
     ...profile
   }
@@ -90,9 +92,36 @@ async function deactivateProfile(profileId: ObjectId) {
   }
 }
 
+async function getAdmins() {
+  await client.connect();
+ // Join profile with account to get the email with foreign key profiles.accountId
+  return profilesColelction.aggregate([
+    {
+      "$match": { "accountType": ProfileType.admin }
+    },
+    {
+      "$lookup": {
+        "from": "accounts",
+        "foreignField": "_id",
+        "localField": "accountId",
+        "as": "account"
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        name: 1,
+        email: { $first: '$account.userName' }
+      }
+    }
+  ]).toArray();
+}
+
 export {
   createProfile,
   getProfile,
+  getAdmins,
   updateProfile,
   getProfileByAccount,
   deactivateProfile

@@ -24,6 +24,10 @@ export function getPlans() {
   return API.call({ uri: 'plans' })
 }
 
+export function getPlansById(id: string) {
+  return API.call({ uri: `plans/${id}` })
+}
+
 export function getShoppingList() {
   return API.call({ uri: 'plan/list', method: 'POST' })
 }
@@ -64,6 +68,7 @@ export default {
   getPlan,
   getPlanById,
   getPlans,
+  getPlansById,
   newDocPlan,
   getShoppingList,
   deletePlan,

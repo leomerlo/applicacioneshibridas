@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as controller from '../controllers/plans.controller.js';
 import { validateToken, addProfileIdToBody } from '../middleware/token.middleware.js';
-import { validateDoctor, validatePatient } from '../middleware/profile.validate.middleware.js';
+import { validateAdmin, validateDoctor, validatePatient, validateDoctorORAdmin } from '../middleware/profile.validate.middleware.js';
 
 const router = Router();
 
@@ -10,7 +10,7 @@ router.post('/plan/draft', [validateToken, addProfileIdToBody], controller.draft
 router.post('/plan/saveDraft', [validateToken, addProfileIdToBody], controller.generatePlanFromDraft);
 router.post('/plan/saveDraft/:id', [validateToken, addProfileIdToBody], controller.generatePlanFromDraft);
 router.post('/plan/new', [validateToken, addProfileIdToBody], controller.generateRecipies);
-router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlanById);
+router.get('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctorORAdmin], controller.getPlanById);
 router.post('/plan', [validateToken, addProfileIdToBody], controller.generatePlan);
 router.post('/plan/list', [validateToken, addProfileIdToBody], controller.getList);
 router.post('/plan/replace/:day/:meal', [validateToken, addProfileIdToBody], controller.replaceRecipie);
@@ -20,6 +20,7 @@ router.post('/plan/assistant/message', [validateToken, addProfileIdToBody], cont
 router.post('/plan/assistant/plan', [validateToken, addProfileIdToBody], controller.assistantGeneratePlan);
 
 router.get('/plans', [validateToken, addProfileIdToBody, validateDoctor], controller.getPlans);
+router.get('/plans/:id', [validateToken, addProfileIdToBody, validateAdmin], controller.getPlans);
 router.post('/plan/doc', [validateToken, addProfileIdToBody, validateDoctor], controller.generateDocPlan);
 router.post('/plan/:planId/:patientId', [validateToken, addProfileIdToBody, validateDoctor, validatePatient], controller.assignPlan);
 router.delete('/plan/:planId', [validateToken, addProfileIdToBody, validateDoctor], controller.deletePlan);

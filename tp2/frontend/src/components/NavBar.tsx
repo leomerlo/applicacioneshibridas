@@ -30,9 +30,9 @@ const NavBar = () => {
       <div className="flex gap-12 items-center">
         <img src={logo} aria-hidden="true" className="h-4" />
         <ul className="flex gap-3">
-          { profile.accountType === 'admin' ? <li>
-            <Link to={'/admin'} className="block p-4">Inicio</Link>
-          </li> : <></> }
+          { profile.accountType === 'admin' ? <>
+            <li><Link to={'/admin'} className="block p-4">Usuarios</Link></li>
+            </> : <></> }
           { profile.accountType === 'doc' ? <>
             { profile.status === 'active' ? <>
               <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>

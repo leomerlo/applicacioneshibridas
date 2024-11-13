@@ -8,7 +8,7 @@ import * as accountSchema from '../schemas/account.schema.js'
 import { ProfileType, ProfileStatus } from '../schemas/profile.schema.js';
 import { db, client } from './mongo.service.js';
 import * as tokenService from './token.service.js';
-import transporter from './email.service.js';
+import transporter, { newDocEmail, pendingUserEmail } from './email.service.js';
 import generator from 'generate-password';
 
 const accountsCollection = db.collection('accounts')
@@ -60,6 +60,11 @@ async function createAccount(account: Session | DocSession) {
       
       // To allow for future profile creation we create a profile for the new account
       await profileService.createProfile(docProfile, account.type);
+      await newDocEmail(docProfile);
+      const admins = await profileService.getAdmins();
+      admins.forEach(async (admin) => {
+        await pendingUserEmail((admin as Profile));
+      });
     } else {
       newProfile.status = ProfileStatus.active;
       await profileService.createProfile(newProfile, account.type);

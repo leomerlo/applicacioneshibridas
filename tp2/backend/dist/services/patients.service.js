@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { ObjectId } from 'mongodb';
 import * as accountService from './account.service.js';
 import { db, client } from './mongo.service.js';
-import transporter from './email.service.js';
+import { newPatientEmail } from './email.service.js';
 import * as profileService from './profile.service.js';
 const profilesColelction = db.collection('profiles');
 const plansCollection = db.collection('plans');
@@ -23,21 +23,7 @@ export function addPatient(docId, patient) {
             yield accountService.createAccount(patient);
             const doc = yield profileService.getProfile(new ObjectId(docId));
             console.log("pass", rawPass);
-            yield transporter.sendMail({
-                from: '"Leandro Merlo" <merloleandro@gmail.com>',
-                to: patient.userName,
-                subject: "Bienvenid@ a saz!",
-                text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
-                html: `
-        ${doc === null || doc === void 0 ? void 0 : doc.name} te ha invitado a saz!.
-
-        Ingresá aqui: <a href="http://127.0.0.1:5173">saz!</a>
-
-        Usando tu email y la contraseña ${rawPass}.
-
-        Recordá cambiar tu contraseña una vez que ingreses al sistema.
-      `,
-            });
+            yield newPatientEmail(doc, patient, rawPass);
             console.log("Email enviado");
         }
         catch (e) {

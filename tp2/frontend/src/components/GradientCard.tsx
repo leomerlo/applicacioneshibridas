@@ -10,7 +10,7 @@ const GradientCard = (props: PropsWithChildren<Props>) => {
     <div
       // @ts-ignore 
       style={{'--image-url': `url(${cardGradient})`}}
-      className="flex flex-1 flex-col p-10 bg-[image:var(--image-url)] bg-cover rounded-lg mt-6"
+      className="flex flex-1 flex-col p-6 bg-[image:var(--image-url)] bg-cover rounded-lg mt-6"
     >
       <h2 className="text-xl text-white mb-2">{props.title}</h2>
         {props.children}

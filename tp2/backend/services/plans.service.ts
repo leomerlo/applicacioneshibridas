@@ -8,6 +8,7 @@ import * as profileService from './profile.service.js';
 import * as recipiesService from './recipies.service.js';
 import { Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
+import { profile } from 'console';
 
 function blankPlan(): Plan {
   return {
@@ -304,10 +305,19 @@ async function getPlan(profileId: string): Promise<Plan> {
   return plan as Plan;
 }
 
-async function getPlanById(id: string): Promise<Plan> {
+async function getPlanById(id: string, profileId: string): Promise<Plan> {
   await client.connect()
-  const plan = await db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, profileId: 0 } });
-  return plan as Plan;
+  const isAdmin = await db.collection("profiles").findOne({ _id: new ObjectId(profileId), accountType: 'admin' });
+  const plan = await db.collection("plans").findOne({ _id: new ObjectId(id) }, { projection: { _id: 0 } });
+  if (plan && (isAdmin || plan?.docId.toString() === profileId || plan?.profileId.toString() === profileId)) {
+    // Si es doctor, puede eliminar el plan
+    if (plan?.docId.toString() === profileId) {
+      plan.can_edit = true;
+    }
+    return plan as Plan
+  } else {
+    throw new Error('No tenés permisos para ver este plan');
+  }
 }
 
 async function getPlanByThreadId(id: string): Promise<Plan> {

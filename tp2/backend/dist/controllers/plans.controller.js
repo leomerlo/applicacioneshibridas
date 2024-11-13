@@ -159,7 +159,7 @@ function generateDocPlan(req, res) {
 }
 function getPlans(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const profileId = req.body.profileId;
+        const profileId = req.params.id ? req.params.id : req.body.profileId;
         planService.getPlans(profileId)
             .then((plans) => {
             res.status(200).json(plans);
@@ -184,7 +184,8 @@ function getPlan(req, res) {
 function getPlanById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const planId = req.params.planId;
-        planService.getPlanById(planId)
+        const profileId = req.body.profileId;
+        planService.getPlanById(planId, profileId)
             .then((plan) => {
             res.status(200).json(plan);
         })
