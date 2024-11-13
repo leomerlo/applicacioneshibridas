@@ -72,7 +72,7 @@ const UserSidebar = (props: Props) => {
 
       setFilteredList(filteredUsers);
     }
-  }, [filters]);
+  }, [filters, users]);
 
   function typeUpdate(filter: string): void {
     if(filters.type === filter) {

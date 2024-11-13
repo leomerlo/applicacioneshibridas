@@ -234,11 +234,13 @@ const UserView = () => {
                       </div>
                       <div>
                         <h2 className="text-xl my-4">Planes</h2>
-                        { plans.map((plan) => (
-                          <div key={plan._id} className="bg-white rounded-lg shadow-lg p-5 mb-2 flex justify-between">
-                            <Link to={`/plan/${plan._id}`}>{plan.meta.title}</Link>
-                          </div>
-                        )) }
+                        { plans.length === 0 ? <span>No tiene planes</span> : <>
+                          { plans.map((plan) => (
+                            <div key={plan._id} className="bg-white rounded-lg shadow-lg p-5 mb-2 flex justify-between">
+                              <Link to={`/plan/${plan._id}`}>{plan.meta.title}</Link>
+                            </div>
+                          )) }
+                        </>}
                       </div>
                     </>
                     }
