@@ -8,6 +8,7 @@ import Loading from "../components/Loading";
 import EmptyPlanImage from "../assets/girlBowl.png";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const HomeUser = () => {
   const { plan, loadedPlan } = usePlan();
@@ -21,14 +22,14 @@ const HomeUser = () => {
   return (
     <div className="container-fluid mx-auto flex flex-col h-full justify-start">
       {(profile.accountId != '' && loadedPlan) ? <>
-        {plan ? <div>
+        {plan?.meta ? <div>
           <WelcomeCard mode={WelcomeType.h} />
           <FeaturedMealCard />
           <NextMeals />
         </div>
           :
           profile.docId ? <>
-            <div className="w-fit lg:w-6/12 mx-auto flex flex-col h-full">
+            <div className="w-fit px-6 lg:w-6/12 mx-auto flex flex-col h-full">
               <div className="mx-auto w-3/4 mt-8 -translate-x-8">
                 <img src={EmptyPlanImage} className="mx-auto" />
               </div>

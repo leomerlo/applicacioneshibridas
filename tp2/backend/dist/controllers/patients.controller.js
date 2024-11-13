@@ -35,7 +35,6 @@ function addPatient(req, res) {
         const patient = req.body;
         patientsService.addPatient(docId, patient).then(() => {
             res.status(201).json({ message: "Paciente creado" });
-            // TODO: Send email to patient
         }).catch((err) => {
             res.status(400).json({ error: { message: err.message } });
         });

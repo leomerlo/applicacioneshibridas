@@ -3,7 +3,7 @@ import { Session } from '../types/account.js';
 import * as accountService from './account.service.js';
 import { DocProfile, Profile } from '../types/profile.js';
 import { db, client } from './mongo.service.js';
-import transporter, { newPatientEmail } from './email.service.js';
+import { newPatientEmail } from './email.service.js';
 import * as profileService from './profile.service.js';
 
 const profilesColelction = db.collection('profiles');
@@ -16,9 +16,7 @@ export async function addPatient(docId: string, patient: Session) {
     const rawPass = patient.password;
     await accountService.createAccount(patient);
     const doc = await profileService.getProfile(new ObjectId(docId));
-    console.log("pass", rawPass);
     await newPatientEmail((doc as DocProfile), patient, rawPass)
-    console.log("Email enviado");
   } catch (e: any) {
     throw new Error(e.message);
   }

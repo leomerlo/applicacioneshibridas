@@ -137,6 +137,7 @@ function PlanProvider({children}: PropsWithChildren){
     fetchPlan().then((plan) => {
       if (plan.status === 200) {
         setPlan({...plan.data});
+        setLoadedPlan(true);
       }
     }).catch((error) => {
       updateNotifications({ variant: 'error', message: 'Hubo un error al cargar el plan' });

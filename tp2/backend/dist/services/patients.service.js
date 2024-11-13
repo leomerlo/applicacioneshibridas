@@ -22,9 +22,7 @@ export function addPatient(docId, patient) {
             const rawPass = patient.password;
             yield accountService.createAccount(patient);
             const doc = yield profileService.getProfile(new ObjectId(docId));
-            console.log("pass", rawPass);
             yield newPatientEmail(doc, patient, rawPass);
-            console.log("Email enviado");
         }
         catch (e) {
             throw new Error(e.message);
