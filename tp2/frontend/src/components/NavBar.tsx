@@ -26,7 +26,7 @@ const NavBar = () => {
   }
   
   return (
-    <nav className="px-6 py-4 flex justify-between items-center border-b border-b-gray-40">
+    <nav className="px-6 py-4 flex justify-between items-center shadow-sm">
       <div className="flex gap-12 items-center">
         <img src={logo} aria-hidden="true" className="h-4" />
         <ul className="gap-3 hidden md:flex">

@@ -114,7 +114,10 @@ export default {
       },
       margin: {
         'row': '0 -2rem',
-      }
+      },
+      boxShadow: {
+        'reverse-2xl': '0 25px 50px 12px rgba(0, 0, 0, 0.25);',
+      },
     },
   },
   plugins: [],
