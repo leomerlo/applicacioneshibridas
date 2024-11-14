@@ -28,12 +28,14 @@ const HomeUser = () => {
         {plan?.meta ? <div className="w-fit flex flex-col gap-8 px-6">
           <WelcomeCard />
           <NextMeals />
-          <CTACard
-            title="Preparativos para tu semana saludable"
-            description="Revisá los ingredientes necesarios y preparate para cumplir tus metas."
-            ctaText="Ver lista de compras"
-            ctaAction={shoppingListHandler}
-          />
+          <div className="mt-8">
+            <CTACard
+              title="Preparativos para tu semana saludable"
+              description="Revisá los ingredientes necesarios y preparate para cumplir tus metas."
+              ctaText="Ver lista de compras"
+              ctaAction={shoppingListHandler}
+            />
+          </div>
         </div>
           :
           profile.docId ? <>
