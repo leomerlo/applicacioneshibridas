@@ -70,7 +70,7 @@ const Recipie = () => {
   }
 
   return (
-    <div className="container-fluid mx-auto px-8 mb-12">
+    <div className="container-fluid max-w-mobile mx-auto px-8 my-12">
       <div>
         {
           isLoading || loading ?

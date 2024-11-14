@@ -82,7 +82,9 @@ export default {
         'navbar': '96px',
       },
       maxWidth: {
-        authForm: '420px'
+        authForm: '420px',
+        mobile: '26.75rem',
+        '1/2': '50%',
       },
       backgroundPosition: {
         dividerLineSteps: 'left 9px top 8px',
@@ -99,9 +101,6 @@ export default {
         dividerLineBlocksBottom: 'calc(100% + 12px) calc(100% + 1px)',
         '50%': '50%',
         '25%': '25%'
-      },
-      maxWidth: {
-        '1/2': '50%',
       },
       fontSize: {
         'body-xs': '0.75rem',
