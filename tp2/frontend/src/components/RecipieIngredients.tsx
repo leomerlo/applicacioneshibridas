@@ -15,7 +15,7 @@ const RecipieIngredients = () => {
   };
 
   return (
-    <ul className="mt-4">
+    <ul>
       { recipie.ingredients.map((ingredient, index) => {
         return <li key={index}>
           <IngredientItem ingredient={ingredient} onCheck={onCheckHandler} />

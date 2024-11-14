@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons"
-import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons"
 import GoBack from "../components/GoBack"
 import recipie_1 from '../assets/recipie_1.png'
 import recipie_2 from '../assets/recipie_2.png'
@@ -14,8 +11,7 @@ import recipiesService from "../services/recipies.service"
 import Loading from "../components/Loading"
 import RecipieIngredients from "../components/RecipieIngredients"
 import RecipieSteps from "../components/RecipieSteps"
-import HeadDivider from "../components/HeadDivider"
-import Button from "../components/Button"
+import cardGradient from "../assets/pattern_azul_lg.png"
 import planService from "../services/plan.service"
 import { usePlan } from "../contexts/PlanContext"
 import { useNavigate } from "react-router-dom"
@@ -24,46 +20,14 @@ const Recipie = () => {
   const recipieImages = [recipie_1, recipie_2, recipie_3, recipie_4];
   const { name } = useParams();
   const { recipie, loading, recipieError } = useRecipie();
-  const { profile, isUser } = useProfile();
   const { plan, updatePlan, planSelectedDay, planSelectedMeal } = usePlan();
   const [image, setImage] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingIngredients, setLoadingIngredients] = useState(false);
-  const [loadingInstructions, setLoadingInstructions] = useState(false);
-  const [loadingNutrition, setLoadingNutrition] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // @ts-ignore
-    setIsLiked(recipie.likes?.includes(profile._id) || false);
-  }, [recipie]);
 
   useEffect(() => {
     setImage(recipieImages[Math.floor(Math.random() * recipieImages.length)]);
   }, [name]);
-
-  const likeButtonHandler = () => {
-    let service;
-    if(isLiked) {
-      service = recipiesService.unLikeRecipie;
-    } else {
-      service = recipiesService.likeRecipie;
-    }
-
-    service(recipie._id as string).then((res) => {
-      if(res.status === 201){
-        if(isLiked) {
-          // @ts-ignore
-          recipie.likes = recipie.likes?.filter((id) => id !== profile._id);
-        } else {
-          // @ts-ignore
-          recipie.likes?.push(profile._id as string);
-        }
-        setIsLiked(!isLiked);
-      }
-    })
-  }
 
   const translateMeal = (meal: string): string => {
     switch(meal) {
@@ -105,44 +69,13 @@ const Recipie = () => {
     });
   }
 
-  const includesIngredients = (stream: string) => {
-    if (stream.includes('"ingredients":')) {
-      setLoadingIngredients(false);
-    }
-  }
-
-  const includesInstructions = (stream: string) => {
-    if (stream.includes('"instructions":')) {
-      setLoadingInstructions(false);
-    }
-  }
-
-  const includesNutrition = (stream: string) => {
-    if (stream.includes('"nutrition":')) {
-      setLoadingNutrition(false);
-    }
-  }
-
   return (
-    <div className="container-fluid mx-auto">
+    <div className="container-fluid mx-auto px-8 mb-12">
       <div>
         {
           isLoading || loading ?
           <>
-            <Loading action="Cargando receta..." items={[
-              {
-                label: 'Ingredientes',
-                loading: loadingIngredients
-              },
-              {
-                label: 'Instrucciones',
-                loading: loadingInstructions
-              },
-              {
-                label: 'Nutrición',
-                loading: loadingNutrition
-              }
-            ]} />
+            <Loading action="Cargando receta..." />
           </>
           :
           <>
@@ -162,33 +95,26 @@ const Recipie = () => {
               </>
               :
               <>
-                <div className="mt-6">
-                  <div className="flex justify-between">
-                    <h1 className="text-4xl text-gray-90 text-left mt-3">{recipie.name}</h1>
-                    { isUser ? <Button variant="secondary" onClick={replaceRecipieHandler}>Reemplazar esta receta</Button> : '' }
+                <div className="flex flex-col gap-6 mt-12">
+                  <div>
+                    <h1 className="text-4xl text-gray-90 text-left">{recipie.name}</h1>
+                    {/* { isUser ? <Button variant="secondary" onClick={replaceRecipieHandler}>Reemplazar esta receta</Button> : '' } */}
                   </div>
-                </div>
 
-                <HeadDivider>
-                  <button className="flex items-center justify-between" onClick={likeButtonHandler}>
-                    <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} className="text-xl" />
-                    <span className="text-gray-90 ms-2">{recipie.likes?.length || 0}</span>
-                  </button>
-                </HeadDivider>
-
-                <div className="pb-4 bg-dividerLineBlocks bg-dividerLineBlocksBottom">
-                  <div className="pt-6">
+                  <div
+                    // @ts-ignore 
+                    style={{'--image-url': `url(${cardGradient})`}}
+                    className="flex flex-col p-10 gap-4 bg-[image:var(--image-url)] m-row bg-cover mt-6 text-white"
+                  >
                     <span className="font-bold text-xl">Ingredientes</span>
+                    <RecipieIngredients />
                   </div>
 
-                  <RecipieIngredients />
+                  <div>
+                    <span className="font-bold text-xl">Receta</span>
+                    <RecipieSteps />
+                  </div>
                 </div>
-
-                <div className="pt-6">
-                  <span className="font-bold text-xl">Receta</span>
-                </div>
-                
-                <RecipieSteps />
               </>
             }
           </>

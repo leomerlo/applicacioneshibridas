@@ -110,6 +110,9 @@ export default {
         'heading-sm': '1.25rem',
         'heading-md': '1.75rem',
         'heading-lg': '2.25rem',
+      },
+      margin: {
+        'row': '0 -2rem',
       }
     },
   },
