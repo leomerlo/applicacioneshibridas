@@ -1,6 +1,7 @@
 import NextMealItem, { MealTypes } from "./NextMealItem"
 import { usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
+import Dropdown from "../Dropdown";
 
 export type nextMeal = {
   name: string,
@@ -8,49 +9,82 @@ export type nextMeal = {
 }
 
 const NextMeals = () => {
+  const DropdownItems = [
+    {
+      label: 'Lunes',
+      value: 'monday'
+    },
+    {
+      label: 'Martes',
+      value: 'tuesday'
+    },
+    {
+      label: 'Miércoles',
+      value: 'wednesday'
+    },
+    {
+      label: 'Jueves',
+      value: 'thursday'
+    },
+    {
+      label: 'Viernes',
+      value: 'friday'
+    },
+    {
+      label: 'Sabado',
+      value: 'saturday'
+    },
+    {
+      label: 'Domingo',
+      value: 'sunday'
+    }
+  ];
   const { plan, today, todayString, nextMeal } = usePlan();
   const [nextMeals, setNextMeals] = useState<nextMeal[]>([]);
+  const [selectedDay, setSelectedDay] = useState<{
+    label: string,
+    value: string
+  }>(DropdownItems[0]);
 
   const generateNextMeals = (): nextMeal[] => {
-    const nextMeals: nextMeal[] = [];
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    let date = 0;
-    let internalTodayString = todayString;
-    let internalNextMeal = nextMeal;
-    if(todayString != '' && nextMeal != '') {
-      do {
-        switch(internalNextMeal) {
-          case 'breakfast':
-            internalNextMeal = 'lunch';
-            break;
-          case 'lunch':
-            internalNextMeal = 'dinner';
-            break;
-          case 'dinner':
-            internalTodayString = days[days.indexOf(internalTodayString) + 1];
-            date = date + 1;
-            internalNextMeal = 'breakfast';
-            break;
-        }
-        if(internalTodayString !== undefined) {
-          nextMeals.push({
-            day: internalTodayString?.substring(0, 3),
-            date: (today.getDate() + date).toString(),
-            // @ts-ignore
-            name: plan.meals[internalTodayString][internalNextMeal].name,
-            // @ts-ignore
-            meal: MealTypes[internalNextMeal],
-          });
-        } else {
-          internalTodayString = 'monday';
-          internalNextMeal = 'breakfast';
-        }
-      } while(nextMeals.length < 3)
-      return nextMeals;
-    }
-
-    return [];
+    let nextMeals: nextMeal[] = [];
+    const todayString = selectedDay.value;
+    nextMeals = [
+      {
+        day: todayString?.substring(0, 3),
+        date: today.getDate().toString(),
+        // @ts-ignore
+        name: plan.meals[todayString].breakfast.name,
+        meal: MealTypes.breakfast
+      },
+      {
+        day: todayString?.substring(0, 3),
+        date: today.getDate().toString(),
+        // @ts-ignore
+        name: plan.meals[todayString].lunch.name,
+        meal: MealTypes.lunch
+      },
+      {
+        day: todayString?.substring(0, 3),
+        date: today.getDate().toString(),
+        // @ts-ignore
+        name: plan.meals[todayString].dinner.name,
+        meal: MealTypes.dinner
+      }
+    ]
+    return nextMeals;
   }
+
+  const onDayChange = (day: string) => {
+    const selectedDay = DropdownItems.find((item) => item.value === day);
+    setSelectedDay(selectedDay ? selectedDay : DropdownItems[0]);
+    setNextMeals(generateNextMeals());
+  }
+
+  useEffect(() => {
+    const today = DropdownItems.find((item) => item.value === todayString);
+    setSelectedDay(today ? today : DropdownItems[0]);
+  }, []);
 
   useEffect(() => {
     if(plan){
@@ -59,14 +93,11 @@ const NextMeals = () => {
   }, [plan]);
 
   return (
-    <div className="mt-6">
-        <h2 className="text-3xl font-bold">Próximas comidas</h2>
-        <ul
-          // @ts-ignore
-          className="mt-6"
-        >
+    <div className="flex flex-col gap-8">
+        <Dropdown buttonLabel={selectedDay.label} items={DropdownItems} onSelect={onDayChange} />
+        <ul className="flex flex-col gap-8">
           { nextMeals.map((meal, index) => {
-            return <li className="mt-3" key={index}>
+            return <li key={index}>
               <NextMealItem day="" meal={ { name: meal.name, type: meal.meal } } />
             </li>
           })} 

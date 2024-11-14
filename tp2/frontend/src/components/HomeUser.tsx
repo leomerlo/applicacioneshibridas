@@ -1,5 +1,4 @@
-import WelcomeCard, { WelcomeType } from "../components/WelcomeCard"
-import FeaturedMealCard from "../components/FeaturedMealCard"
+import WelcomeCard from "../components/WelcomeCard"
 import NextMeals from "../components/NextMeals/NextMeals"
 import { usePlan } from "../contexts/PlanContext";
 import StartPlan from "../views/StartPlan";
@@ -8,7 +7,7 @@ import Loading from "../components/Loading";
 import EmptyPlanImage from "../assets/girlBowl.png";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import CTACard from "./CTACard";
 
 const HomeUser = () => {
   const { plan, loadedPlan } = usePlan();
@@ -19,13 +18,22 @@ const HomeUser = () => {
     navigate('/profile');
   }
 
+  const shoppingListHandler = () => {
+    navigate('/shoppingList');
+  }
+
   return (
-    <div className="container-fluid mx-auto flex flex-col h-full justify-start">
+    <div className="container-fluid mx-auto flex flex-col h-full justify-start mt-12 mb-6">
       {(profile.accountId != '' && loadedPlan) ? <>
-        {plan?.meta ? <div>
-          <WelcomeCard mode={WelcomeType.h} />
-          <FeaturedMealCard />
+        {plan?.meta ? <div className="w-fit flex flex-col gap-8 px-6">
+          <WelcomeCard />
           <NextMeals />
+          <CTACard
+            title="Preparativos para tu semana saludable"
+            description="Revisá los ingredientes necesarios y preparate para cumplir tus metas."
+            ctaText="Ver lista de compras"
+            ctaAction={shoppingListHandler}
+          />
         </div>
           :
           profile.docId ? <>

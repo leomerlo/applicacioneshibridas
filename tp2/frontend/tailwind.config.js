@@ -30,10 +30,45 @@ export default {
           secondary: "#D9EFFF",
         },
         mealIcons: {
-          breakfast: "#A82525",
-          lunch: "#F5AC0F",
-          dinner: "#0080DD",
-        }
+          breakfast: "#8dd2b7", // mint 300
+          lunch: "#e96ca2", // blue 300
+          dinner: "#3d4f8e", // darkBlue 300
+        },
+        pink: {
+          100: '#f9d1e0',
+          200: '#f3a3c1',
+          300: '#ec75a2',
+          400: '#e64783',
+          500: '#e96ca2',
+        },
+        blue: {
+          100: '#b3c1e0',
+          200: '#8693c1',
+          300: '#5965a2',
+          400: '#2c3783',
+          500: '#425eab',
+        },
+        gray: {
+          100: '#fbfbfb',
+          200: '#f7f7f7',
+          300: '#f3f3f3',
+          400: '#efefef',
+          500: '#f6f6f6',
+        },
+        darkBlue: {
+          100: '#a3b1d0',
+          200: '#576baf',
+          300: '#3d4f8e',
+          400: '#273e8f',
+          500: '#1a2b6e',
+        },
+        mint: {
+          100: '#d9f0e7',
+          200: '#b3e1cf',
+          300: '#8dd2b7',
+          400: '#67c39f',
+          500: '#b8e0d3',
+        },
       },
       width: {
         avatar: '60px',
@@ -67,6 +102,14 @@ export default {
       },
       maxWidth: {
         '1/2': '50%',
+      },
+      fontSize: {
+        'body-xs': '0.75rem',
+        'body-sm': '0.875rem',
+        'body-regular': '1rem',
+        'heading-sm': '1.25rem',
+        'heading-md': '1.75rem',
+        'heading-lg': '2.25rem',
       }
     },
   },
