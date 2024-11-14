@@ -23,7 +23,7 @@ const HomeUser = () => {
   }
 
   return (
-    <div className="container-fluid max-w-mobile mx-auto flex flex-col h-full justify-start mt-12 mb-6">
+    <div className="container-fluid md:w-mobile mx-auto flex flex-col h-full justify-start mt-12 mb-6">
       {(profile.accountId != '' && loadedPlan) ? <>
         {plan?.meta ? <div className="w-fit flex flex-col gap-8 px-6">
           <WelcomeCard />

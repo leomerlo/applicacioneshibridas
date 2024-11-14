@@ -70,8 +70,8 @@ const Recipie = () => {
   }
 
   return (
-    <div className="container-fluid max-w-mobile mx-auto px-8 my-12">
-      <div>
+    <div className="container-fluid md:w-mobile mx-auto my-12">
+      <div className="px-6">
         {
           isLoading || loading ?
           <>
@@ -106,12 +106,12 @@ const Recipie = () => {
                     style={{'--image-url': `url(${cardGradient})`}}
                     className="flex flex-col p-10 gap-4 bg-[image:var(--image-url)] m-row bg-cover mt-6 text-white"
                   >
-                    <span className="font-bold text-xl">Ingredientes</span>
+                    <h2 className="font-bold text-xl">Ingredientes</h2>
                     <RecipieIngredients />
                   </div>
 
                   <div>
-                    <span className="font-bold text-xl">Receta</span>
+                    <h2 className="font-bold text-xl">Receta</h2>
                     <RecipieSteps />
                   </div>
                 </div>

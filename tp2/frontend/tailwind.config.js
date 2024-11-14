@@ -83,8 +83,10 @@ export default {
       },
       maxWidth: {
         authForm: '420px',
-        mobile: '26.75rem',
         '1/2': '50%',
+      },
+      width: {
+        mobile: '40rem',
       },
       backgroundPosition: {
         dividerLineSteps: 'left 9px top 8px',
