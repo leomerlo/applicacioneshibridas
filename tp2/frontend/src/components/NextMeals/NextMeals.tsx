@@ -1,5 +1,5 @@
 import NextMealItem, { MealTypes } from "./NextMealItem"
-import { usePlan } from "../../contexts/PlanContext";
+import { Plan, usePlan } from "../../contexts/PlanContext";
 import { useEffect, useState } from "react";
 import Dropdown from "../Dropdown";
 
@@ -8,7 +8,11 @@ export type nextMeal = {
   meal: MealTypes
 }
 
-const NextMeals = () => {
+interface Props {
+  plan: Plan
+}
+
+const NextMeals = (props: Props) => {
   const DropdownItems = [
     {
       label: 'Lunes',
@@ -39,12 +43,17 @@ const NextMeals = () => {
       value: 'sunday'
     }
   ];
-  const { plan, today, todayString, nextMeal } = usePlan();
+  const [plan, setPlan] = useState<Plan>(props.plan);
+  const { today, todayString } = usePlan();
   const [nextMeals, setNextMeals] = useState<nextMeal[]>([]);
   const [selectedDay, setSelectedDay] = useState<{
     label: string,
     value: string
   }>(DropdownItems[0]);
+
+  useEffect(() => {
+    setPlan(props.plan);
+  }, [props.plan]);
 
   const generateNextMeals = (): nextMeal[] => {
     let nextMeals: nextMeal[] = [];

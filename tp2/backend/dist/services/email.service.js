@@ -25,9 +25,20 @@ export const newPatientEmail = (doc, patient, rawPass) => __awaiter(void 0, void
         subject: "Bienvenid@ a saz!",
         html: `
       ${doc === null || doc === void 0 ? void 0 : doc.name} te ha invitado a saz!<br><br>
-      Ingresá <a href="${appURI}">aqui</a> para empezar a usar la plataforma.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para empezar a usar la plataforma.<br><br>
       Usando tu email y la contraseña ${rawPass}.<br><br>
       Recordá cambiar tu contraseña una vez que ingreses al sistema.<br><br>
+    `,
+    });
+});
+export const assignedPlanEmail = (patient) => __awaiter(void 0, void 0, void 0, function* () {
+    yield transporter.sendMail({
+        from: '"SAZ" <accounts@saz.ai>',
+        to: patient.email,
+        subject: "Nuevo plan asignado",
+        html: `
+      Se te asignó un nuevo plan.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para verlo.<br><br>
     `,
     });
 });
@@ -39,7 +50,7 @@ export const newDocEmail = (profile) => __awaiter(void 0, void 0, void 0, functi
         text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
         html: `
       Bienvenid@ a saz!.<br><br>
-      Ingresá <a href="${appURI}">aqui</a> para comenzar a usar la plataforma.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para comenzar a usar la plataforma.<br><br>
     `,
     });
 });
@@ -51,7 +62,7 @@ export const pendingUserEmail = (profile) => __awaiter(void 0, void 0, void 0, f
         text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
         html: `
       Hola, ${profile === null || profile === void 0 ? void 0 : profile.name} hay una nueva cuenta en espera de aprobación.<br><br>
-      Ingresá <a href="${appURI}">aqui</a> para revisarla.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para revisarla.<br><br>
     `,
     });
 });

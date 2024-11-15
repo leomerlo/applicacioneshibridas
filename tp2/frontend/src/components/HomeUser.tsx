@@ -23,11 +23,11 @@ const HomeUser = () => {
   }
 
   return (
-    <div className="container-fluid md:w-mobile mx-auto flex flex-col h-full justify-start mt-12 mb-6">
+    <div className="container-fluid w-full md:w-mobile mx-auto flex flex-col h-full justify-start mt-12 mb-6">
       {(profile.accountId != '' && loadedPlan) ? <>
-        {plan?.meta ? <div className="w-fit flex flex-col gap-8 px-6">
+        {plan?.meta ? <div className="flex flex-col gap-8 px-6">
           <WelcomeCard />
-          <NextMeals />
+          <NextMeals plan={plan} />
           <div className="mt-8">
             <CTACard
               title="Preparativos para tu semana saludable"

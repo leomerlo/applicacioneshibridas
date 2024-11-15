@@ -14,6 +14,7 @@ import { useProfile } from "../contexts/ProfileContext"
 import { usePlan } from "../contexts/PlanContext"
 import HeadDivider from "./HeadDivider"
 import DaysCarousel from "./DaysCarousel/DaysCarousel"
+import NextMeals from "./NextMeals/NextMeals"
 
 const Patient = () => {
   const navigate = useNavigate();
@@ -110,8 +111,9 @@ const Patient = () => {
                 </div>
               </div>
             </HeadDivider>
-            <DaysCarousel day={day} onDayChange={changeDayHandler} />
-            <PatientNextMeal plan={activePatient.plan} day={day} />
+            <div className="mt-4">
+              <NextMeals plan={activePatient.plan} />
+            </div>
           </> : <>
             <div className="flex flex-col justify-center w-1/2 items-center mx-auto mt-12">
               <h1 className="text-4xl mt-6">{activePatient.name}</h1>

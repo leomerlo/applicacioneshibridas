@@ -1,67 +1,20 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import NutriLayout from "../components/NutriLayout"
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons"
-import { useEffect, useState } from "react";
 import ProfileForm from "./ProfileForm";
-import SubscriptionStatus from "../components/SubscriptionStatus";
+import { useProfile } from "../contexts/ProfileContext";
+import NutriProfile from "../components/NutriProfile";
 
 const _Profile = () => {
-  const menuOptions = [
-    {
-      name: 'profile',
-      label: 'Perfil',
-      clickHandler: () => {
-        setTab('profile');
-      },
-      active: () => { return tab === 'profile' }
-    },
-    {
-      name: 'subscription',
-      label: 'Suscripción',
-      clickHandler: () => {
-        setTab('subscription');
-      },
-      active: () => { return tab === 'subscription' }
-    }
-  ];
-
-  const [tab, setTab] = useState<"profile" | "subscription" | null>(null);
-
-  useEffect(() => {
-    setTab('profile');
-  }, []);
+  const { profile } = useProfile();
 
   return (
-    <NutriLayout
-      sidebar={
-        <ul className="flex-grow flex flex-col gap-4">
-          { menuOptions.map((option, index) => (
-            <li key={index}>
-              <button className={['block', 'w-full', option.active() ? 'bg-gray-10' : null].join(" ")} onClick={option.clickHandler}>
-                <div className="rounded-lg border p-4 flex justify-between">
-                  <div className="flex flex-col text-left">
-                    <span className="text-gray-80 font-bold">{option.label}</span>
-                  </div>
-                  <div className="grow flex justify-end items-center px-4 text-primary-main">
-                    <FontAwesomeIcon icon={faChevronRight} />
-                  </div>
-                </div>
-              </button>
-            </li>
-          ))}
-        </ul>
-      }
-      content={
-        <>
-          { tab === 'profile' ? <>
-            <ProfileForm />
-          </> : null }
-          { tab === 'subscription' ? <>
-            <SubscriptionStatus />
-          </> : null }
-        </>
-      }
-    />
+    profile.accountType === 'doc' ? (
+      <NutriProfile />
+    ) : (
+      <div className="container-fluid w-full md:w-mobile mx-auto my-12">
+        <div className="px-6">
+          <ProfileForm />
+        </div>
+      </div>
+    )
   )
 }
 

@@ -36,6 +36,9 @@ const NavBarMobile = () => {
           <NavBarItem to={'/patients'} label={'Mis pacientes'} icon={faStethoscope} />
           <NavBarItem to={'/plans'} label={'Mis planes'} icon={faFileLines} />
         </> : <></> }
+        { profile.accountType === 'user' && (
+          <NavBarItem to={'/'} label={'Mi plan'} icon={faFileLines} />
+        )}
         { (profile.accountType === 'user' || profile.accountType === 'doc') && (
           <NavBarItem to={'/profile'} label={'Mi perfil'} icon={faUser} />
         )}

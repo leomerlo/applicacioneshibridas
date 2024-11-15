@@ -48,13 +48,6 @@ export default {
           400: '#2c3783',
           500: '#425eab',
         },
-        gray: {
-          100: '#fbfbfb',
-          200: '#f7f7f7',
-          300: '#f3f3f3',
-          400: '#efefef',
-          500: '#f6f6f6',
-        },
         darkBlue: {
           100: '#a3b1d0',
           200: '#576baf',
