@@ -238,7 +238,7 @@ async function getList(req: Request, res: Response) {
       await planService.generateShoppingList(profileId, ingredients);
 
       await planService.getPlan(profileId).then((plan) => {
-        res.status(201).json(plan.shoppingList);
+        res.status(200).json(plan.shoppingList);
       });
     }
   } catch (err: any) {

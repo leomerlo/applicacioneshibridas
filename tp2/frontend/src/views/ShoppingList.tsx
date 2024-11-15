@@ -41,7 +41,7 @@ const ShoppingListPage = () => {
   }
 
   return (
-    <div className="container-fluid mx-auto">
+    <div className="container-fluid w-full md:w-mobile mx-auto my-12 px-6">
       <div className="flex justify-between">
         <GoBack />
       </div>

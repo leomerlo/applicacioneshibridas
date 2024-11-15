@@ -220,7 +220,7 @@ function getList(req, res) {
                 });
                 yield planService.generateShoppingList(profileId, ingredients);
                 yield planService.getPlan(profileId).then((plan) => {
-                    res.status(201).json(plan.shoppingList);
+                    res.status(200).json(plan.shoppingList);
                 });
             }
         }
