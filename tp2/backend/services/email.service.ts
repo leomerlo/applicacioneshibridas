@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { DocProfile, Profile } from '../types/profile';
+import { Account } from '../types/account';
 
 const appURI = process.env.APP_URI || 'http://localhost:5173';
 
@@ -39,14 +40,14 @@ export const assignedPlanEmail = async (patient: any) => {
   });
 }
 
-export const newDocEmail = async (profile: DocProfile) => {
+export const newUserEmail = async (profile: Account) => {
   await transporter.sendMail({
     from: '"SAZ" <accounts@saz.ai>',
-    to: profile.email,
+    to: profile.userName,
     subject: "Bienvenid@ a saz!",
-    text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
     html: `
       Bienvenid@ a saz!.<br><br>
+      Tu cuenta fue creada exitosamente.<br><br>
       Ingresá <a href="${appURI}">acá</a> para comenzar a usar la plataforma.<br><br>
     `,
   });

@@ -14,7 +14,7 @@ import * as profileService from './profile.service.js';
 import { ProfileType, ProfileStatus } from '../schemas/profile.schema.js';
 import { db, client } from './mongo.service.js';
 import * as tokenService from './token.service.js';
-import transporter, { newDocEmail, pendingUserEmail } from './email.service.js';
+import transporter, { newUserEmail, pendingUserEmail } from './email.service.js';
 import generator from 'generate-password';
 const accountsCollection = db.collection('accounts');
 function createAccount(account) {
@@ -55,7 +55,6 @@ function createAccount(account) {
                 docProfile.email = docAccount.userName;
                 // To allow for future profile creation we create a profile for the new account
                 yield profileService.createProfile(docProfile, account.type);
-                yield newDocEmail(docProfile);
                 const admins = yield profileService.getAdmins();
                 admins.forEach((admin) => __awaiter(this, void 0, void 0, function* () {
                     yield pendingUserEmail(admin);
@@ -69,6 +68,10 @@ function createAccount(account) {
         catch (e) {
             yield accountsCollection.deleteOne({ _id: createdAccount.insertedId });
             throw new Error(e.message);
+        }
+        const insertedAccount = yield accountsCollection.findOne({ _id: createdAccount.insertedId });
+        if (insertedAccount) {
+            newUserEmail(insertedAccount);
         }
     });
 }

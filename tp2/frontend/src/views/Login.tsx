@@ -104,12 +104,13 @@ const Login = () => {
     <>
       <div className="h-screen flex flex-col lg:flex-row">
         <NotificationsBlock />
-        <div className="basis-1/2 flex flex-col py-16 px-6">
+        <div className="basis-1/2 flex flex-col py-12 px-6">
           <div className="flex justify-center items-center flex-grow">
             <div className="block h-fit max-w-authForm">
               <form onSubmit={(e) => { e.preventDefault(); login(); }}>
+                <img src={Logo} alt="saz!" className="block md:hidden my-8 mx-auto" />
                 <div className="text-center">
-                  <h1 className="text-4xl text-gray-80">{uiTexts.title}</h1>
+                  <h1 className="hidden md:block text-4xl text-gray-80">{uiTexts.title}</h1>
                   <p className="text-base text-gray-70 mt-3">¡Ingresa tus datos para comenzar a disfrutar de saz!.</p>
                 </div>
                 <div className="mt-8">
@@ -144,7 +145,7 @@ const Login = () => {
         <div
           // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-cover bg-center"
+          className="hidden md:flex basis-1/2 justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-cover bg-center"
         >
           <div className="w-fit h-fit text-center">
             <img src={Logo} alt="saz!" className="mx-auto" />
