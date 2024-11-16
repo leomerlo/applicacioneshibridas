@@ -40,11 +40,13 @@ function getProfile(profileId) {
         yield client.connect();
         const profile = yield profilesColelction.findOne({ _id: new ObjectId(profileId), 'status': { $exists: true } });
         const account = yield db.collection('accounts').findOne({ _id: new ObjectId(profile === null || profile === void 0 ? void 0 : profile.accountId) });
+        const doctor = yield db.collection('profiles').findOne({ _id: new ObjectId(profile === null || profile === void 0 ? void 0 : profile.docId) });
         if (!profile) {
             throw new Error('El perfil que intentas obtener no existe.');
         }
         profile.email = (account === null || account === void 0 ? void 0 : account.userName) || '';
         profile.accountType = profile.accountType || ProfileType.user;
+        profile.doctor = (doctor === null || doctor === void 0 ? void 0 : doctor.name) || '';
         return profile;
     });
 }

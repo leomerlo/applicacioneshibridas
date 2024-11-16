@@ -11,6 +11,7 @@ import { ObjectId } from 'mongodb';
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
+import { assignedPlanEmail } from '../services/email.service.js';
 function draftPlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const profileId = req.body.profileId;
@@ -219,7 +220,7 @@ function getList(req, res) {
                 });
                 yield planService.generateShoppingList(profileId, ingredients);
                 yield planService.getPlan(profileId).then((plan) => {
-                    res.status(201).json(plan.shoppingList);
+                    res.status(200).json(plan.shoppingList);
                 });
             }
         }
@@ -232,13 +233,16 @@ function assignPlan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const patientId = req.params.patientId;
         const planId = req.params.planId;
-        planService.assignPlan(patientId, planId)
-            .then(() => {
+        try {
+            yield planService.assignPlan(patientId, planId);
+            const patient = yield profileService.getProfile(new ObjectId(patientId));
+            console.log(patient);
+            yield assignedPlanEmail(patient);
             res.status(201).json({ message: "Plan asignado" });
-        })
-            .catch((err) => {
-            res.status(400).json({ error: { message: err.message } });
-        });
+        }
+        catch (err) {
+            res.status(400).json({ err, message: err.message });
+        }
     });
 }
 function deletePlan(req, res) {

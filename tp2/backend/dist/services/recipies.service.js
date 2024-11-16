@@ -26,7 +26,7 @@ function getRecipie(recipie, profileId) {
             // @ts-ignore
             Object.keys(plan.meals[day]).forEach((meal) => {
                 // @ts-ignore
-                if (plan.meals[day][meal].name == recipie) {
+                if (plan.meals[day][meal].name.toLowerCase() == recipie.toLowerCase()) {
                     // @ts-ignore
                     returnRecipie = plan.meals[day][meal];
                 }

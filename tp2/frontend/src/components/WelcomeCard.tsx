@@ -1,30 +1,12 @@
-import Avatar from "../components/Avatar"
-import { useProfile } from "../contexts/ProfileContext";
-
-export enum WelcomeType {
-  h = 'horizontal',
-  v = 'vertical'
-}
-
-export type Props = {
-  mode: WelcomeType;
-}
-
-const WelcomeCard = (props: Props) => {
-  const { profile } = useProfile();
-
-  const isVertical = () => {
-    return props.mode === WelcomeType.v
-  }
-
+const WelcomeCard = () => {
   return (
-    <div className={`flex ${ isVertical() ? "flex-col items-center" : "" }`}>
-      <div className="mr-4">
-        { <Avatar size={64} /> }
-      </div>
-      <div className={`${ isVertical() ? "mt-6" : "" }`}>
-        <h1 className="text-4xl text-gray-90">Hola, <span className="text-primary-main">{profile.name}</span></h1>
-        { isVertical() ? <></> : <p className="text-gray-60">Descubrí un mundo de delicias culinarias.</p> }
+    <div className="flex">
+      <div className="flex-grow">
+        <h1 className="text-heading-lg text-primary-main leading-tight">
+          <strong>Este es</strong><br />
+          <span>tu plan semanal</span>
+        </h1>
+        {/* <span className="text-body-sm">Administrado por: <strong>{profile['docId']}</strong></span> */}
       </div>
     </div>
   )

@@ -1,15 +1,15 @@
 import nodemailer from 'nodemailer';
 import { DocProfile, Profile } from '../types/profile';
 
-const appURI = "http://127.0.0.1:5173";
+const appURI = process.env.APP_URI || 'http://localhost:5173';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
   port: 587,
   secure: false, // true for 465, false for other ports
   auth: {
-      user: "hector.kerluke@ethereal.email", // generated ethereal user
-      pass: "4J1PYwW8xygAWfUgnK"  // generated ethereal password
+      user: process.env.ETHEREAL_USER, // generated ethereal user
+      pass: process.env.ETHEREAL_PASS  // generated ethereal password
   }
 });
 
@@ -18,15 +18,23 @@ export const newPatientEmail = async (doc: DocProfile, patient: any, rawPass: st
     from: '"SAZ" <accounts@saz.ai>',
     to: patient.userName,
     subject: "Bienvenid@ a saz!",
-    text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
     html: `
-      ${doc?.name} te ha invitado a saz!.
+      ${doc?.name} te ha invitado a saz!<br><br>
+      Ingresá <a href="${appURI}">acá</a> para empezar a usar la plataforma.<br><br>
+      Usando tu email y la contraseña ${rawPass}.<br><br>
+      Recordá cambiar tu contraseña una vez que ingreses al sistema.<br><br>
+    `,
+  });
+}
 
-      Ingresá <a href="${appURI}">aqui</a> para empezar a usar la plataforma.
-
-      Usando tu email y la contraseña ${rawPass}.
-
-      Recordá cambiar tu contraseña una vez que ingreses al sistema.
+export const assignedPlanEmail = async (patient: any) => {
+  await transporter.sendMail({
+    from: '"SAZ" <accounts@saz.ai>',
+    to: patient.email,
+    subject: "Nuevo plan asignado",
+    html: `
+      Se te asignó un nuevo plan.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para verlo.<br><br>
     `,
   });
 }
@@ -38,9 +46,8 @@ export const newDocEmail = async (profile: DocProfile) => {
     subject: "Bienvenid@ a saz!",
     text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
     html: `
-      Bienvenid@ a saz!.
-
-      Ingresá <a href="${appURI}">aqui</a> para comenzar a usar la plataforma.
+      Bienvenid@ a saz!.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para comenzar a usar la plataforma.<br><br>
     `,
   });
 }
@@ -52,9 +59,8 @@ export const pendingUserEmail = async (profile: Profile) => {
     subject: "Bienvenid@ a saz!",
     text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
     html: `
-      Hola, ${profile?.name} hay una nueva cuenta en espera de aprobación.
-
-      Ingresá <a href="${appURI}">aqui</a> para revisarla.
+      Hola, ${profile?.name} hay una nueva cuenta en espera de aprobación.<br><br>
+      Ingresá <a href="${appURI}">acá</a> para revisarla.<br><br>
     `,
   });
 }

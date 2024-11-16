@@ -26,23 +26,23 @@ const NavBar = () => {
   }
   
   return (
-    <nav className="px-6 py-4 flex justify-between items-center border-b border-b-gray-40">
+    <nav className="px-6 py-4 flex justify-between items-center shadow-sm">
       <div className="flex gap-12 items-center">
         <img src={logo} aria-hidden="true" className="h-4" />
-        <ul className="flex gap-3">
+        <ul className="gap-3 hidden md:flex">
           { profile.accountType === 'admin' ? <>
             <li><Link to={'/admin'} className="block p-4">Usuarios</Link></li>
             </> : <></> }
-          { profile.accountType === 'doc' ? <>
-            { profile.status === 'active' ? <>
-              <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>
-              <li><Link to={'/plans'} className="block p-4">Mis planes</Link></li>
-            </> : <></> }
-            <li><Link to={'/profile'} className="block p-4">Mi perfil</Link></li>
+          { profile.accountType === 'doc' && profile.status === 'active' ? <>
+            <li><Link to={'/patients'} className="block p-4">Mis pacientes</Link></li>
+            <li><Link to={'/plans'} className="block p-4">Mis planes</Link></li>
           </> : <></> }
+          { (profile.accountType === 'user' || profile.accountType === 'doc') && (
+            <li><Link to={'/profile'} className="block p-4">Mi perfil</Link></li>
+          )}
+          <li><Link to={'/logout'} className="block p-4">Cerrar sesión</Link></li>
         </ul>
       </div>
-      <Button className="grow-0" onClick={logout} variant="secondary" size="small">Cerrar sesión</Button>
     </nav>
   )
 }

@@ -27,7 +27,7 @@ const RecipieStep = (props: Props) => {
         <FalseCheck checked={checked} onClick={checkStep} />
       </div>
       <div className="grow pb-4 border-b border-b-gray-40">
-        <p className={`${checked ? "text-gray-60" : "text-gray-80"}`}>
+        <p className={`flex gap-2 ${checked ? "text-gray-60" : "text-gray-80"}`}>
           <span className="font-bold me-1">{props.step + 1}</span> 
           {props.text}
         </p>

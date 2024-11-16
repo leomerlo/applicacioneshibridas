@@ -72,10 +72,10 @@ const ProfileForm = () => {
   }
 
   return (
-    <div>
+    <div className="w-full">
       { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
       <>
-        <div className="flex justify-between">
+        <div className="w-full flex justify-between">
           <GoBack />
         </div>
         <div className="flex justify-between items-center">

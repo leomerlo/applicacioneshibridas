@@ -11,6 +11,7 @@ export interface Profile {
   name: string,
   status: ProfileStatus,
   docId?: ObjectId,
+  doctor?: string,
   accountType: ProfileType.doc | ProfileType.user | ProfileType.admin,
   email?: string
 }

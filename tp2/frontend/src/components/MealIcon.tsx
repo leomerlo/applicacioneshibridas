@@ -49,12 +49,12 @@ const MealIcon = (props: Props) => {
         return "p-4";
 
       case IconSizes.large:
-        return "p-6";
+        return "p-7";
     }
   }
 
   return (
-    <span className={`${getSize(props.size)} rounded-full ${props.background ? mealColor(props.type) : ""} text-white flex justify-center items-center w-fit`}>
+    <span className={`${getSize(props.size)} rounded-lg ${props.background ? mealColor(props.type) : ""} text-white flex justify-center items-center w-fit`}>
       <FontAwesomeIcon icon={getIcon(props.type)} />
     </span>
   )

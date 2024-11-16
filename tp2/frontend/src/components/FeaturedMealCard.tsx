@@ -16,7 +16,6 @@ const FeaturedMealCard = () => {
   });
 
   useEffect(() => {
-    console.log('Feature Meal Card', plan);
     if(plan) {
       if (todayString !== '') {
         setFeaturedMeal({

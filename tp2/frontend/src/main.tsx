@@ -4,6 +4,7 @@ import { initMercadoPago } from '@mercadopago/sdk-react';
 import App from './App.tsx'
 import HomePage from './views/Home.tsx';
 import LoginPage from './views/Login.tsx';
+import LogoutPage from './views/Logout.tsx';
 import RegisterPage from './views/Register.tsx';
 import RecipiePage from './views/Recipie.tsx';
 import ProfilePage from './views/Profile.tsx';
@@ -25,7 +26,6 @@ import Plans from './views/Plans.tsx';
 import PlanView from './views/Plan.tsx';
 import ForgotPassword from './views/ForgotPassword.tsx';
 import BackOffice from './views/backoffice/BackOffice.tsx';
-import Dashboard from './components/Dashboard.tsx';
 import RouteAdmin from './components/RouteAdmin.tsx';
 import Users from './views/backoffice/Users.tsx';
 import AddUserPage from './views/backoffice/AddUserPage.tsx';
@@ -138,6 +138,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+    path: '/logout',
+    element: <LogoutPage />
   },
   {
     path: '/forgotPassword',

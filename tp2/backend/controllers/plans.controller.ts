@@ -3,9 +3,11 @@ import { ObjectId } from 'mongodb';
 import * as planService from '../services/plans.service.js';
 import * as openAiService from '../services/openApi.service.js';
 import * as profileService from '../services/profile.service.js';
+import { assignedPlanEmail } from '../services/email.service.js';
 import { Ingredients } from '../types/recipies.js';
 import { Meals, Plan } from '../types/plan.js';
 import type { Profile } from '../types/profile.js';
+import { profile } from 'console';
 
 async function draftPlan(req: Request, res: Response) {
   const profileId = req.body.profileId;
@@ -236,7 +238,7 @@ async function getList(req: Request, res: Response) {
       await planService.generateShoppingList(profileId, ingredients);
 
       await planService.getPlan(profileId).then((plan) => {
-        res.status(201).json(plan.shoppingList);
+        res.status(200).json(plan.shoppingList);
       });
     }
   } catch (err: any) {
@@ -248,13 +250,15 @@ async function assignPlan(req: Request, res: Response) {
   const patientId = req.params.patientId;
   const planId = req.params.planId;
 
-  planService.assignPlan(patientId, planId)
-    .then(() => {
-      res.status(201).json({ message: "Plan asignado" })
-    })
-    .catch((err) => {
-      res.status(400).json({ error: { message: err.message } })
-    })
+  try {
+    await planService.assignPlan(patientId, planId);
+    const patient = await profileService.getProfile(new ObjectId(patientId));
+    console.log(patient);
+    await assignedPlanEmail(patient);
+    res.status(201).json({ message: "Plan asignado" })
+  } catch (err: any) {
+    res.status(400).json({ err, message: err.message });
+  }
 }
 
 async function deletePlan(req: Request, res: Response) {
