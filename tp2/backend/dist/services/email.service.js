@@ -42,14 +42,14 @@ export const assignedPlanEmail = (patient) => __awaiter(void 0, void 0, void 0, 
     `,
     });
 });
-export const newDocEmail = (profile) => __awaiter(void 0, void 0, void 0, function* () {
+export const newUserEmail = (profile) => __awaiter(void 0, void 0, void 0, function* () {
     yield transporter.sendMail({
         from: '"SAZ" <accounts@saz.ai>',
-        to: profile.email,
+        to: profile.userName,
         subject: "Bienvenid@ a saz!",
-        text: "Bienvenid@ a saz!, tu cuenta fue creada exitosamente.",
         html: `
       Bienvenid@ a saz!.<br><br>
+      Tu cuenta fue creada exitosamente.<br><br>
       Ingresá <a href="${appURI}">acá</a> para comenzar a usar la plataforma.<br><br>
     `,
     });

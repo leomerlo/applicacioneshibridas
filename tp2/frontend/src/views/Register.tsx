@@ -129,7 +129,8 @@ const Register = () => {
         <div className="basis-1/2 flex justify-center items-center py-16 px-6">
           <div className="block h-fit max-w-authForm">
             <div className="text-center">
-              <h1 className="text-4xl text-gray-80">¡Bienvenid@ a saz!</h1>
+              <img src={Logo} alt="saz!" className="block md:hidden mx-auto my-8" />
+              <h1 className="hidden md:flex text-4xl text-gray-80">¡Bienvenid@ a saz!</h1>
               <p className="text-base text-gray-70 mt-3">Ingresá tus datos a continuación y comenzá a explorar un mundo de deliciosas recetas personalizadas.</p>
             </div>
             <div className="mt-8">
@@ -163,7 +164,7 @@ const Register = () => {
         <div
           // @ts-ignore
           style={{'--image-url': `url(${backGradient})`}} 
-          className="basis-1/2 flex justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
+          className="hidden md:flex basis-1/2 justify-center items-center px-12 py-16 lg:py-6 lg:px-28 bg-gray-20 bg-[image:var(--image-url)] bg-no-repeat bg-cover bg-center"
         >
           <div className="h-fit text-center">
             <img src={Logo} alt="saz!" className="mx-auto" />

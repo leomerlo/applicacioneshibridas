@@ -4,11 +4,10 @@ import { ObjectId } from 'mongodb';
 import { Session, DocSession, Account } from '../types/account.js';
 import * as profileService from './profile.service.js';
 import { DocProfile, Profile } from '../types/profile.js';
-import * as accountSchema from '../schemas/account.schema.js'
 import { ProfileType, ProfileStatus } from '../schemas/profile.schema.js';
 import { db, client } from './mongo.service.js';
 import * as tokenService from './token.service.js';
-import transporter, { newDocEmail, pendingUserEmail } from './email.service.js';
+import transporter, { newUserEmail, pendingUserEmail } from './email.service.js';
 import generator from 'generate-password';
 
 const accountsCollection = db.collection('accounts')
@@ -60,7 +59,6 @@ async function createAccount(account: Session | DocSession) {
       
       // To allow for future profile creation we create a profile for the new account
       await profileService.createProfile(docProfile, account.type);
-      await newDocEmail(docProfile);
       const admins = await profileService.getAdmins();
       admins.forEach(async (admin) => {
         await pendingUserEmail((admin as Profile));
@@ -73,6 +71,12 @@ async function createAccount(account: Session | DocSession) {
   } catch (e: any) {
     await accountsCollection.deleteOne({ _id: createdAccount.insertedId });
     throw new Error(e.message);
+  }
+
+  const insertedAccount = await accountsCollection.findOne<Account>({ _id: createdAccount.insertedId });
+
+  if (insertedAccount) {
+    newUserEmail(insertedAccount);
   }
 }
 
