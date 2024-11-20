@@ -6,7 +6,7 @@ import NavBarMobile from './components/NavBarMobile';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen max-h-screen md:max-h-none">
+    <div className="flex flex-col min-h-screen max-h-screen md:max-h-none overflow-hidden">
       <NotificationsBlock />
       <NavBar />
       <div className="flex-1 w-full flex overflow-y-auto">

@@ -42,7 +42,7 @@ export interface Plan {
 
 const emptyPlan: {
   plan: Plan | null,
-  updatePlan: () => void,
+  updatePlan: () => Promise<void>,
   today: Date,
   nextMeal: string,
   todayString: string,
@@ -55,7 +55,7 @@ const emptyPlan: {
   setPlanSelectedMeal: (meal: string) => void
 } = {
   plan: null,
-  updatePlan: () => {},
+  updatePlan: async () => {},
   today: new Date(),
   nextMeal: '',
   todayString: '',
@@ -146,10 +146,9 @@ function PlanProvider({children}: PropsWithChildren){
   }
 
   const updatePlan = async () => {
-    fetchPlan().then((plan) => {
-      if (plan.status === 200) {
-        updateNotifications({ variant: 'success', message: 'Plan actualizado correctamente' });
-        setPlan({...plan.data});
+    fetchPlan().then((response) => {
+      if (response.status === 200) {
+        setPlan({...response.data});
       }
     }).catch((error) => {
       updateNotifications({ variant: 'error', message: 'Hubo un error al actualizar el plan' });

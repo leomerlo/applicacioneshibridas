@@ -35,6 +35,7 @@ import SubscriptionSuccess from './views/subcription/SubscriptionSuccess.tsx';
 import SubscriptionError from './views/subcription/SubscriptionError.tsx';
 import PlanAssistant from './views/PlanAssistant.tsx';
 import Patients from './views/Patients.tsx';
+import PlanForm from './views/PlanForm.tsx';
 
 const router = createBrowserRouter([
   {
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/plan/',
-        element: <PlanView />
+        element: <PlanForm />
       },
       {
         path: '/plan/:id',

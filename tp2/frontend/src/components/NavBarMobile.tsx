@@ -12,7 +12,7 @@ interface ItemProps {
 
 const NavBarItem = (props: ItemProps) => {
   return (
-    <li className="hover:text-primary-hover">
+    <li className="hover:text-primary-hover flex-1">
       <Link to={props.to}>
         <div className="text-heading-sm mb-2 text-center">
           <FontAwesomeIcon icon={props.icon} />

@@ -1,29 +1,16 @@
-import { useState, SyntheticEvent, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useRef } from "react"
 import accountService from "../services/account.service"
-import planService from "../services/plan.service"
 import { useProfile } from "../contexts/ProfileContext"
 import { useNotifications } from "../contexts/NotificationsContext"
-import { usePlan } from "../contexts/PlanContext"
 import Button, { ButtonType } from "../components/Button"
 import GoBack from "../components/GoBack"
-import Loading from "../components/Loading"
-import ProfileImage from "../assets/animalFriends.png"
 import Input from "../components/Input";
 
 const ProfileForm = () => {
   const { profile, refreshProfile } = useProfile();
-  const navigate = useNavigate();
-  const { updatePlan } = usePlan();
   const [tempProfile, setTempProfile] = useState(profile);
   const { updateNotifications } = useNotifications();
-  const [loadingPlan, setLoadingPlan] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
-  const form = useRef(null);
-
-  useEffect(() => {
-    setTempProfile(profile);
-  }, [profile]);
 
   const saveHandler = async () => {
     setLoadingButton(true);
@@ -49,130 +36,67 @@ const ProfileForm = () => {
     });
   }
 
-  const newPlan = () => {
-    setLoadingPlan(true);
-    accountService.updateProfile(tempProfile).then((result) => {
-      if(result.status !== 201) {
-        updateNotifications({ variant: 'error', message: 'Error al actualizar el perfil' });
-      } else {
-        refreshProfile();
-        planService.newPlan((data) => {
-          console.log(data);
-        }, (response) => {
-          setLoadingPlan(false);
-          if(response.status === 201) {
-            updatePlan();
-            navigate("/");
-          } else {
-            updateNotifications({ variant: 'error', message: 'Error al crear el plan, inténtelo de nuevo.' });
-          }
-        });
-      }
-    });
-  }
-
   return (
     <div className="w-full">
-      { loadingPlan ? <Loading action="Estamos generando su plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> :
-      <>
-        <div className="w-full flex justify-between">
-          <GoBack />
-        </div>
-        <div className="flex justify-between items-center">
-          <h1 className="text-4xl mt-6">Mi perfil</h1>
+      <div className="w-full flex justify-between">
+        <GoBack />
+      </div>
+      <form>
+        <div className="flex justify-between items-center mt-6">
+          <h1 className="text-4xl">Mi perfil</h1>
           <div className="flex gap-4">
-            <div className="mt-4">
+            <div className="hidden md:inline-block">
               <Button size="small" type={ButtonType.submit} loading={loadingButton} variant="primary" onClick={saveHandler}>Guardar</Button>
             </div>
-            { profile.accountType === 'user' && !profile.docId ? <>
-              <div className="mt-4">
-                <Button size="small" onClick={newPlan} variant="secondary">Generar nuevo plan</Button>
-              </div>
-            </> : <></>}
           </div>
         </div>
-        <form>
+        <div className="mt-4">
+          <Input
+            name="name"
+            label="Nombre"
+            value={tempProfile.name}
+            onInput={(e) => setTempProfile({...tempProfile, name: e.target.value})}
+            type="text"
+          />
+        </div>
+        <div className="mt-4">
+          <Input
+            name="password"
+            label="Contraseña"
+            value={tempProfile.password as string}
+            onInput={(e) => setTempProfile({...tempProfile, password: e.target.value})}
+            type="password"
+          />
+        </div>
+        { profile.accountType !== 'user' && (<>
           <div className="mt-4">
             <Input
-              name="name"
-              label="Nombre"
-              value={tempProfile.name}
-              onInput={(e) => setTempProfile({...tempProfile, name: e.target.value})}
+              name="idDocument"
+              label="Documento"
+              value={tempProfile.idDocument as string}
+              onInput={(e) => setTempProfile({...tempProfile, idDocument: e.target.value})}
+              placeholder="Dni, sin puntos ni espacios"
+              disabled
               type="text"
             />
           </div>
           <div className="mt-4">
             <Input
-              name="password"
-              label="Contraseña"
-              value={tempProfile.password as string}
-              onInput={(e) => setTempProfile({...tempProfile, password: e.target.value})}
-              type="password"
+              name="idLicense"
+              label="Matricula"
+              value={tempProfile.idLicense as string}
+              onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
+              placeholder="Matricula, sin puntos ni espacios"
+              disabled
+              type="text"
             />
           </div>
-          { profile.accountType === 'user' ? <>
-            { !profile.docId ? <>
-              <div className="mt-4">
-                <label className="text-gray-80 block mb-1" htmlFor="restrictions">Restricciones y alergias</label>
-                <textarea
-                  className="input rounded border border-gray-50 p-2 text-sm w-full"
-                  name="restrictions"
-                  id="restrictions"
-                  value={tempProfile.restrictions}
-                  placeholder="Gluten-free, vegetariano, alergia al tofu, etc."
-                  onChange={(e) => setTempProfile({...tempProfile, restrictions: e.target.value})}
-                />
-              </div>
-              <div className="mt-4">
-                <label className="text-gray-80 block mb-1" htmlFor="preferences">Metas</label>
-                <textarea
-                  className="input rounded border border-gray-50 p-2 text-sm w-full"
-                  name="preferences"
-                  id="preferences"
-                  value={tempProfile.preferences}
-                  placeholder="2300 calorías diarias, alta en proteinas, fideos los jueves, pizza los sabados, etc."
-                  onChange={(e) => setTempProfile({...tempProfile, preferences: e.target.value})}
-                />
-              </div>
-              <div className="mt-4">
-                <label className="text-gray-80 block mb-1" htmlFor="diners">Comensales</label>
-                <input
-                  type="number"
-                  className="input rounded border border-gray-50 p-2 text-sm w-full"
-                  name="diners"
-                  id="diners"
-                  value={tempProfile.diners}
-                  onChange={(e) => setTempProfile({...tempProfile, diners: Number(e.target.value)})}
-                />
-              </div>
-            </> : <></>}
-          </> : <>
-            <div className="mt-4">
-              <Input
-                name="idDocument"
-                label="Documento"
-                value={tempProfile.idDocument as string}
-                onInput={(e) => setTempProfile({...tempProfile, idDocument: e.target.value})}
-                placeholder="Dni, sin puntos ni espacios"
-                disabled
-                type="text"
-              />
-            </div>
-            <div className="mt-4">
-              <Input
-                name="idLicense"
-                label="Matricula"
-                value={tempProfile.idLicense as string}
-                onInput={(e) => setTempProfile({...tempProfile, idLicense: e.target.value})}
-                placeholder="Matricula, sin puntos ni espacios"
-                disabled
-                type="text"
-              />
-            </div>
-          </>
-          }
-        </form>
-      </> }
+        </>
+        )}
+        <div className="mt-6 block md:hidden">
+          <Button full type={ButtonType.submit} loading={loadingButton} variant="primary" onClick={saveHandler}>Guardar</Button>
+        </div>
+      </form>
     </div>
   )
 }

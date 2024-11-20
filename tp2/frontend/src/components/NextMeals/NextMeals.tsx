@@ -49,7 +49,7 @@ const NextMeals = (props: Props) => {
   const [selectedDay, setSelectedDay] = useState<{
     label: string,
     value: string
-  }>(DropdownItems[0]);
+  }>(DropdownItems.find((e) => e.value === todayString) || DropdownItems[0]);
 
   useEffect(() => {
     setPlan(props.plan);
@@ -84,11 +84,14 @@ const NextMeals = (props: Props) => {
     return nextMeals;
   }
 
-  const onDayChange = (day: string) => {
+  const onDayChange = async (day: string) => {
     const selectedDay = DropdownItems.find((item) => item.value === day);
-    setSelectedDay(selectedDay ? selectedDay : DropdownItems[0]);
-    setNextMeals(generateNextMeals());
+    await setSelectedDay(selectedDay ? selectedDay : DropdownItems[0]);
   }
+
+  useEffect(() => {
+    setNextMeals(generateNextMeals());
+  }, [plan]);
 
   useEffect(() => {
     const today = DropdownItems.find((item) => item.value === todayString);
@@ -96,10 +99,8 @@ const NextMeals = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if(plan){
-      setNextMeals(generateNextMeals());
-    }
-  }, [plan]);
+    setNextMeals(generateNextMeals());
+  }, [selectedDay]);
 
   return (
     <div className="flex flex-col gap-8">

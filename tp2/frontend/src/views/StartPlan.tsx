@@ -1,15 +1,20 @@
 import { useEffect, useState }  from 'react';
 import { usePlan } from '../contexts/PlanContext';
 import { useNotifications } from '../contexts/NotificationsContext';
-import EmptyPlanImage from "../assets/girlBowl.png";
+import cardGradient from "../assets/pattern_azul_lg.png"
 import Loading from '../components/Loading';
 import planService from '../services/plan.service';
 import Button, { ButtonType } from '../components/Button';
 import Input from '../components/Input';
 import { Profile, useProfile } from '../contexts/ProfileContext';
 import accountService from '../services/account.service';
+import { useNavigate } from 'react-router-dom';
 
-const StartPlan = () => {
+export interface Props {
+  isPatient?: boolean;
+}
+
+const StartPlan = (props: Props) => {
   const { updatePlan } = usePlan();
   const { profile, refreshProfile } = useProfile();
   const [loading, setLoading] = useState(false);
@@ -24,6 +29,11 @@ const StartPlan = () => {
     restrictions: '',
   });
   const { updateNotifications } = useNotifications();
+  const navigate = useNavigate();
+
+  const editProfileHandler = () => {
+    navigate('/profile');
+  }
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -65,8 +75,12 @@ const StartPlan = () => {
     switch (step.current) {
       case 1:
       default:
-        step.label = 'Comenzar';
-        return step1();
+        if (props.isPatient) {
+          return step1Patient();
+        } else {
+          step.label = 'Comenzar';
+          return step1();
+        }
 
       case 2:
         step.label = 'Siguiente';
@@ -86,17 +100,37 @@ const StartPlan = () => {
     }
   }
 
+  const step1Patient = () => {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="text-left">
+          <h1 className="text-3xl">¡Hola! Parece que aún no tenés un plan generado.</h1>
+          <p className="mt-8">
+            Comunicate con tu nutricionista para que te genere un plan.
+          </p>
+          <p className="mt-4">
+            Mientras tanto, podés empezar agregando tu nombre en el perfil.
+          </p>
+        </div>
+        <div className="mt-8 flex grow items-end">
+          <div className="w-full">
+            <Button full variant="secondary" onClick={editProfileHandler}>Editar perfil</Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const step1 = () => {
     return (
       <>
-        <div className="text-left mt-8 p-6">
-          <h1 className="text-3xl text-gray-90">¡Hola! Parece que no tenés un plan generado.</h1>
-          <p className="text-gray-80 mt-8">
-            A continuación te pediremos algunos datos para generar tu plan a medida.
-          </p>
-          <p className="text-gray-80 mt-4">
-            Todo esto vas a poder modificarlo mas adelante desde tu perfil.
-          </p>
+        <div>
+          <div className="text-left">
+            <h1 className="text-3xl">¡Hola! Parece que no tenés un plan generado.</h1>
+            <p className="mt-8">
+              A continuación te pediremos algunos datos para generar tu plan a medida.
+            </p>
+          </div>
         </div>
       </>
     )
@@ -105,8 +139,8 @@ const StartPlan = () => {
   const step2 = () => {
     return (
       <>
-        <div className="text-left mt-8">
-          <h1 className="text-3xl text-gray-90">Te queremos conocer.</h1>
+        <div className="text-left mt-12">
+          <h1 className="text-3xl text-primary-main">Te queremos conocer.</h1>
           <div className="mt-4">
             {/* @ts-ignore */}
             <Input label="¿Cómo querés que te llamemos?" name="name" autoFocus value={tempProfile.name} onInput={(ev) => { setTempProfile({...tempProfile, name: ev.target.value}) }} />
@@ -119,8 +153,8 @@ const StartPlan = () => {
   const step3 = () => {
     return (
       <>
-        <div className="text-left mt-8">
-          <h1 className="text-3xl text-gray-90">¿Tenés alguna restriccíon alimenticia?</h1>
+        <div className="text-left mt-12">
+          <h1 className="text-3xl text-primary-main">¿Tenés alguna restriccíon alimenticia?</h1>
           <p className="text-gray-80 mt-8">
             Para que podamos ofrecerte un plan a tu medida, necesitamos saber si tenés alguna restricción alimenticia, alergias o dietas no especistas.
           </p>
@@ -151,16 +185,14 @@ const StartPlan = () => {
   const step4 = () => {
     return (
       <>
-        <div className="text-left mt-8">
-          <div className="text-center">
-            <h1 className="text-3xl text-gray-90">¿Tenés alguna meta para tu plan?</h1>
-            </div>
-            <p className="text-gray-80 mt-8">
-              Éstas nos ayudaran a guiar al sistema sobre tus metas, gustos y preferencias.
-            </p>
-            <p className="text-gray-80 mt-4">
-              <b>saz!</b> es un sistema inteligente, asi que podés escribirle tus metas y el sistema las va a entender.
-            </p>
+        <div className="text-left mt-12">
+          <h1 className="text-3xl text-primary-main">¿Tenés alguna meta para tu plan?</h1>
+          <p className="text-gray-80 mt-8">
+            Éstas nos ayudaran a guiar al sistema sobre tus metas, gustos y preferencias.
+          </p>
+          <p className="text-gray-80 mt-4">
+            <b>saz!</b> es un sistema inteligente, asi que podés escribirle tus metas y el sistema las va a entender.
+          </p>
           <hr className="mt-8" />
           <div className="mt-8">
             {/* @ts-ignore */}
@@ -179,8 +211,8 @@ const StartPlan = () => {
   const step5 = () => {
     return (
       <>
-        <div className="text-left mt-8">
-          <h1 className="text-3xl text-gray-90">¿Para cuantos comensales?</h1>
+        <div className="text-left mt-12">
+          <h1 className="text-3xl text-primary-main">¿Para cuantos comensales?</h1>
           <p className="text-gray-80 mt-8">
             Saber para cuantas personas es el plan, nos ayudará a presentartes ingredientes en cantidades adecuadas.
           </p>
@@ -205,19 +237,29 @@ const StartPlan = () => {
     <>
     {
       loading ? <Loading action="Estamos generando tu plan" subtext="Tené paciencia, esto puede tardar unos minutos" /> : 
-      <div className="w-full lg:w-6/12 mx-auto flex flex-col h-full">
-        <div className="mx-auto w-3/4 mt-8 -translate-x-8">
-          <img src={EmptyPlanImage} className="mx-auto" />
-        </div>
-        <form onSubmit={submitHandler} className="flex flex-col justify-between grow">
-          { renderStep() }
-          <div className="mt-8 flex grow items-end">
-            <div className="w-full">
-            <Button full type={ButtonType.submit}>{ step.label }</Button>
-            { step.current > 1 ? <Button className="mt-4" variant="secondary" full onClick={() => { stepBackward() }}>Volver</Button> : <></> }
+      <div className="px-6 w-full">
+        { props.isPatient ? 
+          <div
+            // @ts-ignore
+            style={{'--image-url': `url(${cardGradient})`}}
+            className="flex flex-col p-12 bg-[image:var(--image-url)] rounded-lg bg-cover m-row text-white h-full"
+          >
+            { renderStep() }
+          </div> : 
+          <form
+            onSubmit={submitHandler}
+            // @ts-ignore
+            style={{'--image-url': `url(${cardGradient})`}}
+            className={step.current > 1 ? "flex flex-col justify-between grow h-full" : "flex flex-col p-12 bg-[image:var(--image-url)] rounded-lg bg-cover m-row text-white h-full"}>
+            { renderStep() }
+            <div className="mt-8 pb-6 flex grow items-end">
+              <div className="w-full">
+                <Button variant={step.current > 1 ? "primary" : "secondary"} full type={ButtonType.submit}>{ step.label }</Button>
+                { step.current > 1 && <Button className="mt-4" variant="secondary" full onClick={() => { stepBackward() }}>Volver</Button> }
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        }
       </div>
     }
     </>
